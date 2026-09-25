@@ -1,0 +1,25 @@
+flowchart LR
+  classDef llm fill:#EDE4FF,stroke:#6B3FD4,color:#2A1260,stroke-width:1.5px
+  classDef det fill:#E3F0FF,stroke:#2F6FD1,color:#0E2A55,stroke-width:1.5px
+  classDef human fill:#FFF0DC,stroke:#D9822B,color:#5A3000,stroke-width:1.5px
+  classDef result fill:#37474F,stroke:#1C262B,color:#FFFFFF,stroke-width:2px
+
+  BASE["Base artifact: vendor product + version"]:::det
+  OVER["Tenant overlay: label maps, locator overrides"]:::det
+  OVCHK{"Overlay adds steps or permissions?"}:::det
+  MERGE["Merge overlay onto base"]:::det
+  EFF["Effective artifact"]:::det
+  FP["Preflight: read tenant + app version"]:::det
+  FPCHK{"Fingerprint matches?"}:::det
+  RUN["ReplayEngine runs steps"]:::det
+
+  REJECT["FAILURE: overlay rejected"]:::result
+  DRIFT["FAILURE: DRIFT_DETECTED"]:::result
+
+  BASE --> MERGE
+  OVER --> OVCHK
+  OVCHK -->|yes| REJECT
+  OVCHK -->|no| MERGE
+  MERGE --> EFF --> FP --> FPCHK
+  FPCHK -->|yes| RUN
+  FPCHK -->|no| DRIFT

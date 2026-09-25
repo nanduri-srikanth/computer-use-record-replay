@@ -1,0 +1,124 @@
+[
+ {
+  "role": "system",
+  "content": "Deterministic replay (no LLM)."
+ },
+ {
+  "role": "user",
+  "content": "Deposit below app minimum (expect BUSINESS_OUTCOME VALIDATION_REJECTED)"
+ },
+ {
+  "role": "tool_call",
+  "name": "run_started",
+  "content": "{\n \"capability\": \"open_sub_account\",\n \"version\": 1,\n \"tenant\": \"tenant_a\",\n \"artifact_hash\": \"00d3de1249339318\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "effective_artifact",
+  "content": "{\n \"hash\": \"00d3de1249339318\",\n \"overlay\": \"none\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "fingerprint_ok",
+  "content": "{\n \"version\": \"4.2.1\",\n \"tenant\": \"tenant_a\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "resolved",
+  "content": "{\n \"step\": \"s1\",\n \"candidate\": 0,\n \"tried\": [\n  \"LABEL_PROXIMITY=1\"\n ]\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "acted",
+  "content": "{\n \"step\": \"s1\",\n \"action\": \"FILL\",\n \"risk\": \"REVERSIBLE_WRITE\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "step_timing",
+  "content": "{\n \"step\": \"s1\",\n \"seconds\": 0.024\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "resolved",
+  "content": "{\n \"step\": \"s2\",\n \"candidate\": 0,\n \"tried\": [\n  \"ROLE_NAME=1\"\n ]\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "acted",
+  "content": "{\n \"step\": \"s2\",\n \"action\": \"CLICK\",\n \"risk\": \"READ\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "step_timing",
+  "content": "{\n \"step\": \"s2\",\n \"seconds\": 0.234\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "resolved",
+  "content": "{\n \"step\": \"s3\",\n \"candidate\": 0,\n \"tried\": [\n  \"ROLE_NAME=1\"\n ]\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "acted",
+  "content": "{\n \"step\": \"s3\",\n \"action\": \"CLICK\",\n \"risk\": \"READ\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "step_timing",
+  "content": "{\n \"step\": \"s3\",\n \"seconds\": 0.208\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "resolved",
+  "content": "{\n \"step\": \"s4\",\n \"candidate\": 0,\n \"tried\": [\n  \"LABEL_PROXIMITY=1\"\n ]\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "acted",
+  "content": "{\n \"step\": \"s4\",\n \"action\": \"SELECT\",\n \"risk\": \"REVERSIBLE_WRITE\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "step_timing",
+  "content": "{\n \"step\": \"s4\",\n \"seconds\": 0.026\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "resolved",
+  "content": "{\n \"step\": \"s5\",\n \"candidate\": 0,\n \"tried\": [\n  \"LABEL_PROXIMITY=1\"\n ]\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "acted",
+  "content": "{\n \"step\": \"s5\",\n \"action\": \"FILL\",\n \"risk\": \"REVERSIBLE_WRITE\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "step_timing",
+  "content": "{\n \"step\": \"s5\",\n \"seconds\": 0.011\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "resolved",
+  "content": "{\n \"step\": \"s6\",\n \"candidate\": 0,\n \"tried\": [\n  \"ROLE_NAME=1\"\n ]\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "acted",
+  "content": "{\n \"step\": \"s6\",\n \"action\": \"CLICK\",\n \"risk\": \"READ\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "business_outcome",
+  "content": "{\n \"step\": \"s6\",\n \"code\": \"VALIDATION_REJECTED\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "run_ended",
+  "content": "{\n \"bucket\": \"BUSINESS_OUTCOME\"\n}"
+ },
+ {
+  "role": "assistant",
+  "content": "{\n \"recoveries\": [],\n \"bucket\": \"BUSINESS_OUTCOME\",\n \"code\": \"VALIDATION_REJECTED\",\n \"step\": \"s6\",\n \"detail\": \"Initial deposit must be\"\n}"
+ }
+]

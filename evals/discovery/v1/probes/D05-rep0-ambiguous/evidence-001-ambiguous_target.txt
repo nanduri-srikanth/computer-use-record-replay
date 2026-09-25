@@ -1,0 +1,17 @@
+[nav]
+CoreOne
+
+Member Search
+[main]
+Member Summary
+Name: [REDACTED]
+SSN:	***-**-****
+Date of Birth:	****-**-**
+
+Accounts
+
+Account No	Type	Balance	Action
+****2345	Savings	$***	View
+****2346	Savings	$***	View
+
+CoreOne Banking v4.2.1 | Tenant: tenant_a

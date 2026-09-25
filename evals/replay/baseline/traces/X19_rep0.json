@@ -1,0 +1,74 @@
+[
+ {
+  "role": "system",
+  "content": "Deterministic replay (no LLM)."
+ },
+ {
+  "role": "user",
+  "content": "Unknown dialog, operator cancels (expect ESCALATED )"
+ },
+ {
+  "role": "tool_call",
+  "name": "run_started",
+  "content": "{\n \"capability\": \"get_savings_balance\",\n \"version\": 1,\n \"tenant\": \"tenant_a\",\n \"artifact_hash\": \"d822ccc9caca86c6\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "effective_artifact",
+  "content": "{\n \"hash\": \"d822ccc9caca86c6\",\n \"overlay\": \"none\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "fingerprint_ok",
+  "content": "{\n \"version\": \"4.2.1\",\n \"tenant\": \"tenant_a\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "resolved",
+  "content": "{\n \"step\": \"s1\",\n \"candidate\": 0,\n \"tried\": [\n  \"LABEL_PROXIMITY=1\"\n ]\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "acted",
+  "content": "{\n \"step\": \"s1\",\n \"action\": \"FILL\",\n \"risk\": \"REVERSIBLE_WRITE\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "step_timing",
+  "content": "{\n \"step\": \"s1\",\n \"seconds\": 0.025\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "resolved",
+  "content": "{\n \"step\": \"s2\",\n \"candidate\": 0,\n \"tried\": [\n  \"ROLE_NAME=1\"\n ]\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "acted",
+  "content": "{\n \"step\": \"s2\",\n \"action\": \"CLICK\",\n \"risk\": \"READ\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "intervention_requested",
+  "content": "{\n \"capability\": \"get_savings_balance\",\n \"step\": \"s2\",\n \"reason\": \"UNKNOWN_DIALOG: Security verification required\",\n \"screenshot\": \"X19-unknown-dialog--operator-cancels/evidence-001-intervention\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "claimed",
+  "content": "{\n \"operator\": \"op-test\",\n \"seconds_to_claim\": 0.0\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "handoff_ended",
+  "content": "{\n \"outcome\": \"CANCELLED\",\n \"transitions\": [\n  \"AUTOMATION->PAUSE_REQUESTED (UNKNOWN_DIALOG: Security verification required)\",\n  \"PAUSE_REQUESTED->HUMAN_IN_CONTROL (claimed by op-test)\",\n  \"HUMAN_IN_CONTROL->CANCELLED (operator cancelled)\"\n ],\n \"seconds_in_control\": 0.2\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "run_ended",
+  "content": "{\n \"bucket\": \"ESCALATED\"\n}"
+ },
+ {
+  "role": "assistant",
+  "content": "{\n \"recoveries\": [],\n \"bucket\": \"ESCALATED\",\n \"reason\": \"operator took over at s2: UNKNOWN_DIALOG: Security verification required\",\n \"handoffs\": [\n  {\n   \"step\": \"s2\",\n   \"reason\": \"UNKNOWN_DIALOG: Security verification required\",\n   \"outcome\": \"CANCELLED\",\n   \"operator\": \"op-test\",\n   \"transitions\": [\n    \"AUTOMATION->PAUSE_REQUESTED (UNKNOWN_DIALOG: Security verification required)\",\n    \"PAUSE_REQUESTED->HUMAN_IN_CONTROL (claimed by op-test)\",\n    \"HUMAN_IN_CONTROL->CANCELLED (operator cancelled)\"\n   ],\n   \"human_events\": 0\n  }\n ],\n \"outputs\": null,\n \"business_code\": null\n}"
+ }
+]

@@ -1,0 +1,255 @@
+{
+  "discoveries": [
+    {
+      "label": "savings-clean",
+      "spec": "get_savings_balance",
+      "faults": {},
+      "status": "DRAFT_SAVED",
+      "reason": "goal met",
+      "turns": 6,
+      "run": "discovery/disc-2026-09-25T002942-aa7985",
+      "input_tokens": 12,
+      "output_tokens": 515,
+      "cache_read": 31299,
+      "restarted": false,
+      "served_models": [
+        "claude-opus-5"
+      ],
+      "fallback_categories": [],
+      "handoffs": 0,
+      "artifact": "artifacts/get_savings_balance/v1.json",
+      "steps": [
+        "FILL textbox 'Member ID:'",
+        "CLICK button 'Search'",
+        "CLICK link 'View'",
+        "EXTRACT cell 'Available Balance:'",
+        "EXTRACT cell 'Currency:'"
+      ]
+    },
+    {
+      "label": "subaccount-clean",
+      "spec": "open_sub_account",
+      "faults": {},
+      "status": "DRAFT_SAVED",
+      "reason": "goal met",
+      "turns": 9,
+      "run": "discovery/disc-2026-09-25T003011-a4f9a4",
+      "input_tokens": 18,
+      "output_tokens": 1022,
+      "cache_read": 68538,
+      "restarted": false,
+      "served_models": [
+        "claude-opus-5"
+      ],
+      "fallback_categories": [],
+      "handoffs": 0,
+      "artifact": "artifacts/open_sub_account/v1.json",
+      "steps": [
+        "FILL textbox 'Member ID:'",
+        "CLICK button 'Search'",
+        "CLICK button 'Open Sub-Account'",
+        "SELECT combobox 'Account Type:'",
+        "FILL textbox 'Initial Deposit:'",
+        "CLICK button 'Continue'",
+        "CLICK button 'Confirm'",
+        "EXTRACT cell 'Confirmation Number:'"
+      ]
+    },
+    {
+      "label": "savings-interstitial",
+      "spec": "get_savings_balance",
+      "faults": {
+        "interstitial": true
+      },
+      "status": "DRAFT_SAVED",
+      "reason": "goal met",
+      "turns": 7,
+      "run": "discovery/disc-2026-09-25T003103-91763f",
+      "input_tokens": 14,
+      "output_tokens": 656,
+      "cache_read": 42033,
+      "restarted": false,
+      "served_models": [
+        "claude-opus-5"
+      ],
+      "fallback_categories": [],
+      "handoffs": 0,
+      "artifact": "artifacts/get_savings_balance/v2.json",
+      "steps": [
+        "FILL textbox 'Member ID:'",
+        "CLICK button 'Search'",
+        "CLICK link 'View'",
+        "EXTRACT cell 'Available Balance:'",
+        "EXTRACT cell 'Currency:'"
+      ]
+    },
+    {
+      "label": "savings-unknown-dialog",
+      "spec": "get_savings_balance",
+      "faults": {
+        "unknown_dialog": true
+      },
+      "status": "DRAFT_SAVED",
+      "reason": "goal met",
+      "turns": 7,
+      "run": "discovery/disc-2026-09-25T003130-7e58f3",
+      "input_tokens": 14,
+      "output_tokens": 613,
+      "cache_read": 47316,
+      "restarted": false,
+      "served_models": [
+        "claude-opus-5"
+      ],
+      "fallback_categories": [],
+      "handoffs": 1,
+      "artifact": "artifacts/get_savings_balance/v3.json",
+      "steps": [
+        "FILL textbox 'Member ID:'",
+        "CLICK button 'Search'",
+        "CLICK link 'View'",
+        "EXTRACT cell 'Available Balance:'",
+        "EXTRACT cell 'Currency:'"
+      ]
+    },
+    {
+      "label": "savings-session-expired",
+      "spec": "get_savings_balance",
+      "faults": {
+        "session_expire_at": 4
+      },
+      "status": "DRAFT_SAVED",
+      "reason": "goal met",
+      "turns": 9,
+      "run": "discovery/disc-2026-09-25T003210-5be90c",
+      "input_tokens": 18,
+      "output_tokens": 765,
+      "cache_read": 71355,
+      "restarted": true,
+      "served_models": [
+        "claude-opus-5"
+      ],
+      "fallback_categories": [],
+      "handoffs": 1,
+      "artifact": "artifacts/get_savings_balance/v4.json",
+      "steps": [
+        "FILL textbox 'Member ID:'",
+        "CLICK button 'Search'",
+        "CLICK link 'View'",
+        "EXTRACT cell 'Available Balance:'",
+        "EXTRACT cell 'Currency:'"
+      ]
+    }
+  ],
+  "replays": [
+    {
+      "artifact": "artifacts/get_savings_balance/v1.json",
+      "scenario": "success",
+      "bucket": "SUCCESS",
+      "code": "",
+      "recoveries": [],
+      "run": "replay/savings-clean-v1-success"
+    },
+    {
+      "artifact": "artifacts/get_savings_balance/v1.json",
+      "scenario": "not-found",
+      "bucket": "BUSINESS_OUTCOME",
+      "code": "MEMBER_NOT_FOUND",
+      "recoveries": [],
+      "run": "replay/savings-clean-v1-not-found"
+    },
+    {
+      "artifact": "artifacts/get_savings_balance/v1.json",
+      "scenario": "bad-input",
+      "bucket": "FAILURE",
+      "code": "VALIDATION_ERROR",
+      "recoveries": [],
+      "run": "replay/savings-clean-v1-bad-input"
+    },
+    {
+      "artifact": "artifacts/get_savings_balance/v1.json",
+      "scenario": "ambiguous",
+      "bucket": "FAILURE",
+      "code": "AMBIGUOUS_TARGET",
+      "recoveries": [],
+      "run": "replay/savings-clean-v1-ambiguous"
+    },
+    {
+      "artifact": "artifacts/get_savings_balance/v1.json",
+      "scenario": "app-error",
+      "bucket": "FAILURE",
+      "code": "APP_ERROR",
+      "recoveries": [
+        "TRANSIENT_APP_ERROR",
+        "TRANSIENT_APP_ERROR",
+        "TRANSIENT_APP_ERROR"
+      ],
+      "run": "replay/savings-clean-v1-app-error"
+    },
+    {
+      "artifact": "artifacts/get_savings_balance/v1.json",
+      "scenario": "unknown-dialog-handoff",
+      "bucket": "ESCALATED",
+      "code": "completed after human intervention: UNKNOWN_DIALOG: Security verification required",
+      "recoveries": [],
+      "run": "replay/savings-clean-v1-unknown-dialog-handoff"
+    },
+    {
+      "artifact": "artifacts/open_sub_account/v1.json",
+      "scenario": "approved",
+      "bucket": "SUCCESS",
+      "code": "",
+      "recoveries": [],
+      "run": "replay/subaccount-clean-v1-approved"
+    },
+    {
+      "artifact": "artifacts/open_sub_account/v1.json",
+      "scenario": "declined",
+      "bucket": "BUSINESS_OUTCOME",
+      "code": "DECLINED_BY_OPERATOR",
+      "recoveries": [],
+      "run": "replay/subaccount-clean-v1-declined"
+    },
+    {
+      "artifact": "artifacts/open_sub_account/v1.json",
+      "scenario": "below-minimum",
+      "bucket": "BUSINESS_OUTCOME",
+      "code": "VALIDATION_REJECTED",
+      "recoveries": [],
+      "run": "replay/subaccount-clean-v1-below-minimum"
+    },
+    {
+      "artifact": "artifacts/get_savings_balance/v2.json",
+      "scenario": "interstitial-recovered",
+      "bucket": "SUCCESS",
+      "code": "",
+      "recoveries": [
+        "KNOWN_DIALOG"
+      ],
+      "run": "replay/savings-interstitial-v2-interstitial-recovered"
+    },
+    {
+      "artifact": "artifacts/get_savings_balance/v3.json",
+      "scenario": "clean-after-dialog-discovery",
+      "bucket": "SUCCESS",
+      "code": "",
+      "recoveries": [],
+      "run": "replay/savings-unknown-dialog-v3-clean-after-dialog-discovery"
+    },
+    {
+      "artifact": "artifacts/get_savings_balance/v4.json",
+      "scenario": "clean-after-handoff-discovery",
+      "bucket": "SUCCESS",
+      "code": "",
+      "recoveries": [],
+      "run": "replay/savings-session-expired-v4-clean-after-handoff-discovery"
+    },
+    {
+      "artifact": "artifacts/get_savings_balance/v4.json",
+      "scenario": "session-expired-handoff",
+      "bucket": "ESCALATED",
+      "code": "completed after human intervention: SESSION_EXPIRED: Session expired",
+      "recoveries": [],
+      "run": "replay/savings-session-expired-v4-session-expired-handoff"
+    }
+  ]
+}

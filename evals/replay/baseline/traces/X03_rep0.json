@@ -1,0 +1,64 @@
+[
+ {
+  "role": "system",
+  "content": "Deterministic replay (no LLM)."
+ },
+ {
+  "role": "user",
+  "content": "Member not found (expect BUSINESS_OUTCOME MEMBER_NOT_FOUND)"
+ },
+ {
+  "role": "tool_call",
+  "name": "run_started",
+  "content": "{\n \"capability\": \"get_savings_balance\",\n \"version\": 1,\n \"tenant\": \"tenant_a\",\n \"artifact_hash\": \"d822ccc9caca86c6\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "effective_artifact",
+  "content": "{\n \"hash\": \"d822ccc9caca86c6\",\n \"overlay\": \"none\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "fingerprint_ok",
+  "content": "{\n \"version\": \"4.2.1\",\n \"tenant\": \"tenant_a\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "resolved",
+  "content": "{\n \"step\": \"s1\",\n \"candidate\": 0,\n \"tried\": [\n  \"LABEL_PROXIMITY=1\"\n ]\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "acted",
+  "content": "{\n \"step\": \"s1\",\n \"action\": \"FILL\",\n \"risk\": \"REVERSIBLE_WRITE\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "step_timing",
+  "content": "{\n \"step\": \"s1\",\n \"seconds\": 0.024\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "resolved",
+  "content": "{\n \"step\": \"s2\",\n \"candidate\": 0,\n \"tried\": [\n  \"ROLE_NAME=1\"\n ]\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "acted",
+  "content": "{\n \"step\": \"s2\",\n \"action\": \"CLICK\",\n \"risk\": \"READ\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "business_outcome",
+  "content": "{\n \"step\": \"s2\",\n \"code\": \"MEMBER_NOT_FOUND\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "run_ended",
+  "content": "{\n \"bucket\": \"BUSINESS_OUTCOME\"\n}"
+ },
+ {
+  "role": "assistant",
+  "content": "{\n \"recoveries\": [],\n \"bucket\": \"BUSINESS_OUTCOME\",\n \"code\": \"MEMBER_NOT_FOUND\",\n \"step\": \"s2\",\n \"detail\": \"No member found\"\n}"
+ }
+]

@@ -1,0 +1,54 @@
+--- a/src/cua/discovery/agent.py	2026-09-25 00:02:42
++++ b/src/cua/discovery/agent.py	2026-09-25 00:02:42
+@@ -98,6 +98,7 @@
+     name: str | None
+     headings: tuple[str, ...]
+     dialog_open: bool
++    route: str = ""
+ 
+ 
+ class _Stopped(Exception):
+@@ -192,7 +193,7 @@
+ 
+     @staticmethod
+     def _frame_states(obs: Observation) -> list[_FrameState]:
+-        return [_FrameState(f.name, tuple(f.headings), f.dialog_open) for f in obs.frames]
++        return [_FrameState(f.name, tuple(f.headings), f.dialog_open, f.route) for f in obs.frames]
+ 
+     # ================================================================ main loop
+ 
+@@ -315,11 +316,19 @@
+         reason = tu.input.get("reason") if tu.name == "request_human" else f"no progress for {no_progress} turns"
+         if not run.session.can_escalate:
+             raise _Stopped(f"stuck ({reason}) and no operator available")
++        before = self._frame_states(self.surface.observe(dialog_selector=self.det.pack.dialog_selector))
+         res = run.session.handoff(run.spec.name, f"turn-{turn}", f"STUCK: {reason}", lambda: "RETRY")
+         if res.record.outcome != "RESUMED":
+             raise _Stopped(f"handoff {res.record.outcome.lower()}")
+         if res.record.human_events == 0:
+             return "A human operator looked and handed control back without changing anything. "
++        after = self._frame_states(self.surface.observe(dialog_selector=self.det.pack.dialog_selector))
++        if self._only_closed_a_dialog(before, after):
++            # Closing a dialog is never a recorded step (replay handles dialogs itself), so nothing is missing
++            # from the recording: continue from here instead of restarting into the same dialog again.
++            run.ev.log("human_closed_dialog", turn=turn)
++            return ("A human operator handled the dialog on this page and handed control back. Continue from the "
++                    "current page; do not request help for the same dialog again unless it reappears. ")
+         # The human changed the page. Their actions are captured as event types only (no values), which is not
+         # enough to replay them, so an artifact built from here would silently miss steps. Start over from the
+         # entry point instead; the model now knows what unblocked the flow and its own steps get recorded.
+@@ -335,6 +344,14 @@
+                 "reset to its entry point and earlier steps were discarded. Redo the flow, repeating what the human "
+                 "did yourself where it is still needed. ")
+ 
++    @staticmethod
++    def _only_closed_a_dialog(before: list[_FrameState], after: list[_FrameState]) -> bool:
++        pairs = {b.name: b for b in before}
++        changed = [a for a in after if a.name in pairs and a != pairs[a.name]]
++        return bool(changed) and all(
++            pairs[a.name].dialog_open and not a.dialog_open and pairs[a.name].headings == a.headings
++            and pairs[a.name].route == a.route for a in changed)
++
+     def _main_headings(self) -> list[str]:
+         return next((list(f.headings) for f in self.surface.observe(dialog_selector=self.det.pack.dialog_selector).frames if f.name == "main"), [])
+ 

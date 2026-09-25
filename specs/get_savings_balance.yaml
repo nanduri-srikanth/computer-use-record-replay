@@ -1,0 +1,9 @@
+name: get_savings_balance
+goal: Look up the member's savings account and report its available balance and currency.
+inputs:
+  - {name: member_id, type: string, pattern: '^M\d{4}$'}
+outputs:
+  - {name: balance, type: decimal, sensitive: true}
+  - {name: currency, type: string, pattern: '^[A-Z]{3}$'}
+example_inputs:
+  member_id: M1001

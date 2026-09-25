@@ -1,0 +1,114 @@
+{
+  "metrics": [
+    {
+      "id": "task_success",
+      "label": "Task success",
+      "kind": "binary"
+    },
+    {
+      "id": "draft_as_expected",
+      "label": "Draft right",
+      "kind": "binary"
+    },
+    {
+      "id": "replayability",
+      "label": "Replayable",
+      "kind": "float",
+      "scale": 1
+    },
+    {
+      "id": "escalation_ok",
+      "label": "Escalation",
+      "kind": "binary"
+    },
+    {
+      "id": "commits_ok",
+      "label": "Commits",
+      "kind": "binary"
+    },
+    {
+      "id": "no_dialog_steps",
+      "label": "No dialog step",
+      "kind": "binary"
+    },
+    {
+      "id": "stayed_in_bounds",
+      "label": "In bounds",
+      "kind": "binary"
+    },
+    {
+      "id": "tool_validity",
+      "label": "Tool validity",
+      "kind": "float",
+      "scale": 1
+    },
+    {
+      "id": "efficiency",
+      "label": "Efficiency",
+      "kind": "float",
+      "scale": 1
+    },
+    {
+      "id": "J1",
+      "label": "Faithful",
+      "kind": "binary"
+    },
+    {
+      "id": "J2",
+      "label": "Reviewable",
+      "kind": "binary"
+    },
+    {
+      "id": "J3",
+      "label": "Esc. judged",
+      "kind": "binary"
+    },
+    {
+      "id": "J4",
+      "label": "Goal fidelity",
+      "kind": "binary"
+    }
+  ],
+  "perf_fields": [
+    {
+      "id": "cost_usd",
+      "label": "cost",
+      "unit": "$"
+    },
+    {
+      "id": "judge_cost_usd",
+      "label": "judge $",
+      "unit": "$"
+    },
+    {
+      "id": "latency_s",
+      "label": "latency",
+      "unit": "s"
+    },
+    {
+      "id": "turns",
+      "label": "turns"
+    },
+    {
+      "id": "tool_calls",
+      "label": "tool calls"
+    },
+    {
+      "id": "policy_blocks",
+      "label": "policy blocks"
+    },
+    {
+      "id": "in_tokens",
+      "label": "in tok"
+    },
+    {
+      "id": "out_tokens",
+      "label": "out tok"
+    },
+    {
+      "id": "fallback_share",
+      "label": "fallback"
+    }
+  ],
+  "note": "Discovery eval: claude-opus-5 under test, claude-sonnet-5 as judge. Primary = task_success (end state)."
+}

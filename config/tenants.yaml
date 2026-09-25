@@ -1,0 +1,10 @@
+# Tenant registry: expected app version and per-capability overlays.
+tenants:
+  tenant_a:
+    expected_version: "4.2.1"
+  tenant_b:
+    expected_version: "4.2.1"
+    overlays:
+      get_savings_balance: overlays/tenant_b.json
+  tenant_c:
+    expected_version: "4.2.1"

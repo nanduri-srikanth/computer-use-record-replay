@@ -1,0 +1,31 @@
+{"ts": 1790314260.439, "kind": "run_started", "capability": "open_sub_account", "version": 1, "tenant": "tenant_a", "artifact_hash": "6965507254e3f718"}
+{"ts": 1790314260.439, "kind": "effective_artifact", "hash": "6965507254e3f718", "overlay": "none"}
+{"ts": 1790314260.463, "kind": "fingerprint_ok", "version": "4.2.1", "tenant": "tenant_a"}
+{"ts": 1790314260.478, "kind": "resolved", "step": "s1", "candidate": 0, "tried": ["LABEL_PROXIMITY=1"]}
+{"ts": 1790314260.485, "kind": "acted", "step": "s1", "action": "FILL", "risk": "REVERSIBLE_WRITE"}
+{"ts": 1790314260.487, "kind": "step_timing", "step": "s1", "seconds": 0.024}
+{"ts": 1790314260.5, "kind": "resolved", "step": "s2", "candidate": 0, "tried": ["ROLE_NAME=1"]}
+{"ts": 1790314260.545, "kind": "acted", "step": "s2", "action": "CLICK", "risk": "READ"}
+{"ts": 1790314260.72, "kind": "step_timing", "step": "s2", "seconds": 0.232}
+{"ts": 1790314260.736, "kind": "resolved", "step": "s3", "candidate": 0, "tried": ["ROLE_NAME=1"]}
+{"ts": 1790314260.749, "kind": "acted", "step": "s3", "action": "CLICK", "risk": "READ"}
+{"ts": 1790314260.932, "kind": "step_timing", "step": "s3", "seconds": 0.211}
+{"ts": 1790314260.952, "kind": "resolved", "step": "s4", "candidate": 0, "tried": ["LABEL_PROXIMITY=1"]}
+{"ts": 1790314260.956, "kind": "acted", "step": "s4", "action": "SELECT", "risk": "REVERSIBLE_WRITE"}
+{"ts": 1790314260.958, "kind": "step_timing", "step": "s4", "seconds": 0.026}
+{"ts": 1790314260.965, "kind": "resolved", "step": "s5", "candidate": 0, "tried": ["LABEL_PROXIMITY=1"]}
+{"ts": 1790314260.967, "kind": "acted", "step": "s5", "action": "FILL", "risk": "REVERSIBLE_WRITE"}
+{"ts": 1790314260.969, "kind": "step_timing", "step": "s5", "seconds": 0.011}
+{"ts": 1790314260.976, "kind": "resolved", "step": "s6", "candidate": 0, "tried": ["ROLE_NAME=1"]}
+{"ts": 1790314261.0, "kind": "acted", "step": "s6", "action": "CLICK", "risk": "READ"}
+{"ts": 1790314261.181, "kind": "step_timing", "step": "s6", "seconds": 0.212}
+{"ts": 1790314261.2, "kind": "resolved", "step": "s7", "candidate": 0, "tried": ["ROLE_NAME=1"]}
+{"ts": 1790314261.24, "kind": "approval_requested", "capability": "open_sub_account", "step": "s7", "summary": {"capability": "open_sub_account", "step": "Finalize opening the sub-account to generate the confirmation number", "member_id": "M**01", "account_type": "MONEY_MARKET", "initial_deposit": "100.00"}}
+{"ts": 1790314261.24, "kind": "approval_decided", "step": "s7", "seconds": 0.0, "outcome": "APPROVED"}
+{"ts": 1790314261.24, "kind": "approval_granted", "step": "s7", "operator": "op-test", "token_id": "[SECRET]"}
+{"ts": 1790314261.266, "kind": "acted", "step": "s7", "action": "CLICK", "risk": "IRREVERSIBLE"}
+{"ts": 1790314261.44, "kind": "step_timing", "step": "s7", "seconds": 0.258}
+{"ts": 1790314261.454, "kind": "resolved", "step": "s8", "candidate": 0, "tried": ["LABEL_PROXIMITY=1"]}
+{"ts": 1790314261.455, "kind": "acted", "step": "s8", "action": "EXTRACT", "risk": "READ"}
+{"ts": 1790314261.455, "kind": "step_timing", "step": "s8", "seconds": 0.015}
+{"ts": 1790314261.456, "kind": "run_ended", "bucket": "SUCCESS"}

@@ -1,0 +1,40 @@
+flowchart LR
+  classDef llm fill:#EDE4FF,stroke:#6B3FD4,color:#2A1260,stroke-width:1.5px
+  classDef det fill:#E3F0FF,stroke:#2F6FD1,color:#0E2A55,stroke-width:1.5px
+  classDef human fill:#FFF0DC,stroke:#D9822B,color:#5A3000,stroke-width:1.5px
+  classDef result fill:#37474F,stroke:#1C262B,color:#FFFFFF,stroke-width:2px
+
+  subgraph PROD["Production path: no LLM"]
+    RE["ReplayEngine run"]:::det
+    DA["DiscoveryAgent run"]:::llm
+    EV["events.jsonl"]:::det
+    MET["cua.metrics derive"]:::det
+    LED["runs/metrics.jsonl"]:::det
+  end
+
+  subgraph CI["CI: free, deterministic"]
+    RPE["Replay eval: scenario catalog"]:::det
+    CONF["Confusion matrix, false SUCCESS"]:::det
+  end
+
+  subgraph PAID["On demand: live model"]
+    DE["Discovery eval: 11 cases"]:::llm
+    PROBE["Replay discovered artifact on probes"]:::det
+    JUDGE["Sonnet 5 judge J1 to J4"]:::llm
+    CAL{"Judge calibrated?"}:::human
+  end
+
+  CARD["Scorecard: gates, alerts, trend"]:::result
+
+  RE --> EV
+  DA --> EV
+  EV --> MET --> LED --> CARD
+  RPE --> CONF --> CARD
+  DE --> PROBE --> CARD
+  DE --> JUDGE --> CAL
+  CAL -->|agreement at least 0.9| CARD
+  CAL -.->|below: advisory only| CARD
+
+  style PROD fill:#F4F8FD,stroke:#2F6FD1,stroke-width:2px,stroke-dasharray:6 4
+  style CI fill:#FAFAFA,stroke:#9E9E9E,stroke-width:1px
+  style PAID fill:#F8F5FF,stroke:#6B3FD4,stroke-width:2px

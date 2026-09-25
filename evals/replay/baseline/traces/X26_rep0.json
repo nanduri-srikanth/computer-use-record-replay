@@ -1,0 +1,104 @@
+[
+ {
+  "role": "system",
+  "content": "Deterministic replay (no LLM)."
+ },
+ {
+  "role": "user",
+  "content": "Invisible overlay intercepts clicks (expect FAILURE ACTION_FAILED)"
+ },
+ {
+  "role": "tool_call",
+  "name": "run_started",
+  "content": "{\n \"capability\": \"get_savings_balance\",\n \"version\": 1,\n \"tenant\": \"tenant_a\",\n \"artifact_hash\": \"d822ccc9caca86c6\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "effective_artifact",
+  "content": "{\n \"hash\": \"d822ccc9caca86c6\",\n \"overlay\": \"none\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "fingerprint_ok",
+  "content": "{\n \"version\": \"4.2.1\",\n \"tenant\": \"tenant_a\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "resolved",
+  "content": "{\n \"step\": \"s1\",\n \"candidate\": 0,\n \"tried\": [\n  \"LABEL_PROXIMITY=1\"\n ]\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "acted",
+  "content": "{\n \"step\": \"s1\",\n \"action\": \"FILL\",\n \"risk\": \"REVERSIBLE_WRITE\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "step_timing",
+  "content": "{\n \"step\": \"s1\",\n \"seconds\": 0.025\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "resolved",
+  "content": "{\n \"step\": \"s2\",\n \"candidate\": 0,\n \"tried\": [\n  \"ROLE_NAME=1\"\n ]\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "acted",
+  "content": "{\n \"step\": \"s2\",\n \"action\": \"CLICK\",\n \"risk\": \"READ\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "step_timing",
+  "content": "{\n \"step\": \"s2\",\n \"seconds\": 0.089\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "resolved",
+  "content": "{\n \"step\": \"s3\",\n \"candidate\": 0,\n \"tried\": [\n  \"TABLE_ANCHOR=1\"\n ]\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "recovered",
+  "content": "{\n \"step\": \"s3\",\n \"recovery\": \"ACTION_RETRY\",\n \"detail\": \"CLICK on View link on the Savings row: Locator.click: Timeout 2000ms exceeded.\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "resolved",
+  "content": "{\n \"step\": \"s3\",\n \"candidate\": 0,\n \"tried\": [\n  \"TABLE_ANCHOR=1\"\n ]\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "recovered",
+  "content": "{\n \"step\": \"s3\",\n \"recovery\": \"ACTION_RETRY\",\n \"detail\": \"CLICK on View link on the Savings row: Locator.click: Timeout 2000ms exceeded.\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "resolved",
+  "content": "{\n \"step\": \"s3\",\n \"candidate\": 0,\n \"tried\": [\n  \"TABLE_ANCHOR=1\"\n ]\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "recovered",
+  "content": "{\n \"step\": \"s3\",\n \"recovery\": \"ACTION_RETRY\",\n \"detail\": \"CLICK on View link on the Savings row: Locator.click: Timeout 2000ms exceeded.\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "resolved",
+  "content": "{\n \"step\": \"s3\",\n \"candidate\": 0,\n \"tried\": [\n  \"TABLE_ANCHOR=1\"\n ]\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "failure",
+  "content": "{\n \"reason\": \"ACTION_FAILED\",\n \"step\": \"s3\",\n \"expected\": \"CLICK on View link on the Savings row: Locator.click: Timeout 2000ms exceeded.\",\n \"observed\": \"retry budget exhausted; Member Summary\\nName: [REDACTED]\\nSSN:\\t***-**-****\\nDate of Birth:\\t****-**-**\\n\\nAccounts\\n\\nAccount No\\tType\\tBalance\\tAction\\n****2345\\tChecking\\t$***\\tView\\n****2346\\tSavings\\t$***\\tView\\n\\nCoreOne Banking v4.2.1 | Tenant: tenant_a\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "run_ended",
+  "content": "{\n \"bucket\": \"FAILURE\"\n}"
+ },
+ {
+  "role": "assistant",
+  "content": "{\n \"recoveries\": [\n  {\n   \"step\": \"s3\",\n   \"kind\": \"ACTION_RETRY\",\n   \"detail\": \"CLICK on View link on the Savings row: Locator.click: Timeout 2000ms exceeded.\"\n  },\n  {\n   \"step\": \"s3\",\n   \"kind\": \"ACTION_RETRY\",\n   \"detail\": \"CLICK on View link on the Savings row: Locator.click: Timeout 2000ms exceeded.\"\n  },\n  {\n   \"step\": \"s3\",\n   \"kind\": \"ACTION_RETRY\",\n   \"detail\": \"CLICK on View link on the Savings row: Locator.click: Timeout 2000ms exceeded.\"\n  }\n ],\n \"bucket\": \"FAILURE\",\n \"reason\": \"ACTION_FAILED\",\n \"step\": \"s3\",\n \"expected\": \"CLICK on View link on the Savings row: Locator.click: Timeout 2000ms exceeded.\",\n \"observed\": \"retry budget exhausted; Member Summary\\nName: [REDACTED]\\nSSN:\\t***-**-****\\nDate of Birth:\\t****-**-**\\n\\nAccounts\\n\\nAccount No\\tType\\tBalance\\tAction\\n****2345\\tChecking\\t$***\\tView\\n****2346\\tSavings\\t$***\\tView\\n\\nCoreOne Banking v4.2.1 | Tenant: tenant_a\",\n \"evidence_ref\": \"X26-invisible-overlay-intercepts-clicks/evidence-001-action_failed\",\n \"handoffs\": []\n}"
+ }
+]

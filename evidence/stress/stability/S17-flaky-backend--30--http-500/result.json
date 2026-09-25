@@ -1,0 +1,27 @@
+{
+  "run_id": "S17-flaky-backend--30--http-500",
+  "capability": "get_savings_balance",
+  "version": 1,
+  "tenant": "tenant_a",
+  "inputs_redacted": {
+    "member_id": "M**01"
+  },
+  "result": {
+    "recoveries": [],
+    "bucket": "SUCCESS",
+    "outputs": {
+      "balance": "[REDACTED:sensitive]",
+      "currency": "USD"
+    }
+  },
+  "steps_executed": [
+    "s1",
+    "s2",
+    "s3",
+    "s4",
+    "s5"
+  ],
+  "ui_actions": 3,
+  "started_at": "2026-09-25T05:29:33+00:00",
+  "ended_at": "2026-09-25T05:29:33+00:00"
+}

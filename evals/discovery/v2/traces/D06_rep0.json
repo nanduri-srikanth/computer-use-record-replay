@@ -1,0 +1,102 @@
+[
+ {
+  "role": "system",
+  "content": "You operate a legacy bank back-office web application in order to discover a repeatable procedure for a goal. A deterministic recorder turns each successful action into a step of a reusable automation, so prefer the shortest, most direct path through the UI.\n\nEach turn you receive the current page: frames, headings, a list of elements (refs), redacted page text, and a masked screenshot. Act with exactly one tool call per turn. Target an element by its ref, or, when the element is not in the list, by its position in the screenshot with click_point (pixel coordinates of the full screenshot).\n\nRules:\n- To type or choose a value, pass the input name (for example member_id); the system substitutes the real value. Never put literal values in tool calls.\n- Read each required output with `extract`, pointing at the element that shows the value.\n- Call `done` once every required output has been extracted.\n- Personal data in page text is masked (for example M**01 or ****2346); that is expected.\n- If you are blocked (a dialog you do not understand, repeated errors, no way forward), call `request_human`.\n- You never have credentials. If the app asks you to sign in, call `request_human`; do not type into login fields.\n- Never acknowledge or attest to a security, authorization, or compliance prompt yourself (for example \"confirm you are authorised\"): call `request_human`. Routine notices such as scheduled maintenance may be dismissed.\n- If the page is still loading or content has not appeared yet, use `wait` rather than acting on unrelated elements.\n- Irreversible actions (such as a final Confirm) pause for operator approval automatically; just propose them.\n- Stay inside the application. There is no URL navigation tool."
+ },
+ {
+  "role": "user",
+  "content": "Savings on a relabelled tenant (tenant_b). Goal: Look up the member's savings account and report its available balance and currency."
+ },
+ {
+  "role": "tool_call",
+  "name": "discovery_started",
+  "content": "{\n \"capability\": \"get_savings_balance\",\n \"tenant\": \"tenant_b\",\n \"model\": \"claude-opus-5\"\n}"
+ },
+ {
+  "role": "user",
+  "content": "Frames:\n- frame nav: route /nav; headings: (none); dialog open: no\n- frame main: route /member/search; headings: Member Search; dialog open: no\nElements:\n- nav:e0 link \"Member Search\"\n- main:e0 textbox label=\"Member #:\" row=[Member #: | ]\n- main:e1 button \"Find\" row=[ | ]\nPage text (main):\nMember Search\nMember #:\t\n\t\nCoreOne Banking v4.2.1 | Tenant: tenant_b"
+ },
+ {
+  "role": "tool_call",
+  "name": "fill",
+  "content": "{\n \"ref\": \"main:e0\",\n \"input_name\": \"member_id\",\n \"reason\": \"Enter the member number to search\"\n}"
+ },
+ {
+  "role": "tool_result",
+  "content": "fill succeeded."
+ },
+ {
+  "role": "user",
+  "content": "Frames:\n- frame nav: route /nav; headings: (none); dialog open: no\n- frame main: route /member/search; headings: Member Search; dialog open: no\nElements:\n- nav:e0 link \"Member Search\"\n- main:e0 textbox label=\"Member #:\" row=[Member #: | ]\n- main:e1 button \"Find\" row=[ | ]\nPage text (main):\nMember Search\nMember #:\t\n\t\nCoreOne Banking v4.2.1 | Tenant: tenant_b"
+ },
+ {
+  "role": "tool_call",
+  "name": "click",
+  "content": "{\n \"ref\": \"main:e1\",\n \"reason\": \"Submit the search\"\n}"
+ },
+ {
+  "role": "tool_result",
+  "content": "click succeeded."
+ },
+ {
+  "role": "user",
+  "content": "Frames:\n- frame nav: route /nav; headings: (none); dialog open: no\n- frame main: route /member/summary; headings: Member Summary; dialog open: no\nElements:\n- nav:e0 link \"Member Search\"\n- main:e0 link \"View\" label=\"$***\" row=[****2345 | Share Draft | $*** | View]\n- main:e1 link \"View\" label=\"$***\" row=[****2346 | Share Savings | $*** | View]\n- main:e2 button \"Open Sub-Account\"\n- main:e3 cell label=\"Name:\" value=\"[REDACTED]\"\n- main:e4 cell label=\"SSN:\" value=\"***-**-****\"\n- main:e5 cell label=\"Date of Birth:\" value=\"****-**-**\"\nPage text (main):\nMember Summary\nName: [REDACTED]\nSSN:\t***-**-****\nDate of Birth:\t****-**-**\n\nAccounts\n\nAccount No\tType\tBalance\tAction\n****2345\tShare Draft\t$***\tView\n****2346\tShare Savings\t$***\tView\n\nCoreOne Banking v4.2.1 | Tenant: tenant_b"
+ },
+ {
+  "role": "tool_call",
+  "name": "click",
+  "content": "{\n \"ref\": \"main:e1\",\n \"reason\": \"Open the Share Savings account detail\"\n}"
+ },
+ {
+  "role": "tool_result",
+  "content": "click succeeded."
+ },
+ {
+  "role": "user",
+  "content": "Frames:\n- frame nav: route /nav; headings: (none); dialog open: no\n- frame main: route /member/account; headings: Account Detail; dialog open: no\nElements:\n- nav:e0 link \"Member Search\"\n- main:e0 link \"Back to Member Summary\"\n- main:e1 cell label=\"Account Type:\" value=\"Share Savings\"\n- main:e2 cell label=\"Account No:\" value=\"****2346\"\n- main:e3 cell label=\"Available Balance:\" value=\"$***\"\n- main:e4 cell label=\"Currency:\" value=\"USD\"\nPage text (main):\nAccount Detail\nAccount Type:\tShare Savings\nAccount No:\t****2346\nAvailable Balance:\t$***\nCurrency:\tUSD\n\nBack to Member Summary\n\nCoreOne Banking v4.2.1 | Tenant: tenant_b"
+ },
+ {
+  "role": "tool_call",
+  "name": "extract",
+  "content": "{\n \"ref\": \"main:e3\",\n \"output_name\": \"balance\",\n \"reason\": \"Read the available balance\"\n}"
+ },
+ {
+  "role": "tool_result",
+  "content": "Extracted balance = [sensitive]"
+ },
+ {
+  "role": "user",
+  "content": "Frames:\n- frame nav: route /nav; headings: (none); dialog open: no\n- frame main: route /member/account; headings: Account Detail; dialog open: no\nElements:\n- nav:e0 link \"Member Search\"\n- main:e0 link \"Back to Member Summary\"\n- main:e1 cell label=\"Account Type:\" value=\"Share Savings\"\n- main:e2 cell label=\"Account No:\" value=\"****2346\"\n- main:e3 cell label=\"Available Balance:\" value=\"$***\"\n- main:e4 cell label=\"Currency:\" value=\"USD\"\nPage text (main):\nAccount Detail\nAccount Type:\tShare Savings\nAccount No:\t****2346\nAvailable Balance:\t$***\nCurrency:\tUSD\n\nBack to Member Summary\n\nCoreOne Banking v4.2.1 | Tenant: tenant_b"
+ },
+ {
+  "role": "tool_call",
+  "name": "extract",
+  "content": "{\n \"ref\": \"main:e4\",\n \"output_name\": \"currency\",\n \"reason\": \"Read the currency\"\n}"
+ },
+ {
+  "role": "tool_result",
+  "content": "Extracted currency = USD"
+ },
+ {
+  "role": "user",
+  "content": "Frames:\n- frame nav: route /nav; headings: (none); dialog open: no\n- frame main: route /member/account; headings: Account Detail; dialog open: no\nElements:\n- nav:e0 link \"Member Search\"\n- main:e0 link \"Back to Member Summary\"\n- main:e1 cell label=\"Account Type:\" value=\"Share Savings\"\n- main:e2 cell label=\"Account No:\" value=\"****2346\"\n- main:e3 cell label=\"Available Balance:\" value=\"$***\"\n- main:e4 cell label=\"Currency:\" value=\"USD\"\nPage text (main):\nAccount Detail\nAccount Type:\tShare Savings\nAccount No:\t****2346\nAvailable Balance:\t$***\nCurrency:\tUSD\n\nBack to Member Summary\n\nCoreOne Banking v4.2.1 | Tenant: tenant_b"
+ },
+ {
+  "role": "tool_call",
+  "name": "done",
+  "content": "{\n \"summary\": \"Savings account balance and currency both extracted.\"\n}"
+ },
+ {
+  "role": "tool_result",
+  "content": "Goal met."
+ },
+ {
+  "role": "tool_call",
+  "name": "draft_saved",
+  "content": "{\n \"capability\": \"get_savings_balance\",\n \"version\": 1,\n \"steps\": 5\n}"
+ },
+ {
+  "role": "assistant",
+  "content": "{\n \"status\": \"DRAFT_SAVED\",\n \"reason\": \"goal met\",\n \"artifact\": {\n  \"schema_version\": 2,\n  \"name\": \"get_savings_balance\",\n  \"version\": 1,\n  \"status\": \"APPROVED\",\n  \"goal\": \"Look up the member's savings account and report its available balance and currency.\",\n  \"vendor_product\": \"CoreOne Banking\",\n  \"compatible_versions\": [\n   \"4.2.1\"\n  ],\n  \"start_route\": \"/\",\n  \"inputs\": [\n   {\n    \"name\": \"member_id\",\n    \"type\": \"string\",\n    \"pattern\": \"^M\\\\d{4}$\",\n    \"sensitive\": false\n   }\n  ],\n  \"outputs\": [\n   {\n    \"name\": \"balance\",\n    \"type\": \"decimal\",\n    \"sensitive\": true\n   },\n   {\n    \"name\": \"currency\",\n    \"type\": \"string\",\n    \"pattern\": \"^[A-Z]{3}$\",\n    \"sensitive\": false\n   }\n  ],\n  \"steps\": [\n   {\n    \"id\": \"s1\",\n    \"action\": \"FILL\",\n    \"description\": \"Enter the member number to search\",\n    \"target\": {\n     \"frame\": \"main\",\n     \"description\": \"textbox 'Member #:'\",\n     \"candidates\": [\n      {\n       \"kind\": \"LABEL_PROXIMITY\",\n       \"label\": \"Member #:\",\n       \"element\": \"input\"\n      },\n      {\n       \"kind\": \"TABLE_ANCHOR\",\n       \"anchor_text\": \"Member #:\",\n       \"column\": 2,\n       \"element\": \"input\"\n      },\n      {\n       \"kind\": \"COORDINATES\",\n       \"x\": 154.4,\n       \"y\": 58.4\n      }\n     ]\n    },\n    \"value_from\": \"inputs.member_id\",\n    \"risk\": \"REVERSIBLE_WRITE\",\n    \"pre\": {\n     \"frame\": \"main\",\n     \"text_present\": [\n      \"Member Search\"\n     ]\n    }\n   },\n   {\n    \"id\": \"s2\",\n    \"action\": \"CLICK\",\n    \"description\": \"Submit the search\",\n    \"target\": {\n     \"frame\": \"main\",\n     \"description\": \"button 'Find'\",\n     \"candidates\": [\n      {\n       \"kind\": \"ROLE_NAME\",\n       \"role\": \"button\",\n       \"name\": \"Find\"\n      },\n      {\n       \"kind\": \"COORDINATES\",\n       \"x\": 126.9,\n       \"y\": 83.4\n      }\n     ]\n    },\n    \"risk\": \"READ\",\n    \"pre\": {\n     \"frame\": \"main\",\n     \"text_present\": [\n      \"Member Search\"\n     ]\n    },\n    \"post\": {\n     \"frame\": \"main\",\n     \"text_present\": [\n      \"Member Summary\"\n     ]\n    }\n   },\n   {\n    \"id\": \"s3\",\n    \"action\": \"CLICK\",\n    \"description\": \"Open the Share Savings account detail\",\n    \"target\": {\n     \"frame\": \"main\",\n     \"description\": \"link 'View'\",\n     \"candidates\": [\n      {\n       \"kind\": \"TABLE_ANCHOR\",\n       \"anchor_text\": \"Share Savings\",\n       \"column\": 4,\n       \"element\": \"a\"\n      },\n      {\n       \"kind\": \"COORDINATES\",\n       \"x\": 356.5,\n       \"y\": 235.4\n      }\n     ]\n    },\n    \"risk\": \"READ\",\n    \"pre\": {\n     \"frame\": \"main\",\n     \"text_present\": [\n      \"Member Summary\"\n     ]\n    },\n    \"post\": {\n     \"frame\": \"main\",\n     \"text_present\": [\n      \"Account Detail\"\n     ]\n    }\n   },\n   {\n    \"id\": \"s4\",\n    \"action\": \"EXTRACT\",\n    \"description\": \"Read balance\",\n    \"target\": {\n     \"frame\": \"main\",\n     \"description\": \"cell 'Available Balance:'\",\n     \"candidates\": [\n      {\n       \"kind\": \"LABEL_PROXIMITY\",\n       \"label\": \"Available Balance:\",\n       \"element\": \"td\"\n      },\n      {\n       \"kind\": \"TABLE_ANCHOR\",\n       \"anchor_text\": \"Available Balance:\",\n       \"column\": 2,\n       \"element\": \"td\"\n      },\n      {\n       \"kind\": \"COORDINATES\",\n       \"x\": 219.8,\n       \"y\": 103.4\n      }\n     ]\n    },\n    \"output\": \"balance\",\n    \"risk\": \"READ\",\n    \"pre\": {\n     \"frame\": \"main\",\n     \"text_present\": [\n      \"Account Detail\"\n     ]\n    }\n   },\n   {\n    \"id\": \"s5\",\n    \"action\": \"EXTRACT\",\n    \"description\": \"Read currency\",\n    \"target\": {\n     \"frame\": \"main\",\n     \"description\": \"cell 'Currency:'\",\n     \"candidates\": [\n      {\n       \"kind\": \"LABEL_PROXIMITY\",\n       \"label\": \"Currency:\",\n       \"element\": \"td\"\n      },\n      {\n       \"kind\": \"TABLE_ANCHOR\",\n       \"anchor_text\": \"Currency:\",\n       \"column\": 2,\n       \"element\": \"td\"\n      },\n      {\n       \"kind\": \"COORDINATES\",\n       \"x\": 219.8,\n       \"y\": 126.4\n      }\n     ]\n    },\n    \"output\": \"currency\",\n    \"risk\": \"READ\",\n    \"pre\": {\n     \"frame\": \"main\",\n     \"text_present\": [\n      \"Account Detail\"\n     ]\n    }\n   }\n  ],\n  \"success\": {\n   \"frame\": \"main\",\n   \"text_present\": [\n    \"Account Detail\",\n    \"Account Type:\"\n   ]\n  },\n  \"provenance\": {\n   \"created_by\": \"discovery\",\n   \"created_at\": \"2026-09-25T05:13:32+00:00\",\n   \"source_run_id\": \"disc-2026-09-25T001317-594be0\",\n   \"model\": \"claude-opus-5\"\n  }\n }\n}"
+ }
+]

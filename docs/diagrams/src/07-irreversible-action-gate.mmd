@@ -1,0 +1,39 @@
+%%{init: {'theme': 'neutral'}}%%
+sequenceDiagram
+  autonumber
+  participant RE as ReplayEngine
+  participant PE as PolicyEngine
+  participant SC as SessionController
+  participant OC as OperatorConsole
+  actor H as Human
+  participant BR as Browser
+
+  RE->>BR: steps 1..n-1 (READ, REVERSIBLE_WRITE)
+  RE->>PE: check(step n: confirm, IRREVERSIBLE)
+  PE-->>RE: approval token required
+  Note over RE,PE: Replay paused before commit
+  RE->>SC: request_approval(capability, step n, summary)
+  Note over SC,OC: Redactor masks summary: member ****1234, type, deposit
+  SC->>OC: approval request (redacted summary, masked screenshot)
+  rect rgb(255, 240, 220)
+    OC->>H: review commit
+    alt approve
+      H->>OC: approve
+      OC->>SC: approve
+      SC-->>RE: approval token (single use, this run + step)
+    else deny
+      H->>OC: deny
+      OC->>SC: deny
+      SC-->>RE: denied
+    end
+  end
+  alt token received
+    RE->>PE: verify token
+    PE-->>RE: allowed
+    RE->>BR: click Confirm
+    BR-->>RE: confirmation page
+    Note over RE,PE: post-checkpoint, extract confirmation_number
+    Note over RE,SC: Result SUCCESS {confirmation_number}
+  else denied
+    Note over RE,SC: No commit. Result BUSINESS_OUTCOME (DECLINED_BY_OPERATOR)
+  end

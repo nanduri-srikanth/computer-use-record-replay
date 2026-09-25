@@ -1,0 +1,34 @@
+[
+ {
+  "role": "system",
+  "content": "Deterministic replay (no LLM)."
+ },
+ {
+  "role": "user",
+  "content": "App version drift (tenant_c on 4.3.0) (expect FAILURE DRIFT_DETECTED)"
+ },
+ {
+  "role": "tool_call",
+  "name": "run_started",
+  "content": "{\n \"capability\": \"get_savings_balance\",\n \"version\": 1,\n \"tenant\": \"tenant_c\",\n \"artifact_hash\": \"d822ccc9caca86c6\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "effective_artifact",
+  "content": "{\n \"hash\": \"d822ccc9caca86c6\",\n \"overlay\": \"none\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "failure",
+  "content": "{\n \"reason\": \"DRIFT_DETECTED\",\n \"step\": null,\n \"expected\": \"tenant tenant_c, version in ['4.2.1'] and 4.2.1\",\n \"observed\": \"tenant tenant_c, version 4.3.0\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "run_ended",
+  "content": "{\n \"bucket\": \"FAILURE\"\n}"
+ },
+ {
+  "role": "assistant",
+  "content": "{\n \"recoveries\": [],\n \"bucket\": \"FAILURE\",\n \"reason\": \"DRIFT_DETECTED\",\n \"step\": null,\n \"expected\": \"tenant tenant_c, version in ['4.2.1'] and 4.2.1\",\n \"observed\": \"tenant tenant_c, version 4.3.0\",\n \"evidence_ref\": \"X32-app-version-drift--tenant-c-on-4-3-0/evidence-001-drift_detected\",\n \"handoffs\": []\n}"
+ }
+]

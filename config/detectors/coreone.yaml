@@ -1,0 +1,24 @@
+# Detector pack for the CoreOne Banking vendor product.
+# Checked by ReplayEngine after every action and whenever a checkpoint fails.
+fingerprint:
+  frame: main
+  pattern: 'CoreOne Banking v(?P<version>[0-9.]+) \| Tenant: (?P<tenant>\w+)'
+dialog_selector: ".modal"
+business_outcomes:
+  - {code: MEMBER_NOT_FOUND, frame: main, text: "No member found"}
+  - {code: VALIDATION_REJECTED, frame: main, text: "Initial deposit must be"}
+  - {code: VALIDATION_REJECTED, frame: main, text: "account is frozen"}
+failures:
+  - {reason: PERMISSION_DENIED, frame: main, text: "Not authorized"}
+recoverable:
+  known_dialogs:
+    - {name: maintenance_notice, frame: main, text: "Scheduled maintenance notice", dismiss: {role: button, name: "Continue"}}
+  app_errors:
+    - {frame: main, text: "System Error"}
+  # Browser-native alert/confirm. Known ones are answered as configured; anything else is dismissed
+  # and the run stops, because an unknown native prompt could be asking to confirm anything.
+  native_dialogs:
+    - {text: "Your password will expire", accept: true}
+    - {text: "Open this sub-account now?", accept: true}
+blockers:
+  - {code: SESSION_EXPIRED, frame: main, text: "Session expired"}

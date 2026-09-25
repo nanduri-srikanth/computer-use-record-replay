@@ -1,0 +1,271 @@
+{
+  "schema_version": 2,
+  "name": "open_sub_account",
+  "version": 1,
+  "status": "APPROVED",
+  "goal": "Open a new sub-account for a member with an initial deposit and return the confirmation number.",
+  "vendor_product": "CoreOne Banking",
+  "compatible_versions": [
+    "4.2.1"
+  ],
+  "start_route": "/",
+  "inputs": [
+    {
+      "name": "member_id",
+      "type": "string",
+      "pattern": "^M\\d{4}$",
+      "sensitive": false
+    },
+    {
+      "name": "account_type",
+      "type": "enum",
+      "enum": [
+        "SAVINGS",
+        "MONEY_MARKET",
+        "CHRISTMAS_CLUB"
+      ],
+      "sensitive": false
+    },
+    {
+      "name": "initial_deposit",
+      "type": "decimal",
+      "minimum": "0.01",
+      "sensitive": false
+    }
+  ],
+  "outputs": [
+    {
+      "name": "confirmation_number",
+      "type": "string",
+      "pattern": "^CNF-\\d{8}$",
+      "sensitive": false
+    }
+  ],
+  "steps": [
+    {
+      "id": "s1",
+      "action": "FILL",
+      "description": "Enter member id",
+      "target": {
+        "frame": "main",
+        "description": "Member ID field",
+        "candidates": [
+          {
+            "kind": "LABEL_PROXIMITY",
+            "label": "Member ID:",
+            "element": "input"
+          }
+        ]
+      },
+      "value_from": "inputs.member_id",
+      "risk": "REVERSIBLE_WRITE",
+      "pre": {
+        "frame": "main",
+        "text_present": [
+          "Member Search"
+        ]
+      }
+    },
+    {
+      "id": "s2",
+      "action": "CLICK",
+      "description": "Search for the member",
+      "target": {
+        "frame": "main",
+        "description": "Search button",
+        "candidates": [
+          {
+            "kind": "ROLE_NAME",
+            "role": "button",
+            "name": "Search"
+          }
+        ]
+      },
+      "risk": "READ",
+      "pre": {
+        "frame": "main",
+        "text_present": [
+          "Member Search"
+        ]
+      },
+      "post": {
+        "frame": "main",
+        "text_present": [
+          "Member Summary"
+        ]
+      }
+    },
+    {
+      "id": "s3",
+      "action": "CLICK",
+      "description": "Start opening a sub-account",
+      "target": {
+        "frame": "main",
+        "description": "Open Sub-Account button",
+        "candidates": [
+          {
+            "kind": "ROLE_NAME",
+            "role": "button",
+            "name": "Open Sub-Account"
+          }
+        ]
+      },
+      "risk": "READ",
+      "pre": {
+        "frame": "main",
+        "text_present": [
+          "Member Summary"
+        ]
+      },
+      "post": {
+        "frame": "main",
+        "text_present": [
+          "Open Sub-Account",
+          "Initial Deposit:"
+        ]
+      }
+    },
+    {
+      "id": "s4",
+      "action": "SELECT",
+      "description": "Choose account type",
+      "target": {
+        "frame": "main",
+        "description": "Account type list",
+        "candidates": [
+          {
+            "kind": "LABEL_PROXIMITY",
+            "label": "Account Type:",
+            "element": "select"
+          }
+        ]
+      },
+      "value_from": "inputs.account_type",
+      "risk": "REVERSIBLE_WRITE",
+      "pre": {
+        "frame": "main",
+        "text_present": [
+          "Initial Deposit:"
+        ]
+      }
+    },
+    {
+      "id": "s5",
+      "action": "FILL",
+      "description": "Enter initial deposit",
+      "target": {
+        "frame": "main",
+        "description": "Initial deposit field",
+        "candidates": [
+          {
+            "kind": "LABEL_PROXIMITY",
+            "label": "Initial Deposit:",
+            "element": "input"
+          }
+        ]
+      },
+      "value_from": "inputs.initial_deposit",
+      "risk": "REVERSIBLE_WRITE",
+      "pre": {
+        "frame": "main",
+        "text_present": [
+          "Initial Deposit:"
+        ]
+      }
+    },
+    {
+      "id": "s6",
+      "action": "CLICK",
+      "description": "Continue to review",
+      "target": {
+        "frame": "main",
+        "description": "Continue button",
+        "candidates": [
+          {
+            "kind": "ROLE_NAME",
+            "role": "button",
+            "name": "Continue"
+          }
+        ]
+      },
+      "risk": "READ",
+      "pre": {
+        "frame": "main",
+        "text_present": [
+          "Initial Deposit:"
+        ]
+      },
+      "post": {
+        "frame": "main",
+        "text_present": [
+          "Review Sub-Account"
+        ]
+      }
+    },
+    {
+      "id": "s7",
+      "action": "CLICK",
+      "description": "Confirm and open the account",
+      "target": {
+        "frame": "main",
+        "description": "Confirm button",
+        "candidates": [
+          {
+            "kind": "ROLE_NAME",
+            "role": "button",
+            "name": "Confirm"
+          }
+        ]
+      },
+      "risk": "IRREVERSIBLE",
+      "pre": {
+        "frame": "main",
+        "text_present": [
+          "Review Sub-Account"
+        ]
+      },
+      "post": {
+        "frame": "main",
+        "text_present": [
+          "Sub-Account Opened"
+        ]
+      }
+    },
+    {
+      "id": "s8",
+      "action": "EXTRACT",
+      "description": "Read confirmation number",
+      "target": {
+        "frame": "main",
+        "description": "Confirmation number",
+        "candidates": [
+          {
+            "kind": "LABEL_PROXIMITY",
+            "label": "Confirmation Number:",
+            "element": "td"
+          }
+        ]
+      },
+      "output": "confirmation_number",
+      "risk": "READ",
+      "pre": {
+        "frame": "main",
+        "text_present": [
+          "Sub-Account Opened"
+        ]
+      }
+    }
+  ],
+  "success": {
+    "frame": "main",
+    "text_present": [
+      "Sub-Account Opened",
+      "Confirmation Number:"
+    ]
+  },
+  "provenance": {
+    "created_by": "hand-authored",
+    "created_at": "2026-09-24T00:00:00+00:00",
+    "notes": "Golden reference for replay tests."
+  }
+}

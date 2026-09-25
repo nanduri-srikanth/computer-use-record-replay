@@ -1,0 +1,10 @@
+{"ts": 1790311093.37, "kind": "run_started", "capability": "get_savings_balance", "version": 1, "tenant": "tenant_a", "artifact_hash": "cd275304977a3e0a"}
+{"ts": 1790311093.37, "kind": "effective_artifact", "hash": "cd275304977a3e0a", "overlay": "none"}
+{"ts": 1790311093.393, "kind": "fingerprint_ok", "version": "4.2.1", "tenant": "tenant_a"}
+{"ts": 1790311093.409, "kind": "resolved", "step": "s1", "candidate": 0, "tried": ["LABEL_PROXIMITY=1"]}
+{"ts": 1790311093.416, "kind": "acted", "step": "s1", "action": "FILL", "risk": "REVERSIBLE_WRITE"}
+{"ts": 1790311093.418, "kind": "step_timing", "step": "s1", "seconds": 0.025}
+{"ts": 1790311093.432, "kind": "resolved", "step": "s2", "candidate": 0, "tried": ["ROLE_NAME=1"]}
+{"ts": 1790311093.475, "kind": "acted", "step": "s2", "action": "CLICK", "risk": "READ"}
+{"ts": 1790311093.648, "kind": "business_outcome", "step": "s2", "code": "MEMBER_NOT_FOUND"}
+{"ts": 1790311093.648, "kind": "run_ended", "bucket": "BUSINESS_OUTCOME"}

@@ -1,0 +1,330 @@
+{
+  "schema_version": 2,
+  "name": "open_sub_account",
+  "version": 1,
+  "status": "APPROVED",
+  "goal": "Open a new sub-account of the given type for the member with the given initial deposit, and report the confirmation number.",
+  "vendor_product": "CoreOne Banking",
+  "compatible_versions": [
+    "4.2.1"
+  ],
+  "start_route": "/",
+  "inputs": [
+    {
+      "name": "member_id",
+      "type": "string",
+      "pattern": "^M\\d{4}$",
+      "sensitive": false
+    },
+    {
+      "name": "account_type",
+      "type": "enum",
+      "enum": [
+        "SAVINGS",
+        "MONEY_MARKET",
+        "CHRISTMAS_CLUB"
+      ],
+      "sensitive": false
+    },
+    {
+      "name": "initial_deposit",
+      "type": "decimal",
+      "minimum": "0.01",
+      "sensitive": false
+    }
+  ],
+  "outputs": [
+    {
+      "name": "confirmation_number",
+      "type": "string",
+      "pattern": "^CNF-\\d{8}$",
+      "sensitive": false
+    }
+  ],
+  "steps": [
+    {
+      "id": "s1",
+      "action": "FILL",
+      "description": "Enter the member ID to locate the member record",
+      "target": {
+        "frame": "main",
+        "description": "textbox 'Member ID:'",
+        "candidates": [
+          {
+            "kind": "LABEL_PROXIMITY",
+            "label": "Member ID:",
+            "element": "input"
+          },
+          {
+            "kind": "TABLE_ANCHOR",
+            "anchor_text": "Member ID:",
+            "column": 2,
+            "element": "input"
+          },
+          {
+            "kind": "COORDINATES",
+            "x": 160.4,
+            "y": 58.4
+          }
+        ]
+      },
+      "value_from": "inputs.member_id",
+      "risk": "REVERSIBLE_WRITE",
+      "pre": {
+        "frame": "main",
+        "text_present": [
+          "Member Search"
+        ]
+      }
+    },
+    {
+      "id": "s2",
+      "action": "CLICK",
+      "description": "Submit the search to open the member record",
+      "target": {
+        "frame": "main",
+        "description": "button 'Search'",
+        "candidates": [
+          {
+            "kind": "ROLE_NAME",
+            "role": "button",
+            "name": "Search"
+          },
+          {
+            "kind": "COORDINATES",
+            "x": 141.0,
+            "y": 83.4
+          }
+        ]
+      },
+      "risk": "READ",
+      "pre": {
+        "frame": "main",
+        "text_present": [
+          "Member Search"
+        ]
+      },
+      "post": {
+        "frame": "main",
+        "text_present": [
+          "Member Summary"
+        ]
+      }
+    },
+    {
+      "id": "s3",
+      "action": "CLICK",
+      "description": "Begin the sub-account opening workflow",
+      "target": {
+        "frame": "main",
+        "description": "button 'Open Sub-Account'",
+        "candidates": [
+          {
+            "kind": "ROLE_NAME",
+            "role": "button",
+            "name": "Open Sub-Account"
+          },
+          {
+            "kind": "COORDINATES",
+            "x": 72.3,
+            "y": 272.4
+          }
+        ]
+      },
+      "risk": "READ",
+      "pre": {
+        "frame": "main",
+        "text_present": [
+          "Member Summary"
+        ]
+      },
+      "post": {
+        "frame": "main",
+        "text_present": [
+          "Open Sub-Account"
+        ]
+      }
+    },
+    {
+      "id": "s4",
+      "action": "SELECT",
+      "description": "Set the requested sub-account type",
+      "target": {
+        "frame": "main",
+        "description": "combobox 'Account Type:'",
+        "candidates": [
+          {
+            "kind": "LABEL_PROXIMITY",
+            "label": "Account Type:",
+            "element": "select"
+          },
+          {
+            "kind": "TABLE_ANCHOR",
+            "anchor_text": "Account Type:",
+            "column": 2,
+            "element": "select"
+          }
+        ]
+      },
+      "value_from": "inputs.account_type",
+      "risk": "REVERSIBLE_WRITE",
+      "pre": {
+        "frame": "main",
+        "text_present": [
+          "Open Sub-Account"
+        ]
+      }
+    },
+    {
+      "id": "s5",
+      "action": "FILL",
+      "description": "Enter the initial deposit amount for the new sub-account",
+      "target": {
+        "frame": "main",
+        "description": "textbox 'Initial Deposit:'",
+        "candidates": [
+          {
+            "kind": "LABEL_PROXIMITY",
+            "label": "Initial Deposit:",
+            "element": "input"
+          },
+          {
+            "kind": "TABLE_ANCHOR",
+            "anchor_text": "Initial Deposit:",
+            "column": 2,
+            "element": "input"
+          },
+          {
+            "kind": "COORDINATES",
+            "x": 175.9,
+            "y": 81.4
+          }
+        ]
+      },
+      "value_from": "inputs.initial_deposit",
+      "risk": "REVERSIBLE_WRITE",
+      "pre": {
+        "frame": "main",
+        "text_present": [
+          "Open Sub-Account"
+        ]
+      }
+    },
+    {
+      "id": "s6",
+      "action": "CLICK",
+      "description": "Advance to the review/confirmation step",
+      "target": {
+        "frame": "main",
+        "description": "button 'Continue'",
+        "candidates": [
+          {
+            "kind": "ROLE_NAME",
+            "role": "button",
+            "name": "Continue"
+          },
+          {
+            "kind": "COORDINATES",
+            "x": 169.1,
+            "y": 106.4
+          }
+        ]
+      },
+      "risk": "READ",
+      "pre": {
+        "frame": "main",
+        "text_present": [
+          "Open Sub-Account"
+        ]
+      },
+      "post": {
+        "frame": "main",
+        "text_present": [
+          "Review Sub-Account"
+        ]
+      }
+    },
+    {
+      "id": "s7",
+      "action": "CLICK",
+      "description": "Finalize opening the sub-account to generate the confirmation number",
+      "target": {
+        "frame": "main",
+        "description": "button 'Confirm'",
+        "candidates": [
+          {
+            "kind": "ROLE_NAME",
+            "role": "button",
+            "name": "Confirm"
+          },
+          {
+            "kind": "COORDINATES",
+            "x": 39.3,
+            "y": 115.4
+          }
+        ]
+      },
+      "risk": "IRREVERSIBLE",
+      "pre": {
+        "frame": "main",
+        "text_present": [
+          "Review Sub-Account"
+        ]
+      },
+      "post": {
+        "frame": "main",
+        "text_present": [
+          "Sub-Account Opened"
+        ]
+      }
+    },
+    {
+      "id": "s8",
+      "action": "EXTRACT",
+      "description": "Read confirmation_number",
+      "target": {
+        "frame": "main",
+        "description": "cell 'Confirmation Number:'",
+        "candidates": [
+          {
+            "kind": "LABEL_PROXIMITY",
+            "label": "Confirmation Number:",
+            "element": "td"
+          },
+          {
+            "kind": "TABLE_ANCHOR",
+            "anchor_text": "Confirmation Number:",
+            "column": 2,
+            "element": "td"
+          },
+          {
+            "kind": "COORDINATES",
+            "x": 255.9,
+            "y": 57.4
+          }
+        ]
+      },
+      "output": "confirmation_number",
+      "risk": "READ",
+      "pre": {
+        "frame": "main",
+        "text_present": [
+          "Sub-Account Opened"
+        ]
+      }
+    }
+  ],
+  "success": {
+    "frame": "main",
+    "text_present": [
+      "Sub-Account Opened",
+      "Confirmation Number:"
+    ]
+  },
+  "provenance": {
+    "created_by": "discovery",
+    "created_at": "2026-09-25T05:31:00+00:00",
+    "source_run_id": "disc-2026-09-25T003011-a4f9a4",
+    "model": "claude-opus-5"
+  }
+}

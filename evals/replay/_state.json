@@ -1,0 +1,42 @@
+{
+  "metrics": [
+    {
+      "id": "correct",
+      "label": "Correct",
+      "kind": "binary"
+    },
+    {
+      "id": "bucket_ok",
+      "label": "Bucket",
+      "kind": "binary"
+    },
+    {
+      "id": "reason_ok",
+      "label": "Reason",
+      "kind": "binary"
+    },
+    {
+      "id": "false_success",
+      "label": "False SUCCESS",
+      "kind": "binary",
+      "better": "lower"
+    },
+    {
+      "id": "recoveries_ok",
+      "label": "Recoveries",
+      "kind": "binary"
+    }
+  ],
+  "perf_fields": [
+    {
+      "id": "latency_s",
+      "label": "latency",
+      "unit": "s"
+    },
+    {
+      "id": "ui_actions",
+      "label": "UI actions"
+    }
+  ],
+  "note": "Replay eval: scenario catalog graded as an eval (no LLM)."
+}

@@ -1,0 +1,58 @@
+flowchart TB
+  classDef llm fill:#EDE4FF,stroke:#6B3FD4,color:#2A1260,stroke-width:1.5px
+  classDef det fill:#E3F0FF,stroke:#2F6FD1,color:#0E2A55,stroke-width:1.5px
+  classDef human fill:#FFF0DC,stroke:#D9822B,color:#5A3000,stroke-width:1.5px
+  classDef result fill:#37474F,stroke:#1C262B,color:#FFFFFF,stroke-width:2px
+
+  CLI["CLI"]:::det
+
+  subgraph CORE["Core"]
+    DA["DiscoveryAgent"]:::llm
+    REC["Recorder"]:::det
+    RE["ReplayEngine"]:::det
+    SC["SessionController"]:::det
+    PE["PolicyEngine"]:::det
+    RED["Redactor"]:::det
+    AS["ArtifactStore"]:::det
+    EV["EvidenceSink"]:::det
+  end
+
+  CLAUDE["Claude API"]:::llm
+  OC["OperatorConsole (mocked)"]:::human
+
+  subgraph SEAM["Surface seam"]
+    SURF["Surface interface: observe, resolve, act, snapshot"]:::det
+    PWS["PlaywrightSurface"]:::det
+    DESK["Desktop Surface UIA/AX (future)"]:::det
+  end
+
+  APP["MockBankApp: framesets, tables, faults"]:::det
+
+  CLI --> DA
+  CLI --> RE
+  CLI -->|approve, deprecate| AS
+  DA --> CLAUDE
+  DA --> SURF
+  DA --> PE
+  DA --> REC
+  DA --> SC
+  REC --> RED
+  REC --> AS
+  RE --> AS
+  RE --> SURF
+  RE --> PE
+  RE --> SC
+  RE --> EV
+  SC --> OC
+  SC --> SURF
+  SC --> RED
+  SC -->|proposed revision| AS
+  EV --> RED
+  SC -.->|token guards act| SURF
+  PWS -.->|implements| SURF
+  DESK -.->|implements| SURF
+  PWS --> APP
+
+  style CORE fill:#FAFAFA,stroke:#9E9E9E,stroke-width:1px
+  style SEAM fill:#F4F8FD,stroke:#2F6FD1,stroke-width:2px,stroke-dasharray:6 4
+  style DESK stroke-dasharray:4 4

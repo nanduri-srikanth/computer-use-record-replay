@@ -1,0 +1,154 @@
+[
+ {
+  "role": "system",
+  "content": "Deterministic replay (no LLM)."
+ },
+ {
+  "role": "user",
+  "content": "Irreversible commit slower than budget (6s) (expect FAILURE TIMEOUT)"
+ },
+ {
+  "role": "tool_call",
+  "name": "run_started",
+  "content": "{\n \"capability\": \"open_sub_account\",\n \"version\": 1,\n \"tenant\": \"tenant_a\",\n \"artifact_hash\": \"00d3de1249339318\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "effective_artifact",
+  "content": "{\n \"hash\": \"00d3de1249339318\",\n \"overlay\": \"none\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "fingerprint_ok",
+  "content": "{\n \"version\": \"4.2.1\",\n \"tenant\": \"tenant_a\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "resolved",
+  "content": "{\n \"step\": \"s1\",\n \"candidate\": 0,\n \"tried\": [\n  \"LABEL_PROXIMITY=1\"\n ]\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "acted",
+  "content": "{\n \"step\": \"s1\",\n \"action\": \"FILL\",\n \"risk\": \"REVERSIBLE_WRITE\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "step_timing",
+  "content": "{\n \"step\": \"s1\",\n \"seconds\": 0.024\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "resolved",
+  "content": "{\n \"step\": \"s2\",\n \"candidate\": 0,\n \"tried\": [\n  \"ROLE_NAME=1\"\n ]\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "acted",
+  "content": "{\n \"step\": \"s2\",\n \"action\": \"CLICK\",\n \"risk\": \"READ\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "step_timing",
+  "content": "{\n \"step\": \"s2\",\n \"seconds\": 0.067\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "resolved",
+  "content": "{\n \"step\": \"s3\",\n \"candidate\": 0,\n \"tried\": [\n  \"ROLE_NAME=1\"\n ]\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "acted",
+  "content": "{\n \"step\": \"s3\",\n \"action\": \"CLICK\",\n \"risk\": \"READ\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "step_timing",
+  "content": "{\n \"step\": \"s3\",\n \"seconds\": 0.219\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "resolved",
+  "content": "{\n \"step\": \"s4\",\n \"candidate\": 0,\n \"tried\": [\n  \"LABEL_PROXIMITY=1\"\n ]\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "acted",
+  "content": "{\n \"step\": \"s4\",\n \"action\": \"SELECT\",\n \"risk\": \"REVERSIBLE_WRITE\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "step_timing",
+  "content": "{\n \"step\": \"s4\",\n \"seconds\": 0.021\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "resolved",
+  "content": "{\n \"step\": \"s5\",\n \"candidate\": 0,\n \"tried\": [\n  \"LABEL_PROXIMITY=1\"\n ]\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "acted",
+  "content": "{\n \"step\": \"s5\",\n \"action\": \"FILL\",\n \"risk\": \"REVERSIBLE_WRITE\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "step_timing",
+  "content": "{\n \"step\": \"s5\",\n \"seconds\": 0.01\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "resolved",
+  "content": "{\n \"step\": \"s6\",\n \"candidate\": 0,\n \"tried\": [\n  \"ROLE_NAME=1\"\n ]\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "acted",
+  "content": "{\n \"step\": \"s6\",\n \"action\": \"CLICK\",\n \"risk\": \"READ\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "step_timing",
+  "content": "{\n \"step\": \"s6\",\n \"seconds\": 0.223\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "resolved",
+  "content": "{\n \"step\": \"s7\",\n \"candidate\": 0,\n \"tried\": [\n  \"ROLE_NAME=1\"\n ]\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "approval_requested",
+  "content": "{\n \"capability\": \"open_sub_account\",\n \"step\": \"s7\",\n \"summary\": {\n  \"capability\": \"open_sub_account\",\n  \"step\": \"Confirm and open the account\",\n  \"member_id\": \"M**01\",\n  \"account_type\": \"MONEY_MARKET\",\n  \"initial_deposit\": \"100.00\"\n }\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "approval_decided",
+  "content": "{\n \"step\": \"s7\",\n \"seconds\": 0.0,\n \"outcome\": \"APPROVED\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "approval_granted",
+  "content": "{\n \"step\": \"s7\",\n \"operator\": \"op-test\",\n \"token_id\": \"[SECRET]\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "acted",
+  "content": "{\n \"step\": \"s7\",\n \"action\": \"CLICK\",\n \"risk\": \"IRREVERSIBLE\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "failure",
+  "content": "{\n \"reason\": \"TIMEOUT\",\n \"step\": \"s7\",\n \"expected\": \"post-checkpoint ['Sub-Account Opened']\",\n \"observed\": \"irreversible step already performed and not retried; verify the result in the app. Review Sub-Account\\nAccount Type:\\tMoney Market\\nInitial Deposit:\\t$***\\n\\nCoreOne Banking v4.2.1 | Tenant: tenant_a\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "run_ended",
+  "content": "{\n \"bucket\": \"FAILURE\"\n}"
+ },
+ {
+  "role": "assistant",
+  "content": "{\n \"recoveries\": [],\n \"bucket\": \"FAILURE\",\n \"reason\": \"TIMEOUT\",\n \"step\": \"s7\",\n \"expected\": \"post-checkpoint ['Sub-Account Opened']\",\n \"observed\": \"irreversible step already performed and not retried; verify the result in the app. Review Sub-Account\\nAccount Type:\\tMoney Market\\nInitial Deposit:\\t$***\\n\\nCoreOne Banking v4.2.1 | Tenant: tenant_a\",\n \"evidence_ref\": \"X28-irreversible-commit-slower-than-budget/evidence-002-timeout\",\n \"handoffs\": []\n}"
+ }
+]

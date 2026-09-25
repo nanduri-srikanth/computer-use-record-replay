@@ -1,0 +1,30 @@
+stateDiagram-v2
+  classDef llm fill:#EDE4FF,stroke:#6B3FD4,color:#2A1260,stroke-width:1.5px
+  classDef det fill:#E3F0FF,stroke:#2F6FD1,color:#0E2A55,stroke-width:1.5px
+  classDef human fill:#FFF0DC,stroke:#D9822B,color:#5A3000,stroke-width:1.5px
+  classDef result fill:#37474F,stroke:#1C262B,color:#FFFFFF,stroke-width:2px
+
+  [*] --> AUTOMATION
+  AUTOMATION --> PAUSE_REQUESTED : blocker detected or operator takeover
+  PAUSE_REQUESTED --> HUMAN_IN_CONTROL : in-flight action done AND human claims
+  PAUSE_REQUESTED --> FAILED : claim timeout
+  PAUSE_REQUESTED --> CANCELLED : operator cancels
+  HUMAN_IN_CONTROL --> RESUME_REQUESTED : human requests resume
+  HUMAN_IN_CONTROL --> CANCELLED : human cancels or hold timeout
+  RESUME_REQUESTED --> VERIFYING_CHECKPOINT : human input released
+  VERIFYING_CHECKPOINT --> AUTOMATION : checkpoint passes
+  VERIFYING_CHECKPOINT --> HUMAN_IN_CONTROL : checkpoint fails, retries left
+  VERIFYING_CHECKPOINT --> FAILED : checkpoint fails, retries exhausted
+  AUTOMATION --> [*] : run completes
+  FAILED --> [*]
+  CANCELLED --> [*]
+
+  note right of HUMAN_IN_CONTROL
+    Automation act() rejected.
+    Human actions captured as
+    event types, no typed values.
+  end note
+
+  class AUTOMATION,VERIFYING_CHECKPOINT det
+  class PAUSE_REQUESTED,HUMAN_IN_CONTROL,RESUME_REQUESTED human
+  class FAILED,CANCELLED result

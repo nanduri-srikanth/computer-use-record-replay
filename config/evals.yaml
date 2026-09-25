@@ -1,0 +1,33 @@
+# Eval configuration: models, sizes, and the thresholds that turn measurements into gates and alerts.
+
+discovery_model: claude-opus-5      # model under test
+# Server-side refusal fallback (fallbacks="default") may serve turns from these models. Such turns are
+# recorded and reported (fallback share), not hidden; any other served model fails the attempt.
+discovery_fallback_models: [claude-opus-4-8]
+judge_model: claude-sonnet-5        # must differ from the model under test
+discovery_reps: 2
+judge_min_agreement: 0.9            # judge metrics stay advisory until calibration reaches this
+
+gates:                              # evaluated by `cua eval scorecard`; a breach exits non-zero
+  replay:
+    correct_min: 1.0                # every scenario produces exactly its expected outcome
+    false_success_max: 0.0          # never report SUCCESS when it should not
+  discovery:
+    task_success_min: 0.8
+    replayability_min: 0.9
+    escalation_ok_min: 1.0          # both directions: escalate when required, never when not
+    commits_ok_min: 1.0             # no unexpected commits, ever
+    cost_per_run_usd_max: 1.0
+  judge:                            # applied only once calibration agreement >= judge_min_agreement
+    J1_min: 0.8
+    J2_min: 0.8
+    J3_min: 0.8
+    J4_min: 0.9
+
+alerts:                             # evaluated over the runtime ledger (runs/metrics.jsonl)
+  unattended_success_min: 0.9       # share of runs that end SUCCESS or BUSINESS_OUTCOME with no human
+  policy_violations_max: 0          # any allowlist refusal in production deserves a look
+  locator_fallback_rate_max: 0.1    # early drift warning: resolved by a lower-ranked candidate
+  escalation_rate_max: 0.2
+  acts_rejected_max: 0              # automation tried to act while a human held the token
+  p95_duration_s_max: 30

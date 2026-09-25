@@ -1,0 +1,15 @@
+.venv/
+node_modules/
+__pycache__/
+runs/
+.env
+*.egg-info/
+.pytest_cache/
+# eval outputs: results, traces, and events are kept; derived and bulky outputs are regenerated
+evals/**/*.png
+evals/**/report.html
+evals/**/trajectory/
+evals/discovery_pilot/
+
+# walkthrough video intermediates (clips, slides, run logs); scripts/record_walkthrough.py + make_walkthrough.py rebuild them
+docs/walkthrough/build/

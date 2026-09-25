@@ -1,0 +1,13 @@
+[nav]
+CoreOne
+
+Member Search
+[main]
+Sign In
+
+Session expired. Please sign in again.
+
+User Name:	
+Password:	
+	
+CoreOne Banking v4.2.1 | Tenant: tenant_a

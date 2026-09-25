@@ -1,0 +1,34 @@
+[
+ {
+  "role": "system",
+  "content": "Deterministic replay (no LLM)."
+ },
+ {
+  "role": "user",
+  "content": "Malformed caller input (expect FAILURE VALIDATION_ERROR)"
+ },
+ {
+  "role": "tool_call",
+  "name": "run_started",
+  "content": "{\n \"capability\": \"get_savings_balance\",\n \"version\": 1,\n \"tenant\": \"tenant_a\",\n \"artifact_hash\": \"d822ccc9caca86c6\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "effective_artifact",
+  "content": "{\n \"hash\": \"d822ccc9caca86c6\",\n \"overlay\": \"none\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "failure",
+  "content": "{\n \"reason\": \"VALIDATION_ERROR\",\n \"step\": null,\n \"expected\": \"inputs match schema\",\n \"observed\": \"member_id does not match ^M\\\\d{4}$\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "run_ended",
+  "content": "{\n \"bucket\": \"FAILURE\"\n}"
+ },
+ {
+  "role": "assistant",
+  "content": "{\n \"recoveries\": [],\n \"bucket\": \"FAILURE\",\n \"reason\": \"VALIDATION_ERROR\",\n \"step\": null,\n \"expected\": \"inputs match schema\",\n \"observed\": \"member_id does not match ^M\\\\d{4}$\",\n \"evidence_ref\": null,\n \"handoffs\": []\n}"
+ }
+]

@@ -1,0 +1,27 @@
+stateDiagram-v2
+  classDef llm fill:#EDE4FF,stroke:#6B3FD4,color:#2A1260,stroke-width:1.5px
+  classDef det fill:#E3F0FF,stroke:#2F6FD1,color:#0E2A55,stroke-width:1.5px
+  classDef human fill:#FFF0DC,stroke:#D9822B,color:#5A3000,stroke-width:1.5px
+  classDef result fill:#37474F,stroke:#1C262B,color:#FFFFFF,stroke-width:2px
+
+  state "DRAFT vN" as DRAFT
+  state "APPROVED vN" as APPROVED
+  state "DEPRECATED vN" as DEPRECATED
+  state "DRAFT vN+1" as DRAFT_NEXT
+  state "APPROVED vN+1" as APPROVED_NEXT
+
+  [*] --> DRAFT : Recorder emits from discovery
+  DRAFT --> APPROVED : reviewer approves
+  APPROVED --> DRAFT_NEXT : human-proposed revision from handoff
+  DRAFT_NEXT --> APPROVED_NEXT : reviewer approves
+  APPROVED --> DEPRECATED : superseded by vN+1
+  DEPRECATED --> [*]
+
+  note right of APPROVED
+    Only APPROVED versions
+    run unattended.
+  end note
+
+  class DRAFT,DRAFT_NEXT det
+  class APPROVED,APPROVED_NEXT det
+  class DEPRECATED result

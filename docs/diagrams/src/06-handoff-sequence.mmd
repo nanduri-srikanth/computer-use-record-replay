@@ -1,0 +1,49 @@
+%%{init: {'theme': 'neutral'}}%%
+sequenceDiagram
+  autonumber
+  participant RE as ReplayEngine
+  participant SC as SessionController
+  participant OC as OperatorConsole
+  actor H as Human
+  participant BR as Browser
+
+  RE->>BR: act(step k)
+  BR-->>RE: unknown dialog, no handler
+  RE->>SC: request_pause(capability, step k, reason)
+  Note over SC,OC: AUTOMATION to PAUSE_REQUESTED
+  SC->>BR: snapshot()
+  Note over SC,OC: Redactor masks screenshot
+  SC->>OC: intervention request (capability, step, reason, masked screenshot)
+  rect rgb(255, 240, 220)
+    OC->>H: notify operator
+    H->>OC: claim
+    OC->>SC: claim_token(operator)
+    Note over SC,OC: PAUSE_REQUESTED to HUMAN_IN_CONTROL
+    loop Human acts on same live session
+      H->>BR: click, type, select
+      BR-->>SC: event captured (type, target, no values)
+    end
+    RE-xSC: act(step k) attempted
+    SC--xRE: rejected, token held by human
+    H->>OC: resume
+    OC->>SC: request_resume
+    Note over SC,OC: HUMAN_IN_CONTROL to RESUME_REQUESTED
+  end
+  rect rgb(227, 240, 255)
+    Note over SC,OC: RESUME_REQUESTED to VERIFYING_CHECKPOINT
+    SC->>RE: verify checkpoint for step k
+    RE->>BR: observe()
+    BR-->>RE: page state
+    alt post-checkpoint of step k passes
+      RE->>SC: verified, resume at step k+1
+      Note over SC,OC: VERIFYING_CHECKPOINT to AUTOMATION
+    else pre-checkpoint of step k passes
+      RE->>SC: verified, retry step k
+      Note over SC,OC: VERIFYING_CHECKPOINT to AUTOMATION
+    else neither passes, retries left
+      SC->>OC: checkpoint failed, back to human
+      Note over SC,OC: VERIFYING_CHECKPOINT to HUMAN_IN_CONTROL
+    end
+    RE->>BR: continue replay
+  end
+  Note over SC,OC: Captured events stored as proposed DRAFT revision

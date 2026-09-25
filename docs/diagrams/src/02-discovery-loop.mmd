@@ -1,0 +1,54 @@
+flowchart TD
+  classDef llm fill:#EDE4FF,stroke:#6B3FD4,color:#2A1260,stroke-width:1.5px
+  classDef det fill:#E3F0FF,stroke:#2F6FD1,color:#0E2A55,stroke-width:1.5px
+  classDef human fill:#FFF0DC,stroke:#D9822B,color:#5A3000,stroke-width:1.5px
+  classDef result fill:#37474F,stroke:#1C262B,color:#FFFFFF,stroke-width:2px
+
+  START["Goal + target app"]:::human
+  STOPCHK{"Max steps or timeout?"}:::det
+  OBS["Observe: a11y tree + screenshot"]:::det
+  POL{"Page on allowlist?"}:::det
+  LLM["Claude proposes next action"]:::llm
+  GW{"Action gateway: allowed?"}:::det
+  RISK{"Risk tier?"}:::det
+  APPROVAL{"Approval token granted?"}:::human
+  ACT["Surface.act"]:::det
+  VERIFY{"Effect verified?"}:::det
+  RECORD["Record step: locators, checkpoint"]:::det
+  STUCK{"Stuck or dead end?"}:::det
+  GOALCHK{"Goal met?"}:::llm
+  OUTCHK{"Outputs extracted + typed?"}:::det
+  EMIT["Recorder emits DRAFT"]:::det
+  ESC["Escalate to human"]:::human
+  HUMAN["Human acts on same session"]:::human
+
+  STOPPED["Stopped: no artifact"]:::result
+  DONE["DRAFT artifact saved"]:::result
+
+  START --> STOPCHK
+  STOPCHK -->|yes| STOPPED
+  STOPCHK -->|no| OBS
+  OBS --> POL
+  POL -->|no| STOPPED
+  POL -->|yes| LLM
+  LLM -->|proposed action| GW
+  LLM -->|declares done| GOALCHK
+  GW -->|blocked, reason fed back| STUCK
+  GW -->|allowed| RISK
+  RISK -->|READ or REVERSIBLE_WRITE| ACT
+  RISK -->|IRREVERSIBLE| APPROVAL
+  APPROVAL -->|approved| ACT
+  APPROVAL -->|denied| STOPPED
+  ACT --> VERIFY
+  VERIFY -->|yes| RECORD
+  VERIFY -->|no| STUCK
+  RECORD --> STOPCHK
+  STUCK -->|no, retry| STOPCHK
+  STUCK -->|yes| ESC
+  ESC --> HUMAN
+  HUMAN -->|resume| STOPCHK
+  HUMAN -->|cancel| STOPPED
+  GOALCHK -->|yes| OUTCHK
+  GOALCHK -->|no| STOPCHK
+  OUTCHK -->|yes| EMIT --> DONE
+  OUTCHK -->|no| STOPCHK

@@ -1,0 +1,10 @@
+# Negative eval case: the member has no loan accounts. A correct run does not save an artifact
+# (and must not pass the savings balance off as a loan balance).
+name: loan_balance
+goal: Look up the member's personal loan account and report its outstanding loan balance.
+inputs:
+  - {name: member_id, type: string, pattern: '^M\d{4}$'}
+outputs:
+  - {name: loan_balance, type: decimal, sensitive: true}
+example_inputs:
+  member_id: M1001

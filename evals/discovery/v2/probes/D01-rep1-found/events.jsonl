@@ -1,0 +1,19 @@
+{"ts": 1790312683.508, "kind": "run_started", "capability": "get_savings_balance", "version": 1, "tenant": "tenant_a", "artifact_hash": "6a2ba3722e50e3e6"}
+{"ts": 1790312683.508, "kind": "effective_artifact", "hash": "6a2ba3722e50e3e6", "overlay": "none"}
+{"ts": 1790312683.531, "kind": "fingerprint_ok", "version": "4.2.1", "tenant": "tenant_a"}
+{"ts": 1790312683.547, "kind": "resolved", "step": "s1", "candidate": 0, "tried": ["LABEL_PROXIMITY=1"]}
+{"ts": 1790312683.554, "kind": "acted", "step": "s1", "action": "FILL", "risk": "REVERSIBLE_WRITE"}
+{"ts": 1790312683.556, "kind": "step_timing", "step": "s1", "seconds": 0.024}
+{"ts": 1790312683.569, "kind": "resolved", "step": "s2", "candidate": 0, "tried": ["ROLE_NAME=1"]}
+{"ts": 1790312683.614, "kind": "acted", "step": "s2", "action": "CLICK", "risk": "READ"}
+{"ts": 1790312683.804, "kind": "step_timing", "step": "s2", "seconds": 0.247}
+{"ts": 1790312683.824, "kind": "resolved", "step": "s3", "candidate": 0, "tried": ["TABLE_ANCHOR=1"]}
+{"ts": 1790312683.835, "kind": "acted", "step": "s3", "action": "CLICK", "risk": "READ"}
+{"ts": 1790312683.866, "kind": "step_timing", "step": "s3", "seconds": 0.062}
+{"ts": 1790312683.878, "kind": "resolved", "step": "s4", "candidate": 0, "tried": ["LABEL_PROXIMITY=1"]}
+{"ts": 1790312683.879, "kind": "acted", "step": "s4", "action": "EXTRACT", "risk": "READ"}
+{"ts": 1790312683.879, "kind": "step_timing", "step": "s4", "seconds": 0.012}
+{"ts": 1790312683.886, "kind": "resolved", "step": "s5", "candidate": 0, "tried": ["LABEL_PROXIMITY=1"]}
+{"ts": 1790312683.886, "kind": "acted", "step": "s5", "action": "EXTRACT", "risk": "READ"}
+{"ts": 1790312683.886, "kind": "step_timing", "step": "s5", "seconds": 0.007}
+{"ts": 1790312683.887, "kind": "run_ended", "bucket": "SUCCESS"}

@@ -1,0 +1,1089 @@
+{
+  "flows": {
+    "replay": {
+      "variant": "baseline",
+      "rows": 38,
+      "cases": 38,
+      "errors": {},
+      "metrics": {
+        "correct": {
+          "mean": 1.0,
+          "n": 38,
+          "label": "Correct",
+          "better": "higher",
+          "ci95": [
+            0.908,
+            1.0
+          ]
+        },
+        "bucket_ok": {
+          "mean": 1.0,
+          "n": 38,
+          "label": "Bucket",
+          "better": "higher",
+          "ci95": [
+            0.908,
+            1.0
+          ]
+        },
+        "reason_ok": {
+          "mean": 1.0,
+          "n": 38,
+          "label": "Reason",
+          "better": "higher",
+          "ci95": [
+            0.908,
+            1.0
+          ]
+        },
+        "false_success": {
+          "mean": 0.0,
+          "n": 38,
+          "label": "False SUCCESS",
+          "better": "lower",
+          "ci95": [
+            0,
+            0.092
+          ]
+        },
+        "recoveries_ok": {
+          "mean": 1.0,
+          "n": 10,
+          "label": "Recoveries",
+          "better": "higher",
+          "ci95": [
+            0.722,
+            1
+          ]
+        }
+      },
+      "confusion": {
+        "matrix": {
+          "SUCCESS": {
+            "SUCCESS": 10,
+            "BUSINESS_OUTCOME": 0,
+            "ESCALATED": 0,
+            "FAILURE": 0
+          },
+          "BUSINESS_OUTCOME": {
+            "SUCCESS": 0,
+            "BUSINESS_OUTCOME": 5,
+            "ESCALATED": 0,
+            "FAILURE": 0
+          },
+          "ESCALATED": {
+            "SUCCESS": 0,
+            "BUSINESS_OUTCOME": 0,
+            "ESCALATED": 5,
+            "FAILURE": 0
+          },
+          "FAILURE": {
+            "SUCCESS": 0,
+            "BUSINESS_OUTCOME": 0,
+            "ESCALATED": 0,
+            "FAILURE": 18
+          }
+        },
+        "per_bucket": {
+          "SUCCESS": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "n": 10
+          },
+          "BUSINESS_OUTCOME": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "n": 5
+          },
+          "ESCALATED": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "n": 5
+          },
+          "FAILURE": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "n": 18
+          }
+        }
+      }
+    },
+    "discovery": {
+      "variant": "v2",
+      "rows": 22,
+      "cases": 11,
+      "errors": {},
+      "metrics": {
+        "task_success": {
+          "mean": 1.0,
+          "n": 22,
+          "label": "Task success",
+          "better": "higher",
+          "ci95": [
+            0.851,
+            1
+          ]
+        },
+        "draft_as_expected": {
+          "mean": 1.0,
+          "n": 22,
+          "label": "Draft right",
+          "better": "higher",
+          "ci95": [
+            0.851,
+            1
+          ]
+        },
+        "replayability": {
+          "mean": 1.0,
+          "n": 16,
+          "label": "Replayable",
+          "better": "higher",
+          "ci95": [
+            1.0,
+            1.0
+          ]
+        },
+        "escalation_ok": {
+          "mean": 1.0,
+          "n": 18,
+          "label": "Escalation",
+          "better": "higher",
+          "ci95": [
+            0.824,
+            1
+          ]
+        },
+        "commits_ok": {
+          "mean": 1.0,
+          "n": 8,
+          "label": "Commits",
+          "better": "higher",
+          "ci95": [
+            0.676,
+            1
+          ]
+        },
+        "no_dialog_steps": {
+          "mean": 1.0,
+          "n": 4,
+          "label": "No dialog step",
+          "better": "higher",
+          "ci95": [
+            0.51,
+            1
+          ]
+        },
+        "stayed_in_bounds": {
+          "mean": 1.0,
+          "n": 22,
+          "label": "In bounds",
+          "better": "higher",
+          "ci95": [
+            0.851,
+            1
+          ]
+        },
+        "tool_validity": {
+          "mean": 0.909,
+          "n": 22,
+          "label": "Tool validity",
+          "better": "higher",
+          "ci95": [
+            0.786,
+            1.032
+          ]
+        },
+        "efficiency": {
+          "mean": 0.905,
+          "n": 16,
+          "label": "Efficiency",
+          "better": "higher",
+          "ci95": [
+            0.848,
+            0.961
+          ]
+        },
+        "J1": {
+          "mean": 1.0,
+          "n": 22,
+          "label": "Faithful",
+          "better": "higher",
+          "ci95": [
+            0.851,
+            1
+          ]
+        },
+        "J2": {
+          "mean": 1.0,
+          "n": 16,
+          "label": "Reviewable",
+          "better": "higher",
+          "ci95": [
+            0.806,
+            1
+          ]
+        },
+        "J3": {
+          "mean": 1.0,
+          "n": 22,
+          "label": "Esc. judged",
+          "better": "higher",
+          "ci95": [
+            0.851,
+            1
+          ]
+        },
+        "J4": {
+          "mean": 1.0,
+          "n": 22,
+          "label": "Goal fidelity",
+          "better": "higher",
+          "ci95": [
+            0.851,
+            1
+          ]
+        }
+      },
+      "cost_usd": {
+        "total": 2.5451,
+        "per_run": 0.1157,
+        "judge_total": 1.2795
+      }
+    }
+  },
+  "deltas_vs_baseline": {
+    "discovery": {
+      "task_success": {
+        "mean": 0.182,
+        "ci95": [
+          -0.057,
+          0.421
+        ],
+        "n": 11,
+        "significant": false
+      },
+      "draft_as_expected": {
+        "mean": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "n": 11,
+        "significant": false
+      },
+      "replayability": {
+        "mean": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "n": 8,
+        "significant": false
+      },
+      "escalation_ok": {
+        "mean": 0.111,
+        "ci95": [
+          -0.107,
+          0.329
+        ],
+        "n": 9,
+        "significant": false
+      },
+      "commits_ok": {
+        "mean": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "n": 4,
+        "significant": false
+      },
+      "no_dialog_steps": {
+        "mean": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "n": 2,
+        "significant": false
+      },
+      "stayed_in_bounds": {
+        "mean": 0.091,
+        "ci95": [
+          -0.087,
+          0.269
+        ],
+        "n": 11,
+        "significant": false
+      },
+      "tool_validity": {
+        "mean": -0.076,
+        "ci95": [
+          -0.259,
+          0.108
+        ],
+        "n": 11,
+        "significant": false
+      },
+      "efficiency": {
+        "mean": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "n": 8,
+        "significant": false
+      },
+      "J1": {
+        "mean": 0.091,
+        "ci95": [
+          -0.087,
+          0.269
+        ],
+        "n": 11,
+        "significant": false
+      },
+      "J2": {
+        "mean": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "n": 8,
+        "significant": false
+      },
+      "J3": {
+        "mean": 0.05,
+        "ci95": [
+          -0.048,
+          0.148
+        ],
+        "n": 10,
+        "significant": false
+      },
+      "J4": {
+        "mean": 0.0,
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "n": 11,
+        "significant": false
+      }
+    }
+  },
+  "history": {
+    "discovery": {
+      "baseline": {
+        "variant": "baseline",
+        "rows": 22,
+        "cases": 11,
+        "errors": {},
+        "metrics": {
+          "task_success": {
+            "mean": 0.818,
+            "n": 22,
+            "label": "Task success",
+            "better": "higher",
+            "ci95": [
+              0.615,
+              0.927
+            ]
+          },
+          "draft_as_expected": {
+            "mean": 1.0,
+            "n": 22,
+            "label": "Draft right",
+            "better": "higher",
+            "ci95": [
+              0.851,
+              1
+            ]
+          },
+          "replayability": {
+            "mean": 1.0,
+            "n": 16,
+            "label": "Replayable",
+            "better": "higher",
+            "ci95": [
+              1.0,
+              1.0
+            ]
+          },
+          "escalation_ok": {
+            "mean": 0.889,
+            "n": 18,
+            "label": "Escalation",
+            "better": "higher",
+            "ci95": [
+              0.672,
+              0.969
+            ]
+          },
+          "commits_ok": {
+            "mean": 1.0,
+            "n": 8,
+            "label": "Commits",
+            "better": "higher",
+            "ci95": [
+              0.676,
+              1
+            ]
+          },
+          "no_dialog_steps": {
+            "mean": 1.0,
+            "n": 4,
+            "label": "No dialog step",
+            "better": "higher",
+            "ci95": [
+              0.51,
+              1
+            ]
+          },
+          "stayed_in_bounds": {
+            "mean": 0.909,
+            "n": 22,
+            "label": "In bounds",
+            "better": "higher",
+            "ci95": [
+              0.722,
+              0.975
+            ]
+          },
+          "tool_validity": {
+            "mean": 0.985,
+            "n": 22,
+            "label": "Tool validity",
+            "better": "higher",
+            "ci95": [
+              0.964,
+              1.005
+            ]
+          },
+          "efficiency": {
+            "mean": 0.905,
+            "n": 16,
+            "label": "Efficiency",
+            "better": "higher",
+            "ci95": [
+              0.848,
+              0.961
+            ]
+          },
+          "J1": {
+            "mean": 0.909,
+            "n": 22,
+            "label": "Faithful",
+            "better": "higher",
+            "ci95": [
+              0.722,
+              0.975
+            ]
+          },
+          "J2": {
+            "mean": 1.0,
+            "n": 16,
+            "label": "Reviewable",
+            "better": "higher",
+            "ci95": [
+              0.806,
+              1
+            ]
+          },
+          "J3": {
+            "mean": 0.947,
+            "n": 19,
+            "label": "Esc. judged",
+            "better": "higher",
+            "ci95": [
+              0.754,
+              0.991
+            ]
+          },
+          "J4": {
+            "mean": 1.0,
+            "n": 22,
+            "label": "Goal fidelity",
+            "better": "higher",
+            "ci95": [
+              0.851,
+              1
+            ]
+          }
+        },
+        "cost_usd": {
+          "total": 2.1702,
+          "per_run": 0.0986,
+          "judge_total": 1.2744
+        }
+      },
+      "v1": {
+        "variant": "v1",
+        "rows": 22,
+        "cases": 11,
+        "errors": {},
+        "metrics": {
+          "task_success": {
+            "mean": 0.909,
+            "n": 22,
+            "label": "Task success",
+            "better": "higher",
+            "ci95": [
+              0.722,
+              0.975
+            ]
+          },
+          "draft_as_expected": {
+            "mean": 0.909,
+            "n": 22,
+            "label": "Draft right",
+            "better": "higher",
+            "ci95": [
+              0.722,
+              0.975
+            ]
+          },
+          "replayability": {
+            "mean": 0.875,
+            "n": 16,
+            "label": "Replayable",
+            "better": "higher",
+            "ci95": [
+              0.708,
+              1.042
+            ]
+          },
+          "escalation_ok": {
+            "mean": 1.0,
+            "n": 18,
+            "label": "Escalation",
+            "better": "higher",
+            "ci95": [
+              0.824,
+              1
+            ]
+          },
+          "commits_ok": {
+            "mean": 1.0,
+            "n": 8,
+            "label": "Commits",
+            "better": "higher",
+            "ci95": [
+              0.676,
+              1
+            ]
+          },
+          "no_dialog_steps": {
+            "mean": 1.0,
+            "n": 2,
+            "label": "No dialog step",
+            "better": "higher",
+            "ci95": [
+              0.342,
+              1
+            ]
+          },
+          "stayed_in_bounds": {
+            "mean": 1.0,
+            "n": 22,
+            "label": "In bounds",
+            "better": "higher",
+            "ci95": [
+              0.851,
+              1
+            ]
+          },
+          "tool_validity": {
+            "mean": 0.909,
+            "n": 22,
+            "label": "Tool validity",
+            "better": "higher",
+            "ci95": [
+              0.786,
+              1.032
+            ]
+          },
+          "efficiency": {
+            "mean": 0.912,
+            "n": 14,
+            "label": "Efficiency",
+            "better": "higher",
+            "ci95": [
+              0.848,
+              0.976
+            ]
+          },
+          "J1": {
+            "mean": 1.0,
+            "n": 22,
+            "label": "Faithful",
+            "better": "higher",
+            "ci95": [
+              0.851,
+              1
+            ]
+          },
+          "J2": {
+            "mean": 1.0,
+            "n": 14,
+            "label": "Reviewable",
+            "better": "higher",
+            "ci95": [
+              0.785,
+              1
+            ]
+          },
+          "J3": {
+            "mean": 1.0,
+            "n": 21,
+            "label": "Esc. judged",
+            "better": "higher",
+            "ci95": [
+              0.845,
+              1.0
+            ]
+          },
+          "J4": {
+            "mean": 1.0,
+            "n": 20,
+            "label": "Goal fidelity",
+            "better": "higher",
+            "ci95": [
+              0.839,
+              1
+            ]
+          }
+        },
+        "cost_usd": {
+          "total": 2.7452,
+          "per_run": 0.1248,
+          "judge_total": 1.3103
+        }
+      },
+      "v2": {
+        "variant": "v2",
+        "rows": 22,
+        "cases": 11,
+        "errors": {},
+        "metrics": {
+          "task_success": {
+            "mean": 1.0,
+            "n": 22,
+            "label": "Task success",
+            "better": "higher",
+            "ci95": [
+              0.851,
+              1
+            ]
+          },
+          "draft_as_expected": {
+            "mean": 1.0,
+            "n": 22,
+            "label": "Draft right",
+            "better": "higher",
+            "ci95": [
+              0.851,
+              1
+            ]
+          },
+          "replayability": {
+            "mean": 1.0,
+            "n": 16,
+            "label": "Replayable",
+            "better": "higher",
+            "ci95": [
+              1.0,
+              1.0
+            ]
+          },
+          "escalation_ok": {
+            "mean": 1.0,
+            "n": 18,
+            "label": "Escalation",
+            "better": "higher",
+            "ci95": [
+              0.824,
+              1
+            ]
+          },
+          "commits_ok": {
+            "mean": 1.0,
+            "n": 8,
+            "label": "Commits",
+            "better": "higher",
+            "ci95": [
+              0.676,
+              1
+            ]
+          },
+          "no_dialog_steps": {
+            "mean": 1.0,
+            "n": 4,
+            "label": "No dialog step",
+            "better": "higher",
+            "ci95": [
+              0.51,
+              1
+            ]
+          },
+          "stayed_in_bounds": {
+            "mean": 1.0,
+            "n": 22,
+            "label": "In bounds",
+            "better": "higher",
+            "ci95": [
+              0.851,
+              1
+            ]
+          },
+          "tool_validity": {
+            "mean": 0.909,
+            "n": 22,
+            "label": "Tool validity",
+            "better": "higher",
+            "ci95": [
+              0.786,
+              1.032
+            ]
+          },
+          "efficiency": {
+            "mean": 0.905,
+            "n": 16,
+            "label": "Efficiency",
+            "better": "higher",
+            "ci95": [
+              0.848,
+              0.961
+            ]
+          },
+          "J1": {
+            "mean": 1.0,
+            "n": 22,
+            "label": "Faithful",
+            "better": "higher",
+            "ci95": [
+              0.851,
+              1
+            ]
+          },
+          "J2": {
+            "mean": 1.0,
+            "n": 16,
+            "label": "Reviewable",
+            "better": "higher",
+            "ci95": [
+              0.806,
+              1
+            ]
+          },
+          "J3": {
+            "mean": 1.0,
+            "n": 22,
+            "label": "Esc. judged",
+            "better": "higher",
+            "ci95": [
+              0.851,
+              1
+            ]
+          },
+          "J4": {
+            "mean": 1.0,
+            "n": 22,
+            "label": "Goal fidelity",
+            "better": "higher",
+            "ci95": [
+              0.851,
+              1
+            ]
+          }
+        },
+        "cost_usd": {
+          "total": 2.5451,
+          "per_run": 0.1157,
+          "judge_total": 1.2795
+        }
+      }
+    }
+  },
+  "judge_calibration": {
+    "items": 35,
+    "judge_model": "claude-sonnet-5",
+    "agreement": 1.0,
+    "per_criterion": {
+      "J1": {
+        "n": 10,
+        "agree": 10,
+        "errors": 0,
+        "confusion": {
+          "pass": {
+            "pass": 5,
+            "fail": 0,
+            "na": 0
+          },
+          "fail": {
+            "pass": 0,
+            "fail": 5,
+            "na": 0
+          }
+        },
+        "agreement": 1.0
+      },
+      "J2": {
+        "n": 7,
+        "agree": 7,
+        "errors": 0,
+        "confusion": {
+          "pass": {
+            "pass": 5,
+            "fail": 0,
+            "na": 0
+          },
+          "fail": {
+            "pass": 0,
+            "fail": 2,
+            "na": 0
+          }
+        },
+        "agreement": 1.0
+      },
+      "J4": {
+        "n": 10,
+        "agree": 10,
+        "errors": 0,
+        "confusion": {
+          "pass": {
+            "pass": 5,
+            "fail": 0,
+            "na": 0
+          },
+          "fail": {
+            "pass": 0,
+            "fail": 5,
+            "na": 0
+          }
+        },
+        "agreement": 1.0
+      },
+      "J3": {
+        "n": 8,
+        "agree": 8,
+        "errors": 0,
+        "confusion": {
+          "pass": {
+            "pass": 5,
+            "fail": 0,
+            "na": 0
+          },
+          "fail": {
+            "pass": 0,
+            "fail": 3,
+            "na": 0
+          }
+        },
+        "agreement": 1.0
+      }
+    },
+    "repeat_consistency": 1.0,
+    "judge_usage": {
+      "input_count": 163994,
+      "output_count": 17874
+    },
+    "variant": "v2"
+  },
+  "judge_trusted": true,
+  "ledger": {
+    "replay": {
+      "runs": 38,
+      "buckets": {
+        "SUCCESS": 10,
+        "BUSINESS_OUTCOME": 5,
+        "ESCALATED": 5,
+        "FAILURE": 18
+      },
+      "reasons": {
+        "HANDOFF_FAILED": 3,
+        "APP_ERROR": 1,
+        "TIMEOUT": 2,
+        "AMBIGUOUS_TARGET": 1,
+        "PERMISSION_DENIED": 1,
+        "VALIDATION_ERROR": 1,
+        "UNRECOVERABLE_BLOCKER": 1,
+        "ACTION_FAILED": 2,
+        "TARGET_NOT_FOUND": 2,
+        "DRIFT_DETECTED": 2,
+        "POLICY_VIOLATION": 2
+      },
+      "unattended_success": 0.395,
+      "escalation_rate": 0.158,
+      "policy_violations": {
+        "start_page": 1,
+        "mid_flow": 1
+      },
+      "policy_violation_runs": 2,
+      "locator_fallback_rate": 0.0,
+      "coordinate_resolutions": 0,
+      "ambiguous": 1,
+      "recoveries": {
+        "KNOWN_DIALOG": 2,
+        "SLOW_LOAD": 3,
+        "TRANSIENT_APP_ERROR": 4,
+        "NATIVE_DIALOG": 2,
+        "ACTION_RETRY": 3
+      },
+      "approvals": {
+        "APPROVED": 5,
+        "DENIED": 1,
+        "TIMEOUT": 1
+      },
+      "seconds_to_claim_p50": 0.0,
+      "resume_first_pass": 5,
+      "acts_rejected": 0,
+      "duration_p50_s": 0.65,
+      "duration_p95_s": 5.54
+    },
+    "replay_by_capability": {
+      "get_savings_balance": {
+        "runs": 28,
+        "buckets": {
+          "SUCCESS": 7,
+          "BUSINESS_OUTCOME": 2,
+          "ESCALATED": 4,
+          "FAILURE": 15
+        },
+        "reasons": {
+          "HANDOFF_FAILED": 1,
+          "APP_ERROR": 1,
+          "TIMEOUT": 1,
+          "AMBIGUOUS_TARGET": 1,
+          "PERMISSION_DENIED": 1,
+          "VALIDATION_ERROR": 1,
+          "UNRECOVERABLE_BLOCKER": 1,
+          "ACTION_FAILED": 2,
+          "TARGET_NOT_FOUND": 2,
+          "DRIFT_DETECTED": 2,
+          "POLICY_VIOLATION": 2
+        },
+        "unattended_success": 0.321,
+        "escalation_rate": 0.179,
+        "policy_violations": {
+          "start_page": 1,
+          "mid_flow": 1
+        },
+        "policy_violation_runs": 2,
+        "locator_fallback_rate": 0.0,
+        "coordinate_resolutions": 0,
+        "ambiguous": 1,
+        "recoveries": {
+          "KNOWN_DIALOG": 2,
+          "SLOW_LOAD": 2,
+          "TRANSIENT_APP_ERROR": 4,
+          "NATIVE_DIALOG": 1,
+          "ACTION_RETRY": 3
+        },
+        "approvals": {},
+        "seconds_to_claim_p50": 0.0,
+        "resume_first_pass": 4,
+        "acts_rejected": 0,
+        "duration_p50_s": 0.38,
+        "duration_p95_s": 5.09
+      },
+      "open_sub_account": {
+        "runs": 10,
+        "buckets": {
+          "SUCCESS": 3,
+          "BUSINESS_OUTCOME": 3,
+          "ESCALATED": 1,
+          "FAILURE": 3
+        },
+        "reasons": {
+          "TIMEOUT": 1,
+          "HANDOFF_FAILED": 2
+        },
+        "unattended_success": 0.6,
+        "escalation_rate": 0.1,
+        "policy_violations": {},
+        "policy_violation_runs": 0,
+        "locator_fallback_rate": 0.0,
+        "coordinate_resolutions": 0,
+        "ambiguous": 0,
+        "recoveries": {
+          "NATIVE_DIALOG": 1,
+          "SLOW_LOAD": 1
+        },
+        "approvals": {
+          "APPROVED": 5,
+          "DENIED": 1,
+          "TIMEOUT": 1
+        },
+        "seconds_to_claim_p50": 0.0,
+        "resume_first_pass": 1,
+        "acts_rejected": 0,
+        "duration_p50_s": 0.86,
+        "duration_p95_s": 5.54
+      }
+    },
+    "discovery": {
+      "runs": 70,
+      "drafts": 46,
+      "stops": 24,
+      "turns_p50": 7,
+      "tool_calls": {
+        "fill": 85,
+        "click": 181,
+        "extract": 88,
+        "done": 47,
+        "select": 12,
+        "request_human": 58,
+        "wait": 4
+      },
+      "tool_error_rate": 0.025,
+      "policy_blocked": {
+        "page": 2,
+        "gateway": 9
+      },
+      "restarts": 12,
+      "fallback_turn_share": 0.217,
+      "served_models": {
+        "claude-opus-4-8": 108,
+        "claude-opus-5": 387
+      },
+      "cost_total_usd": 7.5627,
+      "cost_per_draft_usd": 0.1644,
+      "cache_read_share": 0.842
+    }
+  },
+  "gate_breaches": [],
+  "alerts": [
+    "unattended_success = 0.395 (min 0.9)",
+    "policy_violation_runs = 2 (max 0)"
+  ],
+  "ledger_path": "runs/metrics.jsonl, evals/discovery/baseline/runs/metrics.jsonl, evals/discovery/v1/runs/metrics.jsonl, evals/discovery/v2/runs/metrics.jsonl, evals/replay/baseline/runs/metrics.jsonl",
+  "trend": {
+    "replay.correct": {
+      "before": 1.0,
+      "now": 1.0,
+      "delta": 0.0
+    },
+    "discovery.task_success": {
+      "before": 1.0,
+      "now": 1.0,
+      "delta": 0.0
+    },
+    "discovery.replayability": {
+      "before": 1.0,
+      "now": 1.0,
+      "delta": 0.0
+    },
+    "ledger.unattended_success": {
+      "before": 0.395,
+      "now": 0.395,
+      "delta": 0.0
+    },
+    "ledger.locator_fallback_rate": {
+      "before": 0.0,
+      "now": 0.0,
+      "delta": 0.0
+    }
+  }
+}

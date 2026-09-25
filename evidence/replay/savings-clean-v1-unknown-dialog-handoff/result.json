@@ -1,0 +1,45 @@
+{
+  "run_id": "savings-clean-v1-unknown-dialog-handoff",
+  "capability": "get_savings_balance",
+  "version": 1,
+  "tenant": "tenant_a",
+  "inputs_redacted": {
+    "member_id": "M**01"
+  },
+  "result": {
+    "recoveries": [],
+    "bucket": "ESCALATED",
+    "reason": "completed after human intervention: UNKNOWN_DIALOG: Security verification required",
+    "handoffs": [
+      {
+        "step": "s2",
+        "reason": "UNKNOWN_DIALOG: Security verification required",
+        "outcome": "RESUMED",
+        "operator": "op-test",
+        "transitions": [
+          "AUTOMATION->PAUSE_REQUESTED (UNKNOWN_DIALOG: Security verification required)",
+          "PAUSE_REQUESTED->HUMAN_IN_CONTROL (claimed by op-test)",
+          "HUMAN_IN_CONTROL->RESUME_REQUESTED (human requested resume)",
+          "RESUME_REQUESTED->VERIFYING_CHECKPOINT (human input released)",
+          "VERIFYING_CHECKPOINT->AUTOMATION (checkpoint passed, NEXT)"
+        ],
+        "human_events": 1
+      }
+    ],
+    "outputs": {
+      "balance": "[REDACTED:sensitive]",
+      "currency": "USD"
+    },
+    "business_code": null
+  },
+  "steps_executed": [
+    "s1",
+    "s2",
+    "s3",
+    "s4",
+    "s5"
+  ],
+  "ui_actions": 3,
+  "started_at": "2026-09-25T05:30:10+00:00",
+  "ended_at": "2026-09-25T05:30:11+00:00"
+}

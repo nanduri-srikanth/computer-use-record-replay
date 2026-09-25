@@ -1,0 +1,360 @@
+<title>CoreOne Replay Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+:root {
+  --bg: #e9eef3; --panel: #ffffff; --ink: #0d1b2a; --muted: #52637a; --line: #cfd9e3;
+  --accent: #0f766e; --accent-ink: #ffffff; --nav: #003366; --app: #d4d0c8; --app-ink: #000000;
+  --ok: #15803d; --biz: #1d4ed8; --esc: #c2410c; --fail: #b91c1c; --token: #fde68a; --token-edge: #c2410c;
+  --hi-auto: #2563eb; --hi-read: #16a34a; --hi-human: #ea580c; --log-bg: #0b1422; --log-ink: #cbd5e1;
+  --display: "Barlow Condensed", "Arial Narrow", sans-serif; --body: "IBM Plex Sans", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark; --bg: #0b1320; --panel: #111c2e; --ink: #e6edf5; --muted: #93a4ba; --line: #22324a;
+    --accent: #2dd4bf; --accent-ink: #042f2e; --token: #7c2d12; --token-edge: #fb923c; --log-bg: #060b14;
+    --ok: #22c55e; --biz: #60a5fa; --esc: #fb923c; --fail: #f87171;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark; --bg: #0b1320; --panel: #111c2e; --ink: #e6edf5; --muted: #93a4ba; --line: #22324a;
+  --accent: #2dd4bf; --accent-ink: #042f2e; --token: #7c2d12; --token-edge: #fb923c; --log-bg: #060b14;
+  --ok: #22c55e; --biz: #60a5fa; --esc: #fb923c; --fail: #f87171;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font: 15px/1.5 var(--body); margin: 0; }
+.wrap { max-width: 1240px; margin: 0 auto; padding-inline: 20px; padding-block: 24px 40px; display: grid; gap: 18px; }
+h1 { font: 700 44px/1 var(--display); letter-spacing: .01em; margin: 0; text-wrap: balance; }
+.lede { color: var(--muted); max-width: 68ch; margin: 6px 0 0; }
+.eyebrow { font: 600 12px var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 16px; }
+.controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.chip { font: 500 14px var(--body); border: 1px solid var(--line); background: var(--panel); color: var(--ink);
+  border-radius: 999px; padding: 7px 13px; cursor: pointer; display: inline-flex; gap: 8px; align-items: center; }
+.chip b { font: 600 12px var(--mono); color: var(--muted); }
+.chip[aria-pressed="true"] { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.chip:focus-visible, .btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.btn { font: 600 15px var(--body); border: 0; border-radius: 10px; padding: 10px 18px; cursor: pointer;
+  background: var(--accent); color: var(--accent-ink); }
+.btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+.btn[disabled] { opacity: .5; cursor: default; }
+.spacer { flex: 1; }
+.grid { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 18px; }
+@media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+
+/* the mock legacy app, drawn the way CoreOne Banking renders */
+.window { border-radius: 10px; overflow: hidden; border: 1px solid var(--line); box-shadow: 0 10px 30px rgba(13,27,42,.15); }
+.titlebar { background: #c0c0c0; color: #000; font: 12px Verdana, sans-serif; padding: 5px 10px; display: flex; gap: 8px; align-items: center; }
+.titlebar i { width: 11px; height: 11px; border-radius: 50%; background: #888; display: inline-block; }
+.titlebar span { margin-left: 6px; }
+.frames { display: grid; grid-template-columns: 110px 1fr; min-height: 330px; position: relative; }
+.navf { background: var(--nav); color: #fff; font: 12px Verdana, sans-serif; padding: 10px; }
+.navf u { display: block; margin-top: 10px; }
+.mainf { background: var(--app); color: var(--app-ink); font: 13px Verdana, sans-serif; padding: 12px 14px; position: relative; overflow: hidden; }
+.mainf h4 { margin: 0 0 10px; font-size: 16px; }
+.mainf table { border-collapse: collapse; margin-bottom: 10px; }
+.mainf td, .mainf th { border: 1px solid #777; padding: 3px 6px; text-align: left; }
+.mainf .in { display: inline-block; min-width: 110px; background: #fff; border: 1px solid #555; padding: 1px 4px; height: 20px; }
+.mainf .bt { display: inline-block; border: 1px solid #555; background: #eee; padding: 1px 8px; border-radius: 2px; }
+.mainf a { color: #00e; text-decoration: underline; }
+.mainf .foot { font-size: 10px; color: #444; margin-top: 12px; }
+.mask { background: #ff00ff; color: transparent; }
+.modal { position: absolute; left: 18%; top: 22%; background: #ffffe0; border: 2px solid #000; padding: 10px 14px; box-shadow: 4px 4px 0 rgba(0,0,0,.25); max-width: 70%; }
+.banner { position: absolute; left: 0; right: 0; top: 0; color: #fff; font: 600 12px var(--body); text-align: center; padding: 5px; }
+.hi { outline: 3px solid var(--hi-auto); outline-offset: 2px; }
+.hi.read { outline-color: var(--hi-read); }
+.hi.human { outline-color: var(--hi-human); }
+.ghost-cursor { position: absolute; width: 18px; height: 18px; pointer-events: none; transition: left .45s ease, top .45s ease; z-index: 3; }
+
+/* step track and locator ladder */
+.steps { display: grid; gap: 6px; margin: 10px 0 0; padding: 0; list-style: none; }
+.step { display: grid; grid-template-columns: 34px 70px 1fr auto; gap: 8px; align-items: center; padding: 7px 10px;
+  border: 1px solid var(--line); border-radius: 8px; font-size: 14px; transition: background .25s, border-color .25s; }
+.step .id, .step .act { font: 600 12px var(--mono); color: var(--muted); }
+.step .st { font: 600 12px var(--mono); }
+.step.run { border-color: var(--hi-auto); background: color-mix(in srgb, var(--hi-auto) 10%, var(--panel)); }
+.step.done .st { color: var(--ok); } .step.stop .st { color: var(--fail); }
+.step.stop { border-color: var(--fail); }
+.ladder { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 10px; }
+.rung { border: 1px dashed var(--line); border-radius: 8px; padding: 6px; font: 600 11px var(--mono); color: var(--muted); text-align: center; transition: all .2s; min-height: 44px; }
+.rung small { display: block; font-weight: 400; }
+.rung.try { border-style: solid; border-color: var(--hi-auto); color: var(--ink); }
+.rung.hit { border-style: solid; border-color: var(--ok); color: var(--ok); background: color-mix(in srgb, var(--ok) 12%, var(--panel)); }
+.rung.miss { border-style: solid; border-color: var(--fail); color: var(--fail); }
+
+/* control token rail */
+.rail { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 10px; position: relative; }
+.state { font: 600 11px var(--mono); text-align: center; padding: 10px 4px; border-radius: 8px; border: 1px solid var(--line); position: relative; z-index: 1; }
+.token { position: absolute; top: 0; height: 100%; border-radius: 8px; background: var(--token); border: 2px solid var(--token-edge);
+  transition: left .5s cubic-bezier(.2,.8,.2,1); z-index: 0; }
+
+/* outcome bins */
+.bins { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 640px) { .bins { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.bin { border: 2px solid var(--c); border-radius: 12px; padding: 12px; position: relative; min-height: 120px; background: var(--panel); }
+.bin h3 { margin: 0; font: 700 22px/1 var(--display); color: var(--c); letter-spacing: .02em; }
+.bin .n { font: 700 38px/1 var(--display); font-variant-numeric: tabular-nums; }
+.bin .ids { font: 12px var(--mono); color: var(--muted); margin-top: 6px; min-height: 18px; word-break: break-word; }
+.bin.flash { animation: flash .6s ease; }
+@keyframes flash { 40% { transform: scale(1.04); box-shadow: 0 0 0 8px color-mix(in srgb, var(--c) 25%, transparent); } }
+.ball { position: fixed; width: 22px; height: 22px; border-radius: 50%; z-index: 20; pointer-events: none; box-shadow: 0 4px 12px rgba(0,0,0,.3); }
+.verdict { display: flex; gap: 12px; align-items: baseline; flex-wrap: wrap; margin-top: 12px; min-height: 30px; }
+.pill { font: 600 13px var(--mono); color: #fff; padding: 4px 10px; border-radius: 6px; }
+
+/* events.jsonl */
+.log { background: var(--log-bg); color: var(--log-ink); border-radius: 10px; padding: 12px 14px; font: 12px/1.6 var(--mono); height: 210px; overflow: auto; }
+.log div { white-space: pre-wrap; word-break: break-word; }
+.log .k { color: #7dd3fc; } .log .w { color: #fbbf24; } .log .x { color: #f87171; } .log .g { color: #4ade80; }
+.note { font-size: 13px; color: var(--muted); }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Computer-use automation · interactive companion to the walkthrough</div>
+    <h1>CoreOne Replay Lab</h1>
+    <p class="lede">Pick a condition, press Run, and watch the approved <code>get_savings_balance</code> artifact replay against the legacy app: which locator rung resolves each step, when the control token moves to a person, and which of the four outcome buckets the run lands in. Each scenario mirrors a row of the real stress matrix (<code>evidence/stress/SUMMARY.md</code>).</p>
+  </header>
+
+  <section class="panel" aria-label="Scenario">
+    <div class="controls" id="chips" role="group" aria-label="Choose a condition"></div>
+    <div class="controls" style="margin-top:12px">
+      <button class="btn" id="run" type="button">Run</button>
+      <button class="btn ghost" id="all" type="button">Run all 8</button>
+      <button class="btn ghost" id="speed" type="button" aria-label="Playback speed">Speed 1x</button>
+      <span class="spacer"></span>
+      <span class="note" id="shows"></span>
+    </div>
+  </section>
+
+  <div class="grid">
+    <section aria-label="Live browser session">
+      <div class="window">
+        <div class="titlebar"><i></i><i></i><i></i><span>CoreOne Banking v4.2.1 · tenant_a</span></div>
+        <div class="frames">
+          <div class="navf"><b>CoreOne</b><u>Member Search</u></div>
+          <div class="mainf" id="app" aria-live="polite"></div>
+        </div>
+      </div>
+      <div class="verdict" id="verdict"></div>
+    </section>
+
+    <section class="panel" aria-label="Replay engine">
+      <div class="eyebrow">Artifact steps</div>
+      <ol class="steps" id="steps"></ol>
+      <div class="eyebrow" style="margin-top:14px">Locator ladder for the current step</div>
+      <div class="ladder" id="ladder"></div>
+      <div class="eyebrow" style="margin-top:14px">Control token</div>
+      <div class="rail" id="rail"><div class="token" id="token"></div></div>
+    </section>
+  </div>
+
+  <section aria-label="Outcomes">
+    <div class="bins" id="bins"></div>
+  </section>
+
+  <section aria-label="Event log">
+    <div class="eyebrow" style="margin-bottom:6px">events.jsonl (redacted, as the run writes it)</div>
+    <div class="log" id="log"></div>
+  </section>
+</div>
+
+<script>
+const STEPS = [
+  { id: 's1', act: 'FILL', desc: 'Enter member id', rung: 'LABEL_PROXIMITY' },
+  { id: 's2', act: 'CLICK', desc: 'Search for the member', rung: 'ROLE_NAME' },
+  { id: 's3', act: 'CLICK', desc: 'Open the savings account', rung: 'TABLE_ANCHOR' },
+  { id: 's4', act: 'EXTRACT', desc: 'Read available balance', rung: 'LABEL_PROXIMITY' },
+  { id: 's5', act: 'EXTRACT', desc: 'Read currency', rung: 'LABEL_PROXIMITY' },
+];
+const RUNGS = ['ROLE_NAME', 'LABEL_PROXIMITY', 'TABLE_ANCHOR', 'COORDINATES'];
+const STATES = ['AUTOMATION', 'PAUSE_REQUESTED', 'HUMAN_IN_CONTROL', 'VERIFYING_CHECKPOINT'];
+const BUCKETS = [['SUCCESS', 'var(--ok)'], ['BUSINESS_OUTCOME', 'var(--biz)'], ['ESCALATED', 'var(--esc)'], ['FAILURE', 'var(--fail)']];
+
+// Each scenario mirrors a stress-matrix row: same condition, same outcome, same reason code.
+const SCENARIOS = [
+  { id: 'X01', name: 'Clean run', member: 'M1001', bucket: 'SUCCESS', code: '', shows: 'Happy path; the balance goes to the caller and is masked on disk.' },
+  { id: 'X03', name: 'Member not found', member: 'M9999', bucket: 'BUSINESS_OUTCOME', code: 'MEMBER_NOT_FOUND', stopAt: 's2', view: 'notfound', shows: '"No such member" is an answer, not a crash.' },
+  { id: 'X22', name: 'Two Savings rows', member: 'M1002', bucket: 'FAILURE', code: 'AMBIGUOUS_TARGET', stopAt: 's3', ambiguous: true, shows: 'Stops instead of guessing which row to click.' },
+  { id: 'X07', name: 'Maintenance notice', member: 'M1001', bucket: 'SUCCESS', code: '', interstitial: true, shows: 'A known dialog is dismissed and logged as a recovery.' },
+  { id: 'X14', name: 'Unknown security dialog', member: 'M1001', bucket: 'ESCALATED', code: 'UNKNOWN_DIALOG', handoffAt: 's3', human: 'dialog', shows: 'The same live session goes to a person and back after a checkpoint check.' },
+  { id: 'X15', name: 'Session expires', member: 'M1001', bucket: 'ESCALATED', code: 'SESSION_EXPIRED', handoffAt: 's4', human: 'login', shows: 'Automation never types credentials; the operator signs in on the same session.' },
+  { id: 'X35', name: 'Off-allowlist redirect', member: 'M1001', bucket: 'FAILURE', code: 'POLICY_VIOLATION', stopAt: 's2', view: 'audit', shows: 'The app redirects to /admin/audit; replay stops at the checkpoint wait.' },
+  { id: 'X20', name: 'Persistent HTTP 500', member: 'M1001', bucket: 'FAILURE', code: 'APP_ERROR', stopAt: 's2', view: 'error', retries: 3, shows: 'Three retries spend the budget, then a clear APP_ERROR.' },
+];
+
+const $ = id => document.getElementById(id);
+const counts = { SUCCESS: [], BUSINESS_OUTCOME: [], ESCALATED: [], FAILURE: [] };
+let current = SCENARIOS[0], speed = 1, busy = false;
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const wait = ms => new Promise(r => setTimeout(r, reduced ? Math.min(ms, 60) : ms / speed));
+
+// ---- views of the legacy app
+const foot = '<div class="foot">CoreOne Banking v4.2.1 | Tenant: tenant_a</div>';
+const VIEWS = {
+  search: (v = '') => `<h4>Member Search</h4><table><tr><td style="border:0">Member ID:</td><td style="border:0"><span class="in" data-t="s1">${v}</span></td></tr>
+    <tr><td style="border:0"></td><td style="border:0"><span class="bt" data-t="s2">Search</span></td></tr></table>${foot}`,
+  summary: (amb, masked) => `<h4>Member Summary</h4><table><tr><td>Name:</td><td class="${masked ? 'mask' : ''}">Jane Doe</td></tr>
+    <tr><td>SSN:</td><td class="mask">123-45-6789</td></tr></table><b style="font-size:11px">Accounts</b>
+    <table><tr><th>Account No</th><th>Type</th><th>Balance</th><th>Action</th></tr>
+    ${amb ? `<tr><td class="mask">10022345</td><td>Savings</td><td class="mask">$150.00</td><td><a data-t="s3">View</a></td></tr>
+             <tr><td class="mask">10022346</td><td>Savings</td><td class="mask">$9,800.25</td><td><a data-t="s3">View</a></td></tr>`
+          : `<tr><td class="mask">10012345</td><td>Checking</td><td class="mask">$812.40</td><td><a>View</a></td></tr>
+             <tr><td class="mask">10012346</td><td>Savings</td><td class="mask">$2,450.17</td><td><a data-t="s3">View</a></td></tr>`}
+    </table><span class="bt">Open Sub-Account</span>${foot}`,
+  detail: () => `<h4>Account Detail</h4><table><tr><td style="border:0">Account Type:</td><td style="border:0">Savings</td></tr>
+    <tr><td style="border:0">Available Balance:</td><td style="border:0"><span data-t="s4">$2,450.17</span></td></tr>
+    <tr><td style="border:0">Currency:</td><td style="border:0"><span data-t="s5">USD</span></td></tr></table><a>Back to Member Summary</a>${foot}`,
+  notfound: () => `<h4>Member Search Results</h4><p>No member found for the given ID.</p>${foot}`,
+  audit: () => `<h4>Audit Console</h4><p>Last Entry: Role change approved by admin</p>${foot}`,
+  error: () => `<h4>Server Error</h4><p>HTTP 500: the request could not be completed.</p>${foot}`,
+  login: () => `<h4 style="margin-top:22px">Session expired. Please sign in again.</h4><table>
+    <tr><td style="border:0">User Name:</td><td style="border:0"><span class="in" id="u"></span></td></tr>
+    <tr><td style="border:0">Password:</td><td style="border:0"><span class="in" id="p"></span></td></tr></table><span class="bt" id="signin">Sign In</span>${foot}`,
+};
+const show = html => { $('app').innerHTML = html; };
+const modal = (h, t, b) => { $('app').insertAdjacentHTML('beforeend', `<div class="modal" id="modal"><b>${h}</b><p style="margin:6px 0">${t}</p><span class="bt" id="mbtn">${b}</span></div>`); };
+const banner = (text, color) => { const old = $('banner'); if (old) old.remove();
+  if (text) $('app').insertAdjacentHTML('afterbegin', `<div class="banner" id="banner" style="background:${color}">${text}</div>`); };
+function hi(sel, kind = '') { document.querySelectorAll('#app .hi').forEach(e => e.classList.remove('hi', 'read', 'human'));
+  const el = typeof sel === 'string' ? $('app').querySelector(sel) : sel; if (el) el.classList.add('hi', ...(kind ? [kind] : [])); return el; }
+
+// ---- engine panel
+function drawSteps(active, status = {}) {
+  $('steps').innerHTML = STEPS.map(s => { const st = status[s.id] || '';
+    return `<li class="step ${s.id === active ? 'run' : ''} ${st === 'done' ? 'done' : ''} ${st.startsWith('stop') ? 'stop' : ''}">
+      <span class="id">${s.id}</span><span class="act">${s.act}</span><span>${s.desc}</span>
+      <span class="st">${st === 'done' ? '✓' : st.startsWith('stop') ? '✗ ' + st.slice(5) : s.id === active ? '…' : ''}</span></li>`; }).join('');
+}
+function drawLadder(marks = {}) {
+  $('ladder').innerHTML = RUNGS.map(r => `<div class="rung ${marks[r]?.[0] || ''}">${r.replace('_', ' ')}<small>${marks[r]?.[1] || ''}</small></div>`).join('');
+}
+function drawRail() { $('rail').insertAdjacentHTML('beforeend', STATES.map(s => `<div class="state">${s.replace(/_/g, ' ')}</div>`).join('')); }
+function token(i) { const w = $('rail').clientWidth, gap = 6, cw = (w - gap * 3) / 4; const t = $('token'); t.style.width = cw + 'px'; t.style.left = (i * (cw + gap)) + 'px'; }
+function log(kind, rest = '', cls = 'k') {
+  const line = document.createElement('div');
+  line.innerHTML = `{"kind": <span class="${cls}">"${kind}"</span>${rest ? ', ' + rest : ''}}`;
+  $('log').appendChild(line); $('log').scrollTop = $('log').scrollHeight;
+}
+function drawBins() {
+  $('bins').innerHTML = BUCKETS.map(([b, c]) => `<div class="bin" id="bin-${b}" style="--c:${c}"><h3>${b.replace('_', ' ')}</h3>
+    <div class="n">${counts[b].length}</div><div class="ids">${counts[b].join(' ') || '&nbsp;'}</div></div>`).join('');
+}
+
+async function resolve(step, marks) {
+  drawLadder({});
+  const order = RUNGS.slice(0, RUNGS.indexOf(step.rung) + 1);
+  for (const r of order) {
+    const m = { ...marks }; m[r] = ['try', 'trying'];
+    drawLadder(m); await wait(260);
+    marks[r] = r === step.rung ? ['hit', '1 match'] : ['', 'not recorded'];
+    drawLadder(marks);
+  }
+}
+
+async function drop(bucket, color) {
+  const bin = $('bin-' + bucket), from = $('app').getBoundingClientRect(), to = bin.getBoundingClientRect();
+  if (!reduced) {
+    const ball = document.createElement('div'); ball.className = 'ball'; ball.style.background = color; document.body.appendChild(ball);
+    const x0 = from.left + from.width / 2, y0 = from.top + from.height / 2, x1 = to.left + to.width / 2, y1 = to.top + 24;
+    const dur = 700 / speed, t0 = performance.now();
+    await new Promise(res => { const tick = now => { const k = Math.min(1, (now - t0) / dur);
+      ball.style.left = (x0 + (x1 - x0) * k - 11) + 'px'; ball.style.top = (y0 + (y1 - y0) * k - Math.sin(Math.PI * k) * 160 - 11) + 'px';
+      k < 1 ? requestAnimationFrame(tick) : res(); }; requestAnimationFrame(tick); });
+    ball.remove();
+  }
+  drawBins(); const b = $('bin-' + bucket); b.classList.remove('flash'); void b.offsetWidth; b.classList.add('flash');
+}
+
+async function run(sc) {
+  busy = true; setBusy();
+  const status = {}; $('verdict').innerHTML = ''; $('log').innerHTML = ''; token(0); banner('');
+  log('run_started', `"capability": "get_savings_balance", "version": 1, "tenant": "tenant_a", "scenario": "${sc.id}"`);
+  show(VIEWS.search()); await wait(400); log('fingerprint_ok', '"version": "4.2.1"', 'g');
+  if (sc.interstitial) {
+    modal('Scheduled maintenance notice', 'The system will be unavailable Sunday 02:00 to 04:00.', 'Continue');
+    await wait(600); log('recovery', '"recovery": "KNOWN_DIALOG", "detail": "dismissed Continue"', 'w');
+    hi('#mbtn'); await wait(500); $('modal').remove();
+  }
+  let outputs = {};
+  for (const step of STEPS) {
+    drawSteps(step.id, status);
+    if (sc.stopAt === step.id && sc.ambiguous) {
+      drawLadder({ TABLE_ANCHOR: ['try', 'trying'] }); await wait(350);
+      drawLadder({ ROLE_NAME: ['', 'not recorded'], LABEL_PROXIMITY: ['', 'not recorded'], TABLE_ANCHOR: ['miss', '2 matches: stop'] });
+      document.querySelectorAll('#app [data-t="s3"]').forEach(e => e.classList.add('hi'));
+      log('resolved', `"step": "${step.id}", "tried": ["TABLE_ANCHOR=2"]`, 'x');
+      status[step.id] = 'stop AMBIGUOUS'; drawSteps('', status); break;
+    }
+    const marks = {}; await resolve(step, marks);
+    const el = hi(`[data-t="${step.id}"]`, step.act === 'EXTRACT' ? 'read' : '');
+    log('resolved', `"step": "${step.id}", "tried": ["${step.rung}=1"]`);
+    await wait(350);
+    if (step.act === 'FILL') { for (let i = 1; i <= sc.member.length; i++) { el.textContent = sc.member.slice(0, i); await wait(70); } }
+    log('acted', `"step": "${step.id}", "action": "${step.act}", "risk": "${step.act === 'EXTRACT' ? 'READ' : step.act === 'FILL' ? 'REVERSIBLE_WRITE' : 'READ'}"`);
+    if (step.act === 'EXTRACT') outputs[step.id === 's4' ? 'balance' : 'currency'] = el.textContent.replace(/[$,]/g, '');
+    await wait(300);
+
+    // what the app does after the action
+    if (step.id === 's2') {
+      if (sc.retries) { for (let r = 1; r <= sc.retries; r++) { show(VIEWS.error()); log('recovery', `"recovery": "TRANSIENT_APP_ERROR", "attempt": ${r}`, 'w'); await wait(420); } }
+      if (sc.stopAt === 's2') {
+        show(VIEWS[sc.view]());
+        if (sc.code === 'POLICY_VIOLATION') log('policy_violation', '"stage": "mid_flow", "rule": "route", "detail": "route /admin/audit not on allowlist"', 'x');
+        status[step.id] = 'stop ' + (sc.code === 'MEMBER_NOT_FOUND' ? 'ANSWER' : sc.code.split('_')[0]); drawSteps('', status); break;
+      }
+      show(VIEWS.summary(false, true));
+      if (sc.human === 'dialog') {
+        modal('Security verification required', 'Confirm you are authorised to access this record.', 'Acknowledge');
+        await handoff('UNKNOWN_DIALOG: Security verification required', async () => { hi('#mbtn', 'human'); await wait(700); $('modal').remove(); });
+      }
+    }
+    if (step.id === 's3') {
+      if (sc.human === 'login') {
+        show(VIEWS.login());
+        await handoff('SESSION_EXPIRED: Session expired', async () => {
+          hi('#u', 'human'); for (const c of 'teller1') { $('u').textContent += c; await wait(60); }
+          hi('#p', 'human'); for (let i = 0; i < 11; i++) { $('p').textContent += '•'; await wait(45); }
+          hi('#signin', 'human'); await wait(400); show(VIEWS.detail()); });
+      } else show(VIEWS.detail());
+    }
+    status[step.id] = 'done';
+  }
+  drawSteps('', status); hi(null);
+  // verdict: SUCCESS / ESCALATED carry outputs; the caller sees the balance, the disk copy masks it
+  const [b, color] = BUCKETS.find(x => x[0] === sc.bucket);
+  const res = sc.bucket === 'SUCCESS' || sc.bucket === 'ESCALATED' ? { bucket: sc.bucket, outputs } : { bucket: sc.bucket, code: sc.code };
+  log('run_ended', `"bucket": "${sc.bucket}"${sc.code ? `, "code": "${sc.code}"` : ''}${res.outputs ? ', "outputs": {"balance": "[REDACTED:sensitive]", "currency": "USD"}' : ''}`, sc.bucket === 'FAILURE' ? 'x' : 'g');
+  $('verdict').innerHTML = `<span class="pill" style="background:${color}">${b}</span><b style="font-family:var(--mono)">${sc.code}</b>
+    <span class="note">${res.outputs ? 'caller receives ' + JSON.stringify(res.outputs) : 'no outputs'}</span>`;
+  counts[b].push(sc.id); await drop(b, color);
+  busy = false; setBusy();
+}
+
+async function handoff(reason, humanActs) {
+  log('intervention_requested', `"reason": "${reason}"`, 'w'); token(1); banner('Waiting for an operator to claim the session', '#b45309'); await wait(700);
+  log('claimed', '"operator": "op-1", "seconds_to_claim": 1.2', 'w'); token(2);
+  banner('OPERATOR IN CONTROL: automation is paused and its actions are rejected', '#c2410c'); await wait(500);
+  log('act_rejected', '"reason": "control token held by a human"', 'x'); await wait(300);
+  await humanActs(); log('human_event', '"type": "click"', 'w');
+  token(3); banner('Operator resumed: verifying the checkpoint', '#15803d'); log('handoff_ended', '"decision": "RESUME", "seconds_in_control": 3.1', 'w'); await wait(700);
+  token(0); banner(''); await wait(200);
+}
+
+// ---- controls
+function setBusy() { ['run', 'all'].forEach(id => $(id).disabled = busy); document.querySelectorAll('.chip').forEach(c => c.disabled = busy); }
+function select(sc) { current = sc; document.querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed', c.dataset.id === sc.id));
+  $('shows').textContent = sc.shows; }
+$('chips').innerHTML = SCENARIOS.map(s => `<button type="button" class="chip" data-id="${s.id}" id="chip-${s.id}" aria-pressed="false"><b>${s.id}</b>${s.name}</button>`).join('');
+$('chips').addEventListener('click', e => { const b = e.target.closest('.chip'); if (b && !busy) select(SCENARIOS.find(s => s.id === b.dataset.id)); });
+$('run').addEventListener('click', () => !busy && run(current));
+$('all').addEventListener('click', async () => { if (busy) return; for (const s of SCENARIOS) { select(s); await run(s); await wait(400); } });
+$('speed').addEventListener('click', () => { speed = speed === 1 ? 2 : speed === 2 ? 4 : 1; $('speed').textContent = `Speed ${speed}x`; });
+addEventListener('resize', () => token(0));
+
+// the page opens in a working state: the engine laid out, the app on its first screen, X01 selected and playing
+drawRail(); drawSteps(''); drawLadder(); drawBins(); show(VIEWS.search()); select(SCENARIOS[0]); token(0);
+log('ready', '"artifact": "get_savings_balance v1 APPROVED", "hint": "choose a condition and press Run"', 'g');
+setTimeout(() => { if (!busy) run(current); }, 700);
+</script>

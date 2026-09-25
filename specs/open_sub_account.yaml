@@ -1,0 +1,12 @@
+name: open_sub_account
+goal: Open a new sub-account of the given type for the member with the given initial deposit, and report the confirmation number.
+inputs:
+  - {name: member_id, type: string, pattern: '^M\d{4}$'}
+  - {name: account_type, type: enum, enum: [SAVINGS, MONEY_MARKET, CHRISTMAS_CLUB]}
+  - {name: initial_deposit, type: decimal, minimum: '0.01'}
+outputs:
+  - {name: confirmation_number, type: string, pattern: '^CNF-\d{8}$'}
+example_inputs:
+  member_id: M1001
+  account_type: MONEY_MARKET
+  initial_deposit: '100.00'

@@ -1,0 +1,97 @@
+flowchart TD
+  classDef llm fill:#EDE4FF,stroke:#6B3FD4,color:#2A1260,stroke-width:1.5px
+  classDef det fill:#E3F0FF,stroke:#2F6FD1,color:#0E2A55,stroke-width:1.5px
+  classDef human fill:#FFF0DC,stroke:#D9822B,color:#5A3000,stroke-width:1.5px
+  classDef result fill:#37474F,stroke:#1C262B,color:#FFFFFF,stroke-width:2px
+
+  LOAD["Load artifact + tenant overlay"]:::det
+  VALID{"Schema valid and APPROVED?"}:::det
+  PPOL{"Steps within allowlist?"}:::det
+  PFP{"Tenant + version fingerprint match?"}:::det
+  PIN{"Inputs match schema?"}:::det
+
+  subgraph LOOP["Per-step loop"]
+    NEXT["Next step"]:::det
+    PRE{"Pre-checkpoint passes?"}:::det
+    LADDER["Resolve locator ladder"]:::det
+    MATCH{"Match count?"}:::det
+    MORE{"More candidates?"}:::det
+    RISK{"Risk tier?"}:::det
+    GATE{"Approval token granted?"}:::human
+    ACT["Surface.act"]:::det
+    ACTOK{"Action took effect?"}:::det
+    POST{"Post-checkpoint passes?"}:::det
+    DETECT{"Outcome detector fired?"}:::det
+    RECOV{"Known recoverable condition?"}:::det
+    HANDLE["Run handler, log, retry step"]:::det
+    BUDGET{"Retry budget left?"}:::det
+    ESCAL{"Escalatable blocker?"}:::det
+    HANDOFF["Handoff to human"]:::human
+    RESUMED{"Handoff outcome?"}:::det
+    DONE{"More steps?"}:::det
+  end
+
+  SUCC{"Success condition met?"}:::det
+  EXTRACT["Validate extracted outputs"]:::det
+  OUTV{"Outputs match schema?"}:::det
+  WASESC{"Human held token this run?"}:::det
+
+  SUCCESS["SUCCESS: typed outputs"]:::result
+  BIZ["BUSINESS_OUTCOME"]:::result
+  ESC["ESCALATED"]:::result
+  FAIL["FAILURE: step, expected, observed, evidence"]:::result
+
+  LOAD --> VALID
+  VALID -->|no| FAIL
+  VALID -->|yes| PPOL
+  PPOL -->|no| FAIL
+  PPOL -->|yes| PIN
+  PIN -->|no| FAIL
+  PIN -->|yes| PFP
+  PFP -->|no: DRIFT_DETECTED| FAIL
+  PFP -->|yes| NEXT
+
+  NEXT --> PRE
+  PRE -->|yes| LADDER
+  PRE -->|no| RECOV
+  LADDER --> MATCH
+  MATCH -->|exactly 1| RISK
+  MATCH -->|0| MORE
+  MATCH -->|more than 1: AMBIGUOUS_TARGET| FAIL
+  MORE -->|yes, next candidate| LADDER
+  MORE -->|no| RECOV
+  RISK -->|READ or REVERSIBLE_WRITE| ACT
+  RISK -->|IRREVERSIBLE| GATE
+  GATE -->|approved| ACT
+  GATE -->|denied: DECLINED_BY_OPERATOR| BIZ
+  ACT --> ACTOK
+  ACTOK -->|no, retry budget left| RECOV
+  ACTOK -->|irreversible or value not applied: ACTION_FAILED| FAIL
+  ACTOK -->|yes| DETECT
+  DETECT -->|business outcome| BIZ
+  DETECT -->|none| POST
+  POST -->|yes| DONE
+  POST -->|no| RECOV
+  RECOV -->|yes| BUDGET
+  BUDGET -->|yes| HANDLE
+  HANDLE --> PRE
+  BUDGET -->|no| FAIL
+  RECOV -->|no| ESCAL
+  ESCAL -->|yes| HANDOFF
+  ESCAL -->|no| FAIL
+  HANDOFF --> RESUMED
+  RESUMED -->|checkpoint passed| NEXT
+  RESUMED -->|FAILED| FAIL
+  RESUMED -->|CANCELLED| ESC
+  DONE -->|yes| NEXT
+  DONE -->|no| SUCC
+  SUCC -->|no: SUCCESS_CONDITION_UNMET| FAIL
+  SUCC -->|yes| EXTRACT
+
+  EXTRACT --> OUTV
+  OUTV -->|no| FAIL
+  OUTV -->|yes| WASESC
+  WASESC -->|yes| ESC
+  WASESC -->|no| SUCCESS
+
+  style LOOP fill:#FAFAFA,stroke:#9E9E9E,stroke-width:1px

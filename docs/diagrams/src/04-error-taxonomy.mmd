@@ -1,0 +1,65 @@
+flowchart LR
+  classDef llm fill:#EDE4FF,stroke:#6B3FD4,color:#2A1260,stroke-width:1.5px
+  classDef det fill:#E3F0FF,stroke:#2F6FD1,color:#0E2A55,stroke-width:1.5px
+  classDef human fill:#FFF0DC,stroke:#D9822B,color:#5A3000,stroke-width:1.5px
+  classDef result fill:#37474F,stroke:#1C262B,color:#FFFFFF,stroke-width:2px
+
+  subgraph COND["Runtime condition"]
+    C1["Input validation error"]:::det
+    C1B["App field validation error"]:::det
+    C2["Record not found"]:::det
+    C3["Permission denied"]:::det
+    C4["Known dialog"]:::det
+    C5["Unknown dialog"]:::det
+    C6["Session timeout"]:::det
+    C7["Slow load"]:::det
+    C8["App error"]:::det
+    C9["Ambiguous target"]:::det
+    C10["Drift detected"]:::det
+    C11["Irreversible step pending approval"]:::det
+  end
+
+  subgraph HANDLE["Handling"]
+    H1["Reject at preflight"]:::det
+    H2["Outcome detector"]:::det
+    H3["Stop, capture evidence"]:::det
+    H4["Dismiss handler, log"]:::det
+    H5["Escalate via handoff"]:::human
+    H6["Bounded wait, log"]:::det
+    H7["Bounded retry, log"]:::det
+    H8["Approval request"]:::human
+  end
+
+  CONT["Recovered: continue replay"]:::det
+
+  SUCCESS["SUCCESS"]:::result
+  BIZ["BUSINESS_OUTCOME"]:::result
+  ESC["ESCALATED"]:::result
+  FAIL["FAILURE"]:::result
+
+  C1 --> H1 -->|VALIDATION_ERROR| FAIL
+  C10 --> H1
+  H1 -->|DRIFT_DETECTED| FAIL
+  C1B --> H2
+  C2 --> H2
+  H2 -->|MEMBER_NOT_FOUND, VALIDATION_REJECTED| BIZ
+  C3 --> H3
+  C9 --> H3
+  H3 -->|PERMISSION_DENIED, AMBIGUOUS_TARGET| FAIL
+  C4 --> H4 --> CONT
+  C5 --> H5
+  C6 --> H5
+  H5 -->|human took over| ESC
+  H5 -->|handoff FAILED| FAIL
+  H5 -->|checkpoint passed| CONT
+  C7 --> H6 --> CONT
+  H6 -->|budget exhausted: TIMEOUT| FAIL
+  C8 --> H7 --> CONT
+  H7 -->|persistent: APP_ERROR| FAIL
+  C11 --> H8
+  H8 -->|approved| CONT
+  H8 -->|DECLINED_BY_OPERATOR| BIZ
+  CONT -.->|all steps pass, unattended| SUCCESS
+
+  style COND fill:#FAFAFA,stroke:#9E9E9E,stroke-width:1px
+  style HANDLE fill:#FAFAFA,stroke:#9E9E9E,stroke-width:1px

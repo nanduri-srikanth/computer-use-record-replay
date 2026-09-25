@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Workflow Diagrams</title>
+<style>
+:root { --bg:#F6F7F9; --card:#FFFFFF; --ink:#1B1F24; --muted:#5B6470; --line:#DDE1E6; }
+@media (prefers-color-scheme: dark) { :root { --bg:#14171B; --card:#1D2126; --ink:#E8EAED; --muted:#9AA3AE; --line:#2E343B; } }
+* { box-sizing:border-box; }
+body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.5 -apple-system, system-ui, sans-serif; }
+main { max-width:1200px; margin:0 auto; padding:32px 16px 64px; }
+h1 { font-size:24px; margin:0 0 4px; }
+p.sub { color:var(--muted); margin:0 0 20px; }
+.legend { display:flex; flex-wrap:wrap; gap:8px 16px; margin:0 0 20px; font-size:13px; color:var(--muted); }
+.legend i { display:inline-block; width:14px; height:14px; border-radius:3px; border:1.5px solid; vertical-align:-2px; margin-right:6px; }
+ol.toc { columns:2; padding-left:20px; margin:0 0 28px; }
+ol.toc a { color:inherit; }
+section { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:16px; margin:0 0 24px; }
+h2 { font-size:17px; margin:0 0 12px; }
+h2 span { color:var(--muted); font-variant-numeric:tabular-nums; margin-right:10px; }
+img { display:block; max-width:100%; height:auto; margin:0 auto; background:#FFFFFF; border-radius:6px; }
+@media (max-width:640px) { ol.toc { columns:1; } }
+</style></head>
+<body><main>
+<h1>System Workflow Diagrams</h1>
+<p class="sub">Rendered from docs/WORKFLOW.md. Click a diagram to open it full size.</p>
+<div class="legend">
+<span><i style="background:#EDE4FF;border-color:#6B3FD4"></i>LLM involved</span>
+<span><i style="background:#E3F0FF;border-color:#2F6FD1"></i>Deterministic</span>
+<span><i style="background:#FFF0DC;border-color:#D9822B"></i>Human</span>
+<span><i style="background:#37474F;border-color:#1C262B"></i>Result bucket / end state</span>
+</div>
+<ol class="toc"><li><a href="#d1">End-to-end pipeline</a></li><li><a href="#d2">Discovery loop</a></li><li><a href="#d3">Replay execution</a></li><li><a href="#d4">Error taxonomy</a></li><li><a href="#d5">Handoff control-token state machine</a></li><li><a href="#d6">Handoff sequence</a></li><li><a href="#d7">Irreversible action gate</a></li><li><a href="#d8">Multi-tenant resolution</a></li><li><a href="#d9">Artifact lifecycle</a></li><li><a href="#d10">Component map</a></li><li><a href="#d11">Evals and telemetry</a></li></ol>
+<section id="d1"><h2><span>01</span>End-to-end pipeline</h2><a href="01-end-to-end-pipeline.svg" target="_blank"><img src="01-end-to-end-pipeline.svg" alt="End-to-end pipeline" loading="lazy"></a></section>
+<section id="d2"><h2><span>02</span>Discovery loop</h2><a href="02-discovery-loop.svg" target="_blank"><img src="02-discovery-loop.svg" alt="Discovery loop" loading="lazy"></a></section>
+<section id="d3"><h2><span>03</span>Replay execution</h2><a href="03-replay-execution.svg" target="_blank"><img src="03-replay-execution.svg" alt="Replay execution" loading="lazy"></a></section>
+<section id="d4"><h2><span>04</span>Error taxonomy</h2><a href="04-error-taxonomy.svg" target="_blank"><img src="04-error-taxonomy.svg" alt="Error taxonomy" loading="lazy"></a></section>
+<section id="d5"><h2><span>05</span>Handoff control-token state machine</h2><a href="05-handoff-control-token-state-machine.svg" target="_blank"><img src="05-handoff-control-token-state-machine.svg" alt="Handoff control-token state machine" loading="lazy"></a></section>
+<section id="d6"><h2><span>06</span>Handoff sequence</h2><a href="06-handoff-sequence.svg" target="_blank"><img src="06-handoff-sequence.svg" alt="Handoff sequence" loading="lazy"></a></section>
+<section id="d7"><h2><span>07</span>Irreversible action gate</h2><a href="07-irreversible-action-gate.svg" target="_blank"><img src="07-irreversible-action-gate.svg" alt="Irreversible action gate" loading="lazy"></a></section>
+<section id="d8"><h2><span>08</span>Multi-tenant resolution</h2><a href="08-multi-tenant-resolution.svg" target="_blank"><img src="08-multi-tenant-resolution.svg" alt="Multi-tenant resolution" loading="lazy"></a></section>
+<section id="d9"><h2><span>09</span>Artifact lifecycle</h2><a href="09-artifact-lifecycle.svg" target="_blank"><img src="09-artifact-lifecycle.svg" alt="Artifact lifecycle" loading="lazy"></a></section>
+<section id="d10"><h2><span>10</span>Component map</h2><a href="10-component-map.svg" target="_blank"><img src="10-component-map.svg" alt="Component map" loading="lazy"></a></section>
+<section id="d11"><h2><span>11</span>Evals and telemetry</h2><a href="11-evals-and-telemetry.svg" target="_blank"><img src="11-evals-and-telemetry.svg" alt="Evals and telemetry" loading="lazy"></a></section>
+</main></body></html>

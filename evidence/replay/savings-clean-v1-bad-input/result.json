@@ -1,0 +1,23 @@
+{
+  "run_id": "savings-clean-v1-bad-input",
+  "capability": "get_savings_balance",
+  "version": 1,
+  "tenant": "tenant_a",
+  "inputs_redacted": {
+    "member_id": "abc"
+  },
+  "result": {
+    "recoveries": [],
+    "bucket": "FAILURE",
+    "reason": "VALIDATION_ERROR",
+    "step": null,
+    "expected": "inputs match schema",
+    "observed": "member_id does not match ^M\\d{4}$",
+    "evidence_ref": null,
+    "handoffs": []
+  },
+  "steps_executed": [],
+  "ui_actions": 0,
+  "started_at": "2026-09-25T05:30:09+00:00",
+  "ended_at": "2026-09-25T05:30:09+00:00"
+}

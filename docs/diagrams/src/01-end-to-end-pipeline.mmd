@@ -1,0 +1,48 @@
+flowchart LR
+  classDef llm fill:#EDE4FF,stroke:#6B3FD4,color:#2A1260,stroke-width:1.5px
+  classDef det fill:#E3F0FF,stroke:#2F6FD1,color:#0E2A55,stroke-width:1.5px
+  classDef human fill:#FFF0DC,stroke:#D9822B,color:#5A3000,stroke-width:1.5px
+  classDef result fill:#37474F,stroke:#1C262B,color:#FFFFFF,stroke-width:2px
+
+  GOAL["Goal + target app"]:::human
+
+  subgraph DISC["Discovery: LLM in the loop"]
+    DA["DiscoveryAgent loop"]:::llm
+    REC["Recorder"]:::det
+  end
+
+  STOPPED["Stopped: no artifact"]:::result
+  DRAFT["Capability artifact DRAFT"]:::det
+  REVIEW{"Human review"}:::human
+  APPROVED["Artifact APPROVED"]:::det
+  INPUTS["Typed inputs"]:::human
+
+  subgraph NOLLM["Replay boundary: NO LLM"]
+    RE["ReplayEngine"]:::det
+    CLS["Classify result"]:::det
+  end
+
+  OPS["Operator via handoff"]:::human
+
+  SUCCESS["SUCCESS"]:::result
+  BIZ["BUSINESS_OUTCOME"]:::result
+  ESC["ESCALATED"]:::result
+  FAIL["FAILURE"]:::result
+
+  GOAL --> DA
+  DA -->|successful run| REC
+  DA -->|stop condition| STOPPED
+  REC --> DRAFT --> REVIEW
+  REVIEW -->|approve| APPROVED
+  REVIEW -.->|not approved| DRAFT
+  APPROVED --> RE
+  INPUTS --> RE
+  RE <-.->|same live session| OPS
+  RE --> CLS
+  CLS --> SUCCESS
+  CLS --> BIZ
+  CLS --> ESC
+  CLS --> FAIL
+
+  style NOLLM fill:#F4F8FD,stroke:#2F6FD1,stroke-width:2px,stroke-dasharray:6 4
+  style DISC fill:#F8F5FF,stroke:#6B3FD4,stroke-width:2px

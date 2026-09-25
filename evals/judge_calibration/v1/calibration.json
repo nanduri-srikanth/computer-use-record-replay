@@ -1,0 +1,84 @@
+{
+  "items": 33,
+  "judge_model": "claude-sonnet-5",
+  "agreement": 1.0,
+  "per_criterion": {
+    "J1": {
+      "n": 10,
+      "agree": 10,
+      "errors": 0,
+      "confusion": {
+        "pass": {
+          "pass": 5,
+          "fail": 0,
+          "na": 0
+        },
+        "fail": {
+          "pass": 0,
+          "fail": 5,
+          "na": 0
+        }
+      },
+      "agreement": 1.0
+    },
+    "J2": {
+      "n": 7,
+      "agree": 7,
+      "errors": 0,
+      "confusion": {
+        "pass": {
+          "pass": 5,
+          "fail": 0,
+          "na": 0
+        },
+        "fail": {
+          "pass": 0,
+          "fail": 2,
+          "na": 0
+        }
+      },
+      "agreement": 1.0
+    },
+    "J4": {
+      "n": 10,
+      "agree": 10,
+      "errors": 0,
+      "confusion": {
+        "pass": {
+          "pass": 5,
+          "fail": 0,
+          "na": 0
+        },
+        "fail": {
+          "pass": 0,
+          "fail": 5,
+          "na": 0
+        }
+      },
+      "agreement": 1.0
+    },
+    "J3": {
+      "n": 6,
+      "agree": 6,
+      "errors": 0,
+      "confusion": {
+        "pass": {
+          "pass": 4,
+          "fail": 0,
+          "na": 0
+        },
+        "fail": {
+          "pass": 0,
+          "fail": 2,
+          "na": 0
+        }
+      },
+      "agreement": 1.0
+    }
+  },
+  "repeat_consistency": 1.0,
+  "judge_usage": {
+    "input_count": 154366,
+    "output_count": 17066
+  }
+}

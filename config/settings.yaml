@@ -1,0 +1,12 @@
+# Budgets and timeouts (seconds unless noted).
+checkpoint_timeout: 2.0      # normal wait for a checkpoint before recovery kicks in
+slow_load_budget: 6.0        # extra wait allowed for a slow page, then FAILURE TIMEOUT
+retry_budget: 3              # recovery retries per step
+action_timeout: 3.0          # Playwright actionability timeout per action
+claim_timeout: 300.0         # PAUSE_REQUESTED: operator must claim within this
+hold_timeout: 900.0          # HUMAN_IN_CONTROL: idle limit before CANCELLED
+checkpoint_retries: 2        # VERIFYING_CHECKPOINT failures before FAILED
+approval_timeout: 300.0      # no decision: no commit, FAILURE HANDOFF_FAILED
+discovery_max_steps: 30
+discovery_timeout: 600.0
+discovery_stuck_after: 3     # consecutive no-progress turns before escalating

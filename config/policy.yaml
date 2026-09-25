@@ -1,0 +1,13 @@
+# Allowlist and risk rules enforced by PolicyEngine in both discovery and replay.
+allowed_hosts: ["127.0.0.1", "localhost"]
+# Entries ending in "/" are prefixes; others must match exactly.
+allowed_routes: ["/", "/nav", "/login", "/member/", "/subaccount/"]
+allowed_actions: [CLICK, FILL, SELECT, EXTRACT]
+risk_rules:
+  write_actions: [FILL, SELECT]
+  # A click on a control with this name, on a page under this route, commits an irreversible change.
+  irreversible_controls:
+    - {route_prefix: "/subaccount/review", name: "Confirm"}
+  # Fail closed: any click whose control text contains one of these words is IRREVERSIBLE,
+  # on any route. Clicks that submit a POST form are also IRREVERSIBLE (state-changing request).
+  irreversible_keywords: [confirm, submit, delete, remove, transfer, wire, approve, commit, pay, close account, post]

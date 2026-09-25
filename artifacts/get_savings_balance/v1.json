@@ -1,0 +1,178 @@
+{
+  "schema_version": 2,
+  "name": "get_savings_balance",
+  "version": 1,
+  "status": "APPROVED",
+  "goal": "Look up a member's savings account balance and currency.",
+  "vendor_product": "CoreOne Banking",
+  "compatible_versions": [
+    "4.2.1"
+  ],
+  "start_route": "/",
+  "inputs": [
+    {
+      "name": "member_id",
+      "type": "string",
+      "pattern": "^M\\d{4}$",
+      "sensitive": false
+    }
+  ],
+  "outputs": [
+    {
+      "name": "balance",
+      "type": "decimal",
+      "sensitive": true
+    },
+    {
+      "name": "currency",
+      "type": "string",
+      "pattern": "^[A-Z]{3}$",
+      "sensitive": false
+    }
+  ],
+  "steps": [
+    {
+      "id": "s1",
+      "action": "FILL",
+      "description": "Enter member id",
+      "target": {
+        "frame": "main",
+        "description": "Member ID field",
+        "candidates": [
+          {
+            "kind": "LABEL_PROXIMITY",
+            "label": "Member ID:",
+            "element": "input"
+          }
+        ]
+      },
+      "value_from": "inputs.member_id",
+      "risk": "REVERSIBLE_WRITE",
+      "pre": {
+        "frame": "main",
+        "text_present": [
+          "Member Search"
+        ]
+      }
+    },
+    {
+      "id": "s2",
+      "action": "CLICK",
+      "description": "Search for the member",
+      "target": {
+        "frame": "main",
+        "description": "Search button",
+        "candidates": [
+          {
+            "kind": "ROLE_NAME",
+            "role": "button",
+            "name": "Search"
+          }
+        ]
+      },
+      "risk": "READ",
+      "pre": {
+        "frame": "main",
+        "text_present": [
+          "Member Search"
+        ]
+      },
+      "post": {
+        "frame": "main",
+        "text_present": [
+          "Member Summary"
+        ]
+      }
+    },
+    {
+      "id": "s3",
+      "action": "CLICK",
+      "description": "Open the savings account",
+      "target": {
+        "frame": "main",
+        "description": "View link on the Savings row",
+        "candidates": [
+          {
+            "kind": "TABLE_ANCHOR",
+            "anchor_text": "Savings",
+            "column": 4,
+            "element": "a"
+          }
+        ]
+      },
+      "risk": "READ",
+      "pre": {
+        "frame": "main",
+        "text_present": [
+          "Member Summary"
+        ]
+      },
+      "post": {
+        "frame": "main",
+        "text_present": [
+          "Account Detail"
+        ]
+      }
+    },
+    {
+      "id": "s4",
+      "action": "EXTRACT",
+      "description": "Read available balance",
+      "target": {
+        "frame": "main",
+        "description": "Available balance",
+        "candidates": [
+          {
+            "kind": "LABEL_PROXIMITY",
+            "label": "Available Balance:",
+            "element": "td"
+          }
+        ]
+      },
+      "output": "balance",
+      "risk": "READ",
+      "pre": {
+        "frame": "main",
+        "text_present": [
+          "Account Detail"
+        ]
+      }
+    },
+    {
+      "id": "s5",
+      "action": "EXTRACT",
+      "description": "Read currency",
+      "target": {
+        "frame": "main",
+        "description": "Currency",
+        "candidates": [
+          {
+            "kind": "LABEL_PROXIMITY",
+            "label": "Currency:",
+            "element": "td"
+          }
+        ]
+      },
+      "output": "currency",
+      "risk": "READ",
+      "pre": {
+        "frame": "main",
+        "text_present": [
+          "Account Detail"
+        ]
+      }
+    }
+  ],
+  "success": {
+    "frame": "main",
+    "text_present": [
+      "Account Detail",
+      "Available Balance:"
+    ]
+  },
+  "provenance": {
+    "created_by": "hand-authored",
+    "created_at": "2026-09-24T00:00:00+00:00",
+    "notes": "Golden reference for replay tests; discovery output is compared against it."
+  }
+}

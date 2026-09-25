@@ -1,0 +1,11 @@
+{"ts": 1790309430.81, "kind": "run_started", "capability": "get_savings_balance", "version": 1, "tenant": "tenant_a", "artifact_hash": "6e43255d2a83c3d6"}
+{"ts": 1790309430.81, "kind": "effective_artifact", "hash": "6e43255d2a83c3d6", "overlay": "none"}
+{"ts": 1790309430.834, "kind": "fingerprint_ok", "version": "4.2.1", "tenant": "tenant_a"}
+{"ts": 1790309430.849, "kind": "resolved", "step": "s1", "candidate": 0, "tried": ["LABEL_PROXIMITY=1"]}
+{"ts": 1790309430.856, "kind": "acted", "step": "s1", "action": "FILL", "risk": "REVERSIBLE_WRITE"}
+{"ts": 1790309430.858, "kind": "step_timing", "step": "s1", "seconds": 0.024}
+{"ts": 1790309430.87, "kind": "resolved", "step": "s2", "candidate": 0, "tried": ["ROLE_NAME=1"]}
+{"ts": 1790309430.919, "kind": "acted", "step": "s2", "action": "CLICK", "risk": "READ"}
+{"ts": 1790309430.953, "kind": "step_timing", "step": "s2", "seconds": 0.095}
+{"ts": 1790309430.994, "kind": "failure", "reason": "AMBIGUOUS_TARGET", "step": "s3", "expected": "exactly one match", "observed": "link 'View': TABLE_ANCHOR matched 2 elements"}
+{"ts": 1790309430.994, "kind": "run_ended", "bucket": "FAILURE"}

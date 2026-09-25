@@ -1,0 +1,18 @@
+{
+  "tenant": "tenant_b",
+  "base_capability": "get_savings_balance",
+  "label_map": {
+    "Member ID:": "Member #:",
+    "Search": "Find"
+  },
+  "locator_overrides": {
+    "s3": [
+      {
+        "kind": "TABLE_ANCHOR",
+        "anchor_text": "Share Savings",
+        "column": 4,
+        "element": "a"
+      }
+    ]
+  }
+}

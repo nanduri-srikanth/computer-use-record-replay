@@ -1,0 +1,144 @@
+[
+ {
+  "role": "system",
+  "content": "Deterministic replay (no LLM)."
+ },
+ {
+  "role": "user",
+  "content": "Session expired, human signs in (expect ESCALATED )"
+ },
+ {
+  "role": "tool_call",
+  "name": "run_started",
+  "content": "{\n \"capability\": \"get_savings_balance\",\n \"version\": 1,\n \"tenant\": \"tenant_a\",\n \"artifact_hash\": \"d822ccc9caca86c6\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "effective_artifact",
+  "content": "{\n \"hash\": \"d822ccc9caca86c6\",\n \"overlay\": \"none\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "fingerprint_ok",
+  "content": "{\n \"version\": \"4.2.1\",\n \"tenant\": \"tenant_a\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "resolved",
+  "content": "{\n \"step\": \"s1\",\n \"candidate\": 0,\n \"tried\": [\n  \"LABEL_PROXIMITY=1\"\n ]\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "acted",
+  "content": "{\n \"step\": \"s1\",\n \"action\": \"FILL\",\n \"risk\": \"REVERSIBLE_WRITE\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "step_timing",
+  "content": "{\n \"step\": \"s1\",\n \"seconds\": 0.024\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "resolved",
+  "content": "{\n \"step\": \"s2\",\n \"candidate\": 0,\n \"tried\": [\n  \"ROLE_NAME=1\"\n ]\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "acted",
+  "content": "{\n \"step\": \"s2\",\n \"action\": \"CLICK\",\n \"risk\": \"READ\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "step_timing",
+  "content": "{\n \"step\": \"s2\",\n \"seconds\": 0.234\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "resolved",
+  "content": "{\n \"step\": \"s3\",\n \"candidate\": 0,\n \"tried\": [\n  \"TABLE_ANCHOR=1\"\n ]\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "acted",
+  "content": "{\n \"step\": \"s3\",\n \"action\": \"CLICK\",\n \"risk\": \"READ\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "intervention_requested",
+  "content": "{\n \"capability\": \"get_savings_balance\",\n \"step\": \"s3\",\n \"reason\": \"SESSION_EXPIRED: Session expired\",\n \"screenshot\": \"X15-session-expired--human-signs-in/evidence-001-intervention\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "claimed",
+  "content": "{\n \"operator\": \"op-test\",\n \"seconds_to_claim\": 0.0\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "human_event",
+  "content": "{\n \"type\": \"change\",\n \"frame\": \"main\",\n \"tag\": \"input\",\n \"role\": \"textbox\",\n \"name\": \"\",\n \"label\": \"User Name:\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "human_event",
+  "content": "{\n \"type\": \"change\",\n \"frame\": \"main\",\n \"tag\": \"input\",\n \"role\": \"textbox\",\n \"name\": \"\",\n \"label\": \"Password:\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "human_event",
+  "content": "{\n \"type\": \"click\",\n \"frame\": \"main\",\n \"tag\": \"input\",\n \"role\": \"button\",\n \"name\": \"Sign In\",\n \"label\": \"\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "human_event",
+  "content": "{\n \"type\": \"submit\",\n \"frame\": \"main\",\n \"tag\": \"form\",\n \"role\": \"form\",\n \"name\": \"\",\n \"label\": \"\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "handoff_ended",
+  "content": "{\n \"outcome\": \"RESUMED\",\n \"transitions\": [\n  \"AUTOMATION->PAUSE_REQUESTED (SESSION_EXPIRED: Session expired)\",\n  \"PAUSE_REQUESTED->HUMAN_IN_CONTROL (claimed by op-test)\",\n  \"HUMAN_IN_CONTROL->RESUME_REQUESTED (human requested resume)\",\n  \"RESUME_REQUESTED->VERIFYING_CHECKPOINT (human input released)\",\n  \"VERIFYING_CHECKPOINT->AUTOMATION (checkpoint passed, NEXT)\"\n ],\n \"seconds_in_control\": 0.25\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "step_timing",
+  "content": "{\n \"step\": \"s3\",\n \"seconds\": 0.348\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "resolved",
+  "content": "{\n \"step\": \"s4\",\n \"candidate\": 0,\n \"tried\": [\n  \"LABEL_PROXIMITY=1\"\n ]\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "acted",
+  "content": "{\n \"step\": \"s4\",\n \"action\": \"EXTRACT\",\n \"risk\": \"READ\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "step_timing",
+  "content": "{\n \"step\": \"s4\",\n \"seconds\": 0.022\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "resolved",
+  "content": "{\n \"step\": \"s5\",\n \"candidate\": 0,\n \"tried\": [\n  \"LABEL_PROXIMITY=1\"\n ]\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "acted",
+  "content": "{\n \"step\": \"s5\",\n \"action\": \"EXTRACT\",\n \"risk\": \"READ\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "step_timing",
+  "content": "{\n \"step\": \"s5\",\n \"seconds\": 0.008\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "run_ended",
+  "content": "{\n \"bucket\": \"ESCALATED\"\n}"
+ },
+ {
+  "role": "assistant",
+  "content": "{\n \"recoveries\": [],\n \"bucket\": \"ESCALATED\",\n \"reason\": \"completed after human intervention: SESSION_EXPIRED: Session expired\",\n \"handoffs\": [\n  {\n   \"step\": \"s3\",\n   \"reason\": \"SESSION_EXPIRED: Session expired\",\n   \"outcome\": \"RESUMED\",\n   \"operator\": \"op-test\",\n   \"transitions\": [\n    \"AUTOMATION->PAUSE_REQUESTED (SESSION_EXPIRED: Session expired)\",\n    \"PAUSE_REQUESTED->HUMAN_IN_CONTROL (claimed by op-test)\",\n    \"HUMAN_IN_CONTROL->RESUME_REQUESTED (human requested resume)\",\n    \"RESUME_REQUESTED->VERIFYING_CHECKPOINT (human input released)\",\n    \"VERIFYING_CHECKPOINT->AUTOMATION (checkpoint passed, NEXT)\"\n   ],\n   \"human_events\": 4\n  }\n ],\n \"outputs\": {\n  \"balance\": \"[REDACTED:sensitive]\",\n  \"currency\": \"USD\"\n },\n \"business_code\": null\n}"
+ }
+]

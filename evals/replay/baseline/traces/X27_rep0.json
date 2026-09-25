@@ -1,0 +1,49 @@
+[
+ {
+  "role": "system",
+  "content": "Deterministic replay (no LLM)."
+ },
+ {
+  "role": "user",
+  "content": "Input silently truncated by the page (expect FAILURE ACTION_FAILED)"
+ },
+ {
+  "role": "tool_call",
+  "name": "run_started",
+  "content": "{\n \"capability\": \"get_savings_balance\",\n \"version\": 1,\n \"tenant\": \"tenant_a\",\n \"artifact_hash\": \"d822ccc9caca86c6\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "effective_artifact",
+  "content": "{\n \"hash\": \"d822ccc9caca86c6\",\n \"overlay\": \"none\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "fingerprint_ok",
+  "content": "{\n \"version\": \"4.2.1\",\n \"tenant\": \"tenant_a\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "resolved",
+  "content": "{\n \"step\": \"s1\",\n \"candidate\": 0,\n \"tried\": [\n  \"LABEL_PROXIMITY=1\"\n ]\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "acted",
+  "content": "{\n \"step\": \"s1\",\n \"action\": \"FILL\",\n \"risk\": \"REVERSIBLE_WRITE\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "failure",
+  "content": "{\n \"reason\": \"ACTION_FAILED\",\n \"step\": \"s1\",\n \"expected\": \"field holds the supplied member_id (5 chars)\",\n \"observed\": \"field holds a different value (3 chars); input truncated or rejected\"\n}"
+ },
+ {
+  "role": "tool_call",
+  "name": "run_ended",
+  "content": "{\n \"bucket\": \"FAILURE\"\n}"
+ },
+ {
+  "role": "assistant",
+  "content": "{\n \"recoveries\": [],\n \"bucket\": \"FAILURE\",\n \"reason\": \"ACTION_FAILED\",\n \"step\": \"s1\",\n \"expected\": \"field holds the supplied member_id (5 chars)\",\n \"observed\": \"field holds a different value (3 chars); input truncated or rejected\",\n \"evidence_ref\": \"X27-input-silently-truncated-by-the-page/evidence-001-action_failed\",\n \"handoffs\": []\n}"
+ }
+]
