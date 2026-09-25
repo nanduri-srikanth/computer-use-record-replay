@@ -27,7 +27,7 @@ Other config lives in `config/`: `policy.yaml` (allowlist, risk rules), `tenants
 ## Run without live services
 
 ```bash
-make test                       # 162 tests: acceptance, 38 stress scenarios, units, discovery (scripted model), metrics, evals, invariants
+make test                       # 213 tests: acceptance, 38 stress scenarios, units, discovery (scripted model), metrics, evals, invariants, independent review
 make evidence                   # regenerate evidence/stress: matrix, flakiness study, determinism check
 ```
 

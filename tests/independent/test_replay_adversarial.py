@@ -19,7 +19,6 @@ SUB = {"member_id": "M1001", "account_type": "MONEY_MARKET", "initial_deposit": 
 # ---------------------------------------------------------------- tampered / unapproved artifacts
 
 
-@pytest.mark.xfail(strict=True, reason="FINDING (high): approval is not bound to content. content_hash() is computed and logged (engine.py:94) but never recorded at approve time or verified at load/replay (store.py:37-38, 74-79); an edited APPROVED file replays unattended and here returns the Checking balance as SUCCESS")
 def test_tampered_approved_artifact_is_refused(tmp_path, reset, engine, golden, redactor):
     """Approve v1, then edit the approved file on disk (re-point the account row from Savings to Checking)."""
     store = ArtifactStore(tmp_path / "artifacts", redactor)
@@ -37,7 +36,6 @@ def test_tampered_approved_artifact_is_refused(tmp_path, reset, engine, golden, 
     assert rep.result.bucket != "SUCCESS", f"tampered approved artifact ran and returned {rep.result.outputs}"
 
 
-@pytest.mark.xfail(strict=True, reason="FINDING (high): lifecycle status is a plain field in the JSON (store.py:37-38); flipping DRAFT to APPROVED on disk passes the unattended gate (engine.py:126) with no approval record or signature")
 def test_status_forged_on_disk_does_not_grant_unattended_replay(tmp_path, reset, engine, golden, redactor):
     store = ArtifactStore(tmp_path / "artifacts", redactor)
     store.save_draft(golden("get_savings_balance"))  # a DRAFT nobody approved
@@ -87,7 +85,6 @@ def test_role_name_click_toward_off_allowlist_page_refused_before_click(reset, e
     assert rep.result.observed.startswith("pre_action"), rep.result.observed
 
 
-@pytest.mark.xfail(strict=True, reason="FINDING (high): the pre-click allowlist check only runs when Match.target_url is set (engine.py:233-237), and COORDINATES matches never set it (playwright_surface.py:276-281). The post-wait checks URLs before reading the checkpoint (engine.py:298-299, TOCTOU) and there is no URL check before SUCCESS (engine.py:177-186), so the run navigated to /admin/audit and reported SUCCESS (3/3 runs)")
 def test_coordinate_click_toward_off_allowlist_page_refused_before_click(reset, engine, surface, server):
     reset(audit_link=True)
     surface.goto("/")
@@ -101,7 +98,6 @@ def test_coordinate_click_toward_off_allowlist_page_refused_before_click(reset, 
 # ---------------------------------------------------------------- locator ambiguity and drift
 
 
-@pytest.mark.xfail(strict=True, reason="FINDING (high): COORDINATES always resolves count=1 when anything is at the point (playwright_surface.py:276-281), and the recorder appends it to every discovered target (recorder.py:52-53). When a label drifts, the ladder falls through to a blind click: M1002 returns one of two savings balances as SUCCESS where tenant_a gives AMBIGUOUS_TARGET")
 def test_coordinate_fallback_does_not_bypass_the_ambiguity_guard(reset, engine, golden, surface, server):
     """Same artifact, two tenants: on tenant_a the Savings anchor matches two rows (AMBIGUOUS_TARGET). On the
     relabelled tenant_b ('Share Savings') the anchor matches nothing, so the ladder falls to COORDINATES."""
@@ -120,7 +116,6 @@ def test_coordinate_fallback_does_not_bypass_the_ambiguity_guard(reset, engine, 
     assert rep.result.bucket == "FAILURE", f"M1002 has two savings accounts, yet replay returned {rep.result}"
 
 
-@pytest.mark.xfail(strict=True, reason="FINDING (claim mismatch): REPORT section 3 says column reorder gives TARGET_NOT_FOUND. That holds only for the hand-written golden. The live-discovered APPROVED artifact (evidence v4) falls back to COORDINATES, clicks the wrong cell, and ends in TIMEOUT (tried TABLE_ANCHOR=0, COORDINATES=1)")
 def test_discovered_artifact_reports_column_reorder_as_target_not_found(reset, engine):
     """REPORT section 3: 'Column reorders or renamed labels give TARGET_NOT_FOUND with evidence'.
     Checked here against the real live-discovered, APPROVED artifact in /evidence, not the hand-written golden."""
@@ -136,10 +131,21 @@ def test_golden_truncated_fill_is_action_failed(reset, engine, golden):
     assert rep.result.reason.value == "ACTION_FAILED"
 
 
-@pytest.mark.xfail(strict=True, reason="FINDING (high): FILL read-back is skipped for coordinate matches (engine.py:265, isinstance(handle, tuple)). A truncated member id is submitted and the caller receives BUSINESS_OUTCOME MEMBER_NOT_FOUND, a false business answer instead of ACTION_FAILED")
 def test_coordinate_fill_is_verified_like_any_other_fill(reset, engine, golden, surface):
-    """The label drifted, so FILL resolves by coordinates; the field truncates input. The read-back that turns
-    truncation into ACTION_FAILED must still apply, otherwise 'M10' is searched and the caller hears 'no such member'."""
+    """A coordinate-only FILL into a field that truncates input. The read-back that turns truncation into
+    ACTION_FAILED must still apply, otherwise 'M10' is searched and the caller hears 'no such member'.
+    (Review finding: read-back was skipped for coordinate matches.)"""
+    reset(truncate_input=True)
+    surface.goto("/")
+    box = element(surface, "main", role="textbox", label="Member ID:")
+    cap = replace_candidates(golden("get_savings_balance"), "s1", [coords(box.x, box.y)])
+    rep = engine().run(cap, {"member_id": "M1001"}, "tenant_a")
+    assert rep.result.bucket == "FAILURE" and rep.result.reason.value == "ACTION_FAILED", rep.result
+
+
+def test_drifted_label_does_not_fall_back_to_a_blind_point(reset, engine, golden, surface):
+    """The label drifted and the step also carries a coordinate candidate. Replay must not type into whatever is at
+    the stored point: the drift is reported as TARGET_NOT_FOUND. (Review finding: coordinate fallback after drift.)"""
     reset(truncate_input=True)
     surface.goto("/")
     box = element(surface, "main", role="textbox", label="Member ID:")
@@ -147,7 +153,8 @@ def test_coordinate_fill_is_verified_like_any_other_fill(reset, engine, golden, 
         LocatorCandidate(kind=LocatorKind.LABEL_PROXIMITY, label="Member Number:", element="input"),
         coords(box.x, box.y)])
     rep = engine().run(cap, {"member_id": "M1001"}, "tenant_a")
-    assert rep.result.bucket == "FAILURE" and rep.result.reason.value == "ACTION_FAILED", rep.result
+    assert rep.result.bucket == "FAILURE" and rep.result.reason.value == "TARGET_NOT_FOUND", rep.result
+    assert rep.ui_actions == 0
 
 
 def test_commit_reached_by_coordinate_fallback_still_needs_approval(reset, engine, golden, surface, server, app_state):
@@ -180,7 +187,6 @@ def test_unmet_success_condition_returns_no_outputs(reset, engine, golden):
     assert rep.result.reason.value == "SUCCESS_CONDITION_UNMET" and not hasattr(rep.result, "outputs")
 
 
-@pytest.mark.xfail(strict=True, reason="FINDING (medium): the sensitive flag is honoured for outputs only (engine.py:489-498). Inputs are persisted through pattern redaction alone (engine.py:111), so a sensitive free-text input is written verbatim to result.json")
 def test_sensitive_input_is_never_persisted(reset, engine, golden, runs_dir):
     """FieldSpec.sensitive: 'masked in anything persisted'. Applied here to an input rather than an output."""
     cap = golden("get_savings_balance")

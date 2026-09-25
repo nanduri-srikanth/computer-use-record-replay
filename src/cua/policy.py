@@ -7,18 +7,22 @@ from __future__ import annotations
 
 import hashlib
 import hmac
+import posixpath
 import re
 import secrets
 import time
 from dataclasses import dataclass
-from urllib.parse import urlparse
+from urllib.parse import unquote, urlparse
 
 from .config import PolicyConfig
 from .contracts import ActionType, Capability, RiskTier
 
 
+_BLANK_FRAMES = {"about:blank", "about:srcdoc"}
+
+
 class PolicyViolation(Exception):
-    """Our allowlist or approval rules refused something. kind: host, route, action, approval_token."""
+    """Our allowlist or approval rules refused something. kind: scheme, host, route, action, approval_token."""
 
     def __init__(self, message: str, kind: str):
         super().__init__(message)
@@ -45,14 +49,26 @@ class PolicyEngine:
 
     # ---- allowlist -------------------------------------------------------------
 
+    @staticmethod
+    def normalize_route(path: str) -> str:
+        """Decode and resolve dot segments, so '/member/../admin' is judged as '/admin', not as a /member/ route."""
+        decoded = unquote(path or "/")
+        norm = posixpath.normpath(decoded) if decoded.startswith("/") else "/" + posixpath.normpath(decoded)
+        norm = "/" + norm.lstrip("/")  # normpath keeps a leading '//'
+        return norm + "/" if decoded.endswith("/") and norm != "/" else norm
+
     def route_allowed(self, path: str) -> bool:
+        path = self.normalize_route(path)
         return any(path == r or (r.endswith("/") and r != "/" and path.startswith(r))
                    for r in self.config.allowed_routes)
 
     def check_url(self, url: str) -> None:
+        """Fails closed: only http(s) on an allowed host and route, plus the blank frames a page shows while loading."""
         u = urlparse(url)
-        if u.scheme in ("about", "data") or not u.netloc:
-            return  # blank frames during load
+        if url in _BLANK_FRAMES:
+            return
+        if u.scheme not in ("http", "https") or not u.netloc:
+            raise PolicyViolation(f"scheme {u.scheme or '(none)'} not on allowlist", "scheme")
         if u.hostname not in self.config.allowed_hosts:
             raise PolicyViolation(f"host {u.hostname} not on allowlist", "host")
         if not self.route_allowed(u.path or "/"):

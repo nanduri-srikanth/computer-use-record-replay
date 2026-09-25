@@ -265,13 +265,13 @@ flowchart TD
 
 **Design notes**
 - Preflight fails fast. Artifact schema and APPROVED status, the tenant overlay, allowlist coverage of every step, and the input schema are all checked before the UI is touched. The tenant and app version fingerprint is read right after the app opens, before step 1.
-- Locator ladder: role+name, then label proximity, then text anchor plus table-relative position, then coordinates. Zero matches moves to the next candidate. More than one match stops immediately as `AMBIGUOUS_TARGET`, because clicking the wrong row in a bank app is worse than stopping.
+- Locator ladder: role+name, then label proximity, then text anchor plus table-relative position. Zero matches moves to the next candidate. More than one match stops immediately as `AMBIGUOUS_TARGET`, because clicking the wrong row in a bank app is worse than stopping. Coordinates are used only for a target with no semantic candidate; once semantic candidates exist and all miss, the stop is `TARGET_NOT_FOUND`, never a blind click at a stored point.
 - Outcome detectors run after every action, before the post-checkpoint. A "member not found" page fails the checkpoint, but it is a legitimate answer, not an error.
 - Recoverable conditions (known dialog, slow load, transient app error) run a handler, get logged to `EvidenceSink`, and retry the step within a bounded budget. They never surface as failures unless the budget runs out.
 - After a handoff, the engine resumes only after checkpoint verification. It continues at the next step if the human completed the blocked step, or retries the blocked step otherwise.
 - Bucket precedence (a proposal, see Open questions): if a human held the control token at any point, a run that would otherwise be SUCCESS ends as ESCALATED, with outputs attached. SUCCESS always means fully unattended.
 - Every action is verified. A FILL or SELECT whose value did not land (truncated, rejected) stops as `ACTION_FAILED`; a click that could not be performed (obscured, detached) is retried within budget. An irreversible action is never retried.
-- The capability-level `success` checkpoint must hold after the last step before outputs are returned. Recovered conditions are listed on every result as `recoveries`, and sensitive outputs are masked in anything persisted.
+- The capability-level `success` checkpoint must hold after the last step before outputs are returned. Recovered conditions are listed on every result as `recoveries`, and sensitive inputs and outputs are masked in anything persisted.
 - Any unanticipated exception still ends as a structured FAILURE (`UNEXPECTED_ERROR`) with evidence, so the one-bucket rule holds for every exit.
 
 ---

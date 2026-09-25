@@ -53,16 +53,12 @@ def test_malformed_artifact_on_disk_is_rejected_at_load(tmp_path, kind):
 # ---------------------------------------------------------------- allowlist edge cases
 
 
-@pytest.mark.xfail(strict=True, reason="FINDING: PolicyEngine.check_url fails open for URLs with no netloc "
-                   "(policy.py:54-55), so file:// and javascript: URLs pass the allowlist")
 @pytest.mark.parametrize("url", ["file:///etc/passwd", "javascript:fetch('https://evil.example/x')"])
 def test_non_http_schemes_are_not_on_the_allowlist(url):
     with pytest.raises(PolicyViolation):
         PolicyEngine().check_url(url)
 
 
-@pytest.mark.xfail(strict=True, reason="FINDING: route_allowed is a raw string-prefix check (policy.py:48-50); "
-                   "'/member/../admin/audit' passes as a /member/ route without normalisation")
 def test_dot_segment_route_cannot_escape_an_allowed_prefix():
     assert not PolicyEngine().route_allowed("/member/../admin/audit")
 
@@ -112,13 +108,9 @@ def test_pii_shapes_on_a_legacy_page_are_redacted():
         assert leaked not in out
 
 
-@pytest.mark.xfail(strict=True, reason="FINDING (low): no card-number (PAN) pattern; a space-grouped PAN passes "
-                   "through Redactor.text unchanged (redactor.py:19-28)")
 def test_space_grouped_card_number_is_redacted():
     assert "4111 1111 1111 1111" not in Redactor().text("Card on file: 4111 1111 1111 1111")
 
 
-@pytest.mark.xfail(strict=True, reason="FINDING (low): label-based redaction is case-sensitive (redactor.py:16); "
-                   "an upper-case legacy label 'NAME:' leaks the member's name")
 def test_upper_case_sensitive_label_is_redacted():
     assert "JANE DOE" not in Redactor().text("NAME:\tJANE DOE")

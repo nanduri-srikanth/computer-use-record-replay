@@ -44,12 +44,13 @@ def test_discovery_records_draft_that_replays(reset, discover, store, engine):
     cap = result.capability
     assert cap.status == ArtifactStatus.DRAFT and cap.provenance.created_by == "discovery"
     assert [s.action.value for s in cap.steps] == ["FILL", "CLICK", "CLICK", "EXTRACT", "EXTRACT"]
-    # ladder: best candidate first, coordinates always last; the ambiguous "View" role+name was dropped
+    # ladder: best candidate first; the ambiguous "View" role+name was dropped; no blind coordinate fallback
+    # once a semantic locator exists (replay would not use it after drift anyway)
     assert cap.steps[0].target.candidates[0].kind == LocatorKind.LABEL_PROXIMITY
     view = cap.steps[2].target.candidates
     assert view[0].kind == LocatorKind.TABLE_ANCHOR and view[0].anchor_text == "Savings"
     assert all(c.kind != LocatorKind.ROLE_NAME for c in view)
-    assert all(s.target.candidates[-1].kind == LocatorKind.COORDINATES for s in cap.steps)
+    assert all(c.kind != LocatorKind.COORDINATES for s in cap.steps for c in s.target.candidates)
     assert cap.steps[1].post.text_present == ["Member Summary"]
     # the model saw masked data only
     sent = json.dumps([c["messages"][0]["content"][0]["text"] for c in llm.calls])
@@ -118,7 +119,8 @@ def test_discovery_stuck_escalates_to_human_and_continues(reset, discover):
 def test_human_proposed_revision_creates_new_draft(reset, engine, golden, store, runs_dir):
     from .test_acceptance import acknowledge_dialog
     base = golden("get_savings_balance")
-    store._write(base)
+    store.save_draft(base)
+    store.approve(base.name, 1)  # through the lifecycle, so the approval is recorded against this content
     reset(fault="F3")
     rep = engine(console=ScriptedOperator(rounds=[([acknowledge_dialog], "RESUME")])).run(base, {"member_id": "M1001"},
                                                                                          "tenant_a")

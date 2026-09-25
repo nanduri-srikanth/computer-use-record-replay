@@ -219,7 +219,7 @@ class SessionController:
                 t.transition(S.FAILED, "checkpoint retries exhausted")
                 return done("FAILED", operator)
             t.transition(S.HUMAN_IN_CONTROL, "checkpoint failed, back to human")
-            self.console.notify("Checkpoint did not pass. Please finish the step, then resume.")
+            self._console(self.console.notify, "Checkpoint did not pass. Please finish the step, then resume.")
             self.surface.set_event_sink(self._capture)
 
     def request_approval(self, capability: str, step: str, summary: dict[str, Any]) -> ApprovalDecision:

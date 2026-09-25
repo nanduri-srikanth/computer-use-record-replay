@@ -10,7 +10,7 @@ from pathlib import Path
 
 from .config import ROOT, Settings
 from .redactor import Redactor
-from .store import ArtifactStore
+from .store import ArtifactStore, LifecycleError
 
 DEFAULT_URL = os.environ.get("BANK_BASE_URL", "http://127.0.0.1:5055")
 
@@ -57,8 +57,18 @@ def cmd_deprecate(args) -> None:
     print(f"{cap.name} v{cap.version} DEPRECATED")
 
 
+class UsageError(Exception):
+    """Bad input from the command line: reported in one line with exit code 2, never a traceback."""
+
+
 def cmd_replay(args) -> int:
     from .replay.engine import ReplayEngine
+    try:
+        inputs = json.loads(args.inputs)
+    except json.JSONDecodeError as e:
+        raise UsageError(f"--inputs is not valid JSON: {e.msg} at position {e.pos}") from None
+    if not isinstance(inputs, dict):
+        raise UsageError("--inputs must be a JSON object")
     redactor = Redactor(secrets=[_creds()[1]])
     store = _store(redactor)
     cap = store.load(args.name, args.version) if args.version else store.latest(args.name)
@@ -69,12 +79,17 @@ def cmd_replay(args) -> int:
     try:
         engine = ReplayEngine(surface, runs_dir=ROOT / "runs", redactor=redactor, console=_console(args),
                               overlay_root=ROOT)
-        report = engine.run(cap, json.loads(args.inputs), args.tenant, unattended=not args.attended)
+        report = engine.run(cap, inputs, args.tenant, unattended=not args.attended)
     finally:
         surface.close()
     print(json.dumps(report.result.model_dump(mode="json"), indent=2))
     print(f"run log: runs/{report.run_id}/ (sensitive outputs are masked on disk)")
     return 0 if report.result.bucket in ("SUCCESS", "BUSINESS_OUTCOME") else 1
+
+
+def _attended_needs_operator(ap: argparse.ArgumentParser, args) -> None:
+    if args.attended and args.unattended:
+        ap.error("--attended (run a DRAFT with an operator present) cannot be combined with --unattended")
 
 
 def cmd_discover(args) -> int:
@@ -221,6 +236,7 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--inputs", required=True, help='JSON, e.g. \'{"member_id": "M1001"}\'')
     p.add_argument("--attended", action="store_true", help="allow a DRAFT artifact with an operator present")
     browser_opts(p)
+    p.set_defaults(check=_attended_needs_operator)
     p.set_defaults(fn=cmd_replay)
 
     p = sub.add_parser("discover", help="LLM-driven discovery; records a DRAFT artifact")
@@ -268,7 +284,13 @@ def main(argv: list[str] | None = None) -> int:
     p.set_defaults(fn=cmd_serve)
 
     args = ap.parse_args(argv)
-    return args.fn(args) or 0
+    if getattr(args, "check", None):
+        args.check(ap, args)
+    try:
+        return args.fn(args) or 0
+    except (UsageError, LifecycleError) as e:  # store integrity, missing versions, illegal lifecycle moves
+        print(f"cua: {e}", file=sys.stderr)
+        return 2
 
 
 if __name__ == "__main__":

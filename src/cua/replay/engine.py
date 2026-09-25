@@ -63,6 +63,7 @@ class _Ctx:
     recoveries: list[RecoveryRecord] = field(default_factory=list)
     executed: list[str] = field(default_factory=list)
     step_risk: dict[str, RiskTier] = field(default_factory=dict)  # effective tier once resolved
+    current: str | None = None  # the step being executed, for failures raised outside a step's own handling
     ui_actions: int = 0
 
 
@@ -97,7 +98,7 @@ class ReplayEngine:
         except _Stop as s:
             result = s.result
         except Exception as e:  # noqa: BLE001 - the contract is one bucket for every exit
-            result = self._fail(ctx, FailureReason.UNEXPECTED_ERROR, ctx.executed[-1] if ctx.executed else None,
+            result = self._fail(ctx, FailureReason.UNEXPECTED_ERROR, ctx.current,
                                 "run completes without an unhandled error", f"{type(e).__name__}: {e}")
         finally:
             self.surface.set_act_guard(lambda: None)
@@ -108,7 +109,7 @@ class ReplayEngine:
             update["handoffs"] = list(ctx.handoffs)
         result = result.model_copy(update=update)
         report = RunReport(run_id=run_id, capability=cap.name, version=cap.version, tenant=tenant,
-                           inputs_redacted={k: self.redactor.text(str(v)) for k, v in inputs.items()},
+                           inputs_redacted=self._persistable_inputs(inputs, cap),
                            result=result, steps_executed=ctx.executed, ui_actions=ctx.ui_actions, started_at=started,
                            ended_at=datetime.now(timezone.utc).isoformat(timespec="seconds"))
         ev.log("run_ended", bucket=result.bucket)
@@ -122,10 +123,12 @@ class ReplayEngine:
     # ================================================================ preflight + loop
 
     def _run(self, ctx: _Ctx, cap: Capability, inputs: dict[str, Any], tenant: str, unattended: bool) -> RunResult:
-        # 1. artifact status
-        if unattended and cap.status != ArtifactStatus.APPROVED:
-            return self._fail(ctx, FailureReason.ARTIFACT_NOT_APPROVED, None, "status APPROVED for unattended run",
-                              f"status {cap.status.value}", capture=False)
+        # 1. artifact status: only APPROVED runs unattended; anything else needs an operator actually attached
+        if cap.status != ArtifactStatus.APPROVED and (unattended or not ctx.session.can_escalate):
+            return self._fail(ctx, FailureReason.ARTIFACT_NOT_APPROVED, None,
+                              "status APPROVED, or an attended run with an operator console",
+                              f"status {cap.status.value}, {'unattended' if unattended else 'no operator console'}",
+                              capture=False)
         # 2. tenant overlay -> effective artifact
         tenant_cfg = self.tenants.get(tenant)
         if tenant_cfg is None:
@@ -152,7 +155,7 @@ class ReplayEngine:
         # 5. open the app, confirm it stayed on the allowlist, fingerprint tenant + version
         try:
             self.surface.goto(effective.start_route)
-            self._check_urls(None)
+            self._check_urls()
         except PolicyViolation as e:
             return self._policy_fail(ctx, e, "start_page", None, "start page within allowlist")
         except ActionFailed as e:
@@ -170,12 +173,18 @@ class ReplayEngine:
         # 6. per-step loop
         for step in effective.steps:
             t_step = time.time()
+            ctx.current = step.id
             self._execute(ctx, step)
             ctx.executed.append(step.id)
             ctx.ev.log("step_timing", step=step.id, seconds=round(time.time() - t_step, 3))
 
-        # 7. capability-level success condition
-        if not self._await_value(lambda: self._checkpoint_ok(effective.success), self.settings.checkpoint_timeout):
+        # 7. capability-level success condition, read from a page that is still on the allowlist
+        ok = self._await_value(lambda: self._checkpoint_ok(effective.success), self.settings.checkpoint_timeout)
+        try:
+            self._check_urls()
+        except PolicyViolation as e:
+            return self._policy_fail(ctx, e, "mid_flow", ctx.executed[-1], "page within allowlist at completion")
+        if not ok:
             return self._fail(ctx, FailureReason.SUCCESS_CONDITION_UNMET, ctx.executed[-1],
                               f"success condition {effective.success.text_present}", self._observed(effective.success.frame))
         # 8. outputs
@@ -218,7 +227,7 @@ class ReplayEngine:
             self._stop(self._policy_fail(ctx, e, "mid_flow", step.id, "page and action within policy"))
 
     def _attempt(self, ctx: _Ctx, step: Step, human_completed: bool) -> None:
-        self._check_urls(self._frame_of(step))
+        self._check_urls()
         if human_completed:
             return
         if step.pre and not self._pre_ok(step):
@@ -262,7 +271,7 @@ class ReplayEngine:
             ctx.ui_actions += 1
         ctx.ev.log("acted", step=step.id, action=step.action.value, risk=risk.value)
         self._check_native_dialogs(ctx, step)
-        if step.action in (ActionType.FILL, ActionType.SELECT) and not isinstance(match.handle, tuple):
+        if step.action in (ActionType.FILL, ActionType.SELECT):  # every match kind, coordinates included
             actual = self.surface.read_value(match)
             if actual.strip() != (value or "").strip():
                 self._stop(self._fail(ctx, FailureReason.ACTION_FAILED, step.id,
@@ -295,8 +304,9 @@ class ReplayEngine:
         """Wait for the post-checkpoint, running outcome detectors while waiting."""
         end = time.time() + self.settings.checkpoint_timeout
         while True:
-            self._check_urls(self._frame_of(step))  # a redirect off the allowlist stops the run here
+            self._check_urls()  # a redirect off the allowlist stops the run here
             ok = self._checkpoint_ok(step.post)  # checkpoint first, so the scan below sees the same page
+            self._check_urls()  # and again after the read: a navigation that landed meanwhile never counts as passing
             d = ctx.det.scan()
             if d and d.terminal:
                 self._outcome(ctx, step, d)
@@ -429,7 +439,7 @@ class ReplayEngine:
             self._stop(self._fail(ctx, FailureReason.HANDOFF_FAILED, step.id, "approval channel for irreversible step",
                                   "no operator console configured"))
         summary = {"capability": ctx.cap.name, "step": step.description,
-                   **{k: str(v) for k, v in ctx.inputs.items()}}
+                   **self._persistable_inputs(ctx.inputs, ctx.cap)}
         decision = ctx.session.request_approval(ctx.cap.name, step.id, summary)
         if decision.outcome == "DENIED":
             self._stop(BusinessOutcome(code=BusinessCode.DECLINED_BY_OPERATOR, step=step.id,
@@ -441,9 +451,9 @@ class ReplayEngine:
 
     # ================================================================ results
 
-    def _check_urls(self, frame: str | None) -> None:
-        for name in {None, frame, "main"}:
-            url = self.surface.frame_url(name)
+    def _check_urls(self) -> None:
+        """Every frame, not just the step's: a human (or a redirect) can leave any frame off the allowlist."""
+        for url in self.surface.frame_urls():
             if url:
                 self.policy.check_url(url)
 
@@ -485,6 +495,11 @@ class ReplayEngine:
         if isinstance(result, Success):
             return Escalated(reason=reason, handoffs=ctx.handoffs, outputs=result.outputs)
         return Escalated(reason=reason, handoffs=ctx.handoffs, business_code=result.code)
+
+    def _persistable_inputs(self, inputs: dict[str, Any], cap: Capability) -> dict[str, str]:
+        """Inputs as persisted: sensitive fields masked outright, the rest pattern-redacted."""
+        sensitive = {f.name for f in cap.inputs if f.sensitive}
+        return {k: SENSITIVE_MASK if k in sensitive else self.redactor.text(str(v)) for k, v in inputs.items()}
 
     @staticmethod
     def _persistable(report: RunReport, cap: Capability) -> dict[str, Any]:

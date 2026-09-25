@@ -49,7 +49,10 @@ class Recorder:
                 if self._unique(el.frame, c):
                     out.append(c)
                     break
-        if el.tag != "select":  # a coordinate click cannot choose an option, so it is no fallback for SELECT
+        # Coordinates only when nothing semantic is unique: replay never falls back to a blind point once a semantic
+        # locator exists (see locators.py), and a coordinate-only step stands out to the reviewer. A coordinate click
+        # cannot choose an option, so SELECT never gets one.
+        if not out and el.tag != "select":
             out.append(LocatorCandidate(kind=LocatorKind.COORDINATES, x=round(el.x, 1), y=round(el.y, 1)))
         if not out:
             raise ValueError(f"no stable locator for {self.describe(el)}")
