@@ -3,6 +3,7 @@ import json
 from pathlib import Path
 
 from cua.contracts import Capability, TenantOverlay
+from cua.store import ArtifactStore
 
 ROOT = Path(__file__).resolve().parent.parent
 M = "main"
@@ -93,6 +94,7 @@ for body in (balance, subaccount):
     p = ROOT / "artifacts" / cap.name / "v1.json"
     p.parent.mkdir(parents=True, exist_ok=True)
     p.write_text(json.dumps(cap.model_dump(mode="json", exclude_none=True), indent=2) + "\n")
+    ArtifactStore(ROOT / "artifacts")._record_approval(cap)  # the goldens are reviewed as written: record the approval
     print("wrote", p.relative_to(ROOT))
 TenantOverlay.model_validate(overlay_b)
 (ROOT / "overlays" / "tenant_b.json").write_text(json.dumps(overlay_b, indent=2) + "\n")

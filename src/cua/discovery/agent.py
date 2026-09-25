@@ -260,7 +260,8 @@ class DiscoveryAgent:
                 raise _Stopped("discovery timeout")
             try:
                 for f in run.obs.frames:
-                    self.policy.check_url(f.url)
+                    if f.url:
+                        self.policy.check_url(f.url)
             except PolicyViolation as e:
                 ev.log("policy_blocked", stage="page", rule=e.kind, detail=str(e))
                 raise _Stopped(f"page off allowlist: {e}") from None

@@ -70,9 +70,6 @@ def test_values_typed_by_the_human_are_never_captured(reset, engine, golden, run
     assert "ZETA-unique-7781" not in run_dir_text(runs_dir, rep.run_id)
 
 
-@pytest.mark.xfail(strict=True, reason="FINDING (low): the replay allowlist check covers only the top, 'main' and "
-                   "step frames (engine.py:444-448), while discovery checks every frame (agent.py:262-263). A frame the "
-                   "human navigates off the allowlist during a handoff goes unnoticed, and the run resumes and completes")
 def test_session_left_off_allowlist_by_the_human_is_not_resumed(reset, engine, golden, server):
     reset(fault="F3")
 
@@ -107,9 +104,6 @@ def test_broken_approval_channel_fails_closed(reset, engine, golden, app_state):
     # Note (low): reported as UNEXPECTED_ERROR at step s6, the last *completed* step (engine.py:100), not s7.
 
 
-@pytest.mark.xfail(strict=True, reason="FINDING (low): SessionController wraps console calls in _console() so a broken "
-                   "channel ends as HANDOFF_FAILED, but console.notify is called unwrapped (session.py:222). The failure "
-                   "escapes as UNEXPECTED_ERROR and the token is left in HUMAN_IN_CONTROL")
 def test_broken_notify_channel_fails_the_handoff_not_the_run(reset, engine, golden):
     reset(fault="F3")
     op = _NotifyDown(rounds=[([], "RESUME"), ([acknowledge_dialog], "RESUME")])
@@ -151,9 +145,6 @@ def test_cli_replay_happy_path_and_masking(cli_root, server, reset):
     assert "2450.17" not in on_disk and "[REDACTED:sensitive]" in on_disk
 
 
-@pytest.mark.xfail(strict=True, reason="FINDING (low): CLI error paths crash with raw tracebacks instead of a clean "
-                   "message and exit code: invalid --inputs JSON (cli.py:72), a missing --version file (cli.py:64 via "
-                   "store.py:38), and an illegal lifecycle transition (cli.py:51)")
 @pytest.mark.parametrize("args", [
     ("replay", "get_savings_balance", "--inputs", "{not json", "--unattended"),
     ("replay", "get_savings_balance", "--version", "99", "--inputs", '{"member_id": "M1001"}', "--unattended"),
@@ -165,9 +156,6 @@ def test_cli_error_paths_have_no_traceback(cli_root, server, args):
     assert "Traceback" not in r.stderr, r.stderr[-300:]
 
 
-@pytest.mark.xfail(strict=True, reason="FINDING (medium): --attended ('allow a DRAFT artifact with an operator present') "
-                   "can be combined with --unattended (no operator). The engine gate keys only on the attended flag "
-                   "(cli.py:72, engine.py:126), so a DRAFT runs with nobody present")
 def test_cli_draft_never_runs_without_an_operator(cli_root, server, reset):
     art = json.loads((cli_root / "artifacts" / "get_savings_balance" / "v1.json").read_text())
     art.update(version=2, status="DRAFT")

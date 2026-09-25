@@ -109,10 +109,24 @@ def test_ladder_first_unique_wins():
     assert resolve_ladder(s, LADDER).candidate_index == 0 and s.calls == [LocatorKind.ROLE_NAME]
 
 
-def test_ladder_zero_moves_to_next_and_coordinates_last():
+def test_ladder_zero_moves_to_next_semantic_candidate():
+    s = FakeSurface({LocatorKind.ROLE_NAME: 0, LocatorKind.LABEL_PROXIMITY: 0,
+                     LocatorKind.TABLE_ANCHOR: 1, LocatorKind.COORDINATES: 1})
+    assert resolve_ladder(s, LADDER).candidate_index == 2
+
+
+def test_ladder_never_falls_back_to_coordinates_after_semantic_drift():
     s = FakeSurface({LocatorKind.ROLE_NAME: 0, LocatorKind.LABEL_PROXIMITY: 0,
                      LocatorKind.TABLE_ANCHOR: 0, LocatorKind.COORDINATES: 1})
-    assert resolve_ladder(s, LADDER).candidate_index == 3
+    with pytest.raises(TargetNotFound, match="not used after semantic drift"):
+        resolve_ladder(s, LADDER)
+    assert LocatorKind.COORDINATES not in s.calls
+
+
+def test_ladder_coordinate_only_target_resolves():
+    s = FakeSurface({LocatorKind.COORDINATES: 1})
+    only = TargetDescriptor(description="t", candidates=[LocatorCandidate(kind=LocatorKind.COORDINATES, x=1, y=1)])
+    assert resolve_ladder(s, only).candidate_index == 0
 
 
 def test_ladder_ambiguous_stops_immediately():

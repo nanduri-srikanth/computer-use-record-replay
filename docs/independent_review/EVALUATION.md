@@ -270,3 +270,29 @@ Meanwhile a load-bearing path (the coordinate fallback) went un-threat-modeled.
 - **Low or claim (rest).**
 
 None of the xfails is a mistake in my own tests. I fixed one assumption of my own during the review: the broken-approval test originally expected `step == "s7"`. The product reports s6, which I now record as a low note rather than a test failure.
+
+## Addendum: remediation (branch `fix/independent-review-findings`)
+
+All 18 `xfail(strict)` findings were fixed, and their tests now run as ordinary regression tests (no xfail marks remain in `tests/independent/`).
+
+| Finding | Fix |
+|---|---|
+| Coordinate fallback bypasses ambiguity, fill read-back and the column-reorder claim | `locators.py`: COORDINATES is tried only for targets with no semantic candidate; after semantic drift the result is `TARGET_NOT_FOUND`. `recorder.py` no longer appends coordinates to targets that have a semantic locator. The FILL read-back applies to every match kind (`playwright_surface.read_value` reads the control at the point). |
+| Coordinate click leaves the allowlist and reports SUCCESS | Point matches carry the clickable ancestor's `target_url` and `submits_post`, so the pre-click check and risk classification apply. URLs are checked on every frame (`Surface.frame_urls`), before and after each post-checkpoint read, and before SUCCESS. |
+| Approval not bound to content; status forgeable on disk | `store.py`: `approve` records the content hash in `<name>/approvals.json`; `load` raises `IntegrityError` if the content changed, or `NotApproved` if no approval is recorded; `latest` skips never-approved versions. Committed approved artifacts were backfilled; their hashes match the `artifact_hash` in the original replay evidence. |
+| Sensitive inputs persisted | `engine._persistable_inputs` masks sensitive inputs in `result.json` and in approval payloads. |
+| `--attended --unattended` runs a DRAFT with no operator | The CLI rejects the combination; the engine refuses a non-APPROVED artifact unless an operator console is attached. |
+| `file:` / `javascript:` URLs and `..` routes | `check_url` allows only http(s) plus `about:blank` / `about:srcdoc`; routes are percent-decoded and dot-normalised before matching. |
+| Frame left off-allowlist by the human | All frames are checked (see above). |
+| Broken notify channel gives UNEXPECTED_ERROR | `session.py` wraps `notify` like the other console calls, so the failure is `HANDOFF_FAILED`. |
+| Unexpected errors blamed on the previous step | They are attributed to the step that was running. |
+| CLI tracebacks | Bad `--inputs`, a missing version, an illegal transition and integrity errors print one line and exit with code 2. |
+| Redaction gaps | Card numbers (13–19 digits, grouped or not); sensitive labels matched case-insensitively. |
+
+Tests changed because they encoded the old behaviour:
+- `test_units.py` ladder tests: coordinates are no longer tried after semantic drift.
+- `test_metrics.py`: drift is now shown with a second semantic rung.
+- `test_discovery.py`: recorded targets carry no coordinate fallback; the revision test approves through the lifecycle.
+- The independent coordinate-fill test is split in two: coordinate-only fill gives `ACTION_FAILED` through read-back, and a drifted label gives `TARGET_NOT_FOUND`.
+
+Replay eval after the fixes: correct = 1.0, false SUCCESS = 0.

@@ -85,6 +85,19 @@ _TARGET_URL_JS = ("el => { if (el.tagName === 'A' && el.href) return el.href;"
                   " if (el.form && (t === 'submit' || el.tagName === 'BUTTON')) return el.form.action || '';"
                   " return ''; }")
 
+_POINT_JS = ("([x, y]) => { const el = document.elementFromPoint(x, y);"
+             " if (!el || el === document.body || el === document.documentElement) return null;"
+             " const c = el.closest('a[href], button, input[type=submit], input[type=button]') || el;"
+             " const t = (c.getAttribute('type') || '').toLowerCase();"
+             " const submit = !!c.form && (t === 'submit' || c.tagName === 'BUTTON');"
+             " const url = c.tagName === 'A' ? c.href : (submit ? (c.form.action || '') : '');"
+             " const post = submit && (c.form.getAttribute('method') || 'get').toLowerCase() === 'post';"
+             " const text = (el.tagName === 'INPUT' ? el.value : (c.innerText || el.innerText || '')).trim();"
+             " return {text, url, post}; }")
+
+_POINT_VALUE_JS = ("([x, y]) => { const el = document.elementFromPoint(x, y);"
+                   " return el ? ('value' in el ? String(el.value) : (el.innerText || '').trim()) : ''; }")
+
 _CAPTURE_JS = r"""
 (() => {
   if (window.__cuaCapture) return; window.__cuaCapture = true;
@@ -215,6 +228,10 @@ class PlaywrightSurface:
         except LookupError:
             return ""
 
+    def frame_urls(self) -> list[str]:
+        """Every frame in the page, including nested and unnamed ones: the allowlist applies to all of them."""
+        return [f.url for f in self.page.frames]
+
     def frame_text(self, frame: str | None) -> str:
         try:
             return self._frame(frame).locator("body").inner_text(timeout=1000)
@@ -274,11 +291,13 @@ class PlaywrightSurface:
             return Match(count=0)
         route = urlparse(f.url).path or "/"
         if candidate.kind == LocatorKind.COORDINATES:
-            text = f.evaluate("([x, y]) => { const el = document.elementFromPoint(x, y);"
-                              " return el && el !== document.body ? (el.innerText || el.value || '').trim() : null; }",
-                              [candidate.x, candidate.y])
-            return Match(count=0 if text is None else 1, handle=("point", frame, candidate.x, candidate.y),
-                         text=text or "", frame_route=route)
+            hit = f.evaluate(_POINT_JS, [candidate.x, candidate.y])
+            if hit is None:
+                return Match(count=0, frame_route=route)
+            # the clickable ancestor carries the destination and form method, so a point click gets the same
+            # pre-click allowlist check and POST-submit risk classification as a semantic match
+            return Match(count=1, handle=("point", frame, candidate.x, candidate.y), text=hit["text"],
+                         frame_route=route, submits_post=hit["post"], target_url=hit["url"])
         loc = self._locator(f, candidate)
         visible = [loc.nth(i) for i in range(loc.count()) if loc.nth(i).is_visible()]
         if len(visible) != 1:
@@ -379,8 +398,12 @@ class PlaywrightSurface:
     def read_value(self, match: Match) -> str:
         """Current value of a form control (or text of anything else). Read-only, not guarded."""
         h = match.handle
-        if isinstance(h, tuple):
-            return match.text
+        if isinstance(h, tuple):  # a point match: read the control that is at the point now
+            _, frame, x, y = h
+            try:
+                return str(self._frame(frame).evaluate(_POINT_VALUE_JS, [x, y]) or "")
+            except (PlaywrightError, LookupError):
+                return ""
         try:
             return h.input_value(timeout=self.action_timeout_ms)
         except Exception:

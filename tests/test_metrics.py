@@ -41,15 +41,13 @@ def test_locator_fallback_is_visible_before_anything_fails(reset, engine, golden
     cap = golden("get_savings_balance")
     s2 = cap.steps[1]
     stale = LocatorCandidate(kind=LocatorKind.ROLE_NAME, role="button", name="Search Members")  # renamed in the UI
-    backup = LocatorCandidate(kind=LocatorKind.LABEL_PROXIMITY, label="Member ID:", element="input")
-    s2 = s2.model_copy(update={"target": s2.target.model_copy(update={"candidates": [
-        stale, LocatorCandidate(kind=LocatorKind.COORDINATES, x=141.0, y=83.4)]})})
+    backup = LocatorCandidate(kind=LocatorKind.ROLE_NAME, role="button", name="Search")  # the second rung
+    s2 = s2.model_copy(update={"target": s2.target.model_copy(update={"candidates": [stale, backup]})})
     drifted = cap.model_copy(update={"steps": [cap.steps[0], s2, *cap.steps[2:]]})
-    del backup
     rep = engine().run(drifted, {"member_id": "M1001"}, "tenant_a")
     m = read(runs_dir / "metrics.jsonl")[-1]
-    assert rep.result.bucket == "SUCCESS"  # still works...
-    assert m.fallback_resolutions == 1 and m.coordinate_resolutions == 1  # ...but the ledger shows the drift
+    assert rep.result.bucket == "SUCCESS"  # still works on the backup rung...
+    assert m.fallback_resolutions == 1 and m.coordinate_resolutions == 0  # ...but the ledger shows the drift
 
 
 def test_handoff_and_recovery_numbers(server, tmp_path):

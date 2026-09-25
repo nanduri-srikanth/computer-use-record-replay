@@ -13,11 +13,15 @@ from typing import Any
 # Values next to these labels are personal data even when no pattern can recognise them (names, addresses).
 # Legacy table layouts put the label in the neighbouring cell, so this works without a clean DOM.
 SENSITIVE_LABELS = ["Name:", "Member Name:", "Address:", "Phone:", "Email:", "Mother's Maiden Name:"]
-_LABELLED = re.compile(r"(?m)^((?:" + "|".join(re.escape(x[:-1]) for x in SENSITIVE_LABELS) + r")\s*:)[ \t]*\S[^\n]*$")
+# Case-insensitive: legacy screens print labels in capitals ("NAME:") as often as not.
+_LABELLED = re.compile(r"(?mi)^((?:" + "|".join(re.escape(x[:-1]) for x in SENSITIVE_LABELS) + r")\s*:)[ \t]*\S[^\n]*$")
+_SENSITIVE_LABELS_CF = {x.casefold() for x in SENSITIVE_LABELS}
 
 # Order matters: longer, more specific patterns first.
 _PATTERNS: list[tuple[str, re.Pattern[str], Any]] = [
     ("ssn", re.compile(r"\b\d{3}-\d{2}-\d{4}\b"), "***-**-****"),
+    # Card numbers (13-19 digits, often grouped by spaces or dashes); before account_no, which would miss the groups.
+    ("card_no", re.compile(r"\b\d(?:[ -]?\d){12,18}\b"), lambda m: "**** " + re.sub(r"\D", "", m.group(0))[-4:]),
     ("date", re.compile(r"\b(?:19|20)\d{2}-\d{2}-\d{2}\b"), "****-**-**"),
     ("date_us", re.compile(r"\b\d{2}/\d{2}/\d{4}\b"), "**/**/****"),
     ("email", re.compile(r"\b[\w.+-]+@[\w-]+\.[\w.]+\b"), "***@***"),
@@ -45,7 +49,7 @@ class Redactor:
 
     def labelled(self, label: str, value: str) -> str:
         """A value shown next to a label: masked outright when the label marks personal data."""
-        if label.strip() in SENSITIVE_LABELS:
+        if label.strip().casefold() in _SENSITIVE_LABELS_CF:
             return "[REDACTED]"
         return self.text(value)
 
@@ -67,4 +71,4 @@ class Redactor:
     @staticmethod
     def mask_patterns() -> list[re.Pattern[str]]:
         """Patterns whose on-screen matches are masked in screenshots."""
-        return [p for name, p, _ in _PATTERNS if name in ("ssn", "date", "date_us", "email", "account_no", "money")]
+        return [p for name, p, _ in _PATTERNS if name in ("ssn", "card_no", "date", "date_us", "email", "account_no", "money")]

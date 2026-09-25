@@ -2,7 +2,7 @@
 
 Gate breaches: **0**. Runtime alerts: **2**. Judge trusted for gating: **yes**.
 
-- ALERT unattended_success = 0.395 (min 0.9)
+- ALERT unattended_success = 0.425 (min 0.9)
 - ALERT policy_violation_runs = 2 (max 0)
 
 ## Replay eval (baseline: 38 cases, 38 rows, errors 0)
@@ -72,13 +72,13 @@ claude-sonnet-5 on 35 labelled items: agreement **1.0**, repeat consistency 1.0.
 
 > This view includes **eval traffic**, where failures are injected on purpose (the stress scenarios include allowlist redirects, app errors, and drift). Alerts here show the alerting works; for production, run `cua eval scorecard` without `--include-evals` so only `runs/metrics.jsonl` counts.
 
-- Replay runs: 38; buckets {'SUCCESS': 10, 'BUSINESS_OUTCOME': 5, 'ESCALATED': 5, 'FAILURE': 18}
-- Unattended success: 40%; escalation rate 16%
+- Replay runs: 40; buckets {'SUCCESS': 11, 'BUSINESS_OUTCOME': 6, 'ESCALATED': 5, 'FAILURE': 18}
+- Unattended success: 42%; escalation rate 15%
 - **Policy violations** (allowlist): 2 runs, by stage {'start_page': 1, 'mid_flow': 1}
 - Locator fallback rate: 0.0% (coordinate resolutions 0); ambiguous targets 1
 - Failures by reason: {'HANDOFF_FAILED': 3, 'APP_ERROR': 1, 'TIMEOUT': 2, 'AMBIGUOUS_TARGET': 1, 'PERMISSION_DENIED': 1, 'VALIDATION_ERROR': 1, 'UNRECOVERABLE_BLOCKER': 1, 'ACTION_FAILED': 2, 'TARGET_NOT_FOUND': 2, 'DRIFT_DETECTED': 2, 'POLICY_VIOLATION': 2}
 - Recoveries: {'KNOWN_DIALOG': 2, 'SLOW_LOAD': 3, 'TRANSIENT_APP_ERROR': 4, 'NATIVE_DIALOG': 2, 'ACTION_RETRY': 3}; approvals: {'APPROVED': 5, 'DENIED': 1, 'TIMEOUT': 1}; acts rejected while human held token: 0
-- Duration p50 0.65s, p95 5.54s
+- Duration p50 0.5s, p95 5.54s
 - Discovery runs: 70 (46 drafts, 24 stops); turns p50 7; tool calls {'fill': 85, 'click': 181, 'extract': 88, 'done': 47, 'select': 12, 'request_human': 58, 'wait': 4}; tool error rate 2%; policy blocks {'page': 2, 'gateway': 9}; restarts 12
 - Discovery cost $7.563 total, $0.164 per draft; cache-read share 84%
 - **Model fallback**: 22% of turns served by a fallback model; served {'claude-opus-4-8': 108, 'claude-opus-5': 387}
@@ -88,5 +88,5 @@ claude-sonnet-5 on 35 labelled items: agreement **1.0**, repeat consistency 1.0.
 - replay.correct: 1.0 -> 1.0 (+0.0)
 - discovery.task_success: 1.0 -> 1.0 (+0.0)
 - discovery.replayability: 1.0 -> 1.0 (+0.0)
-- ledger.unattended_success: 0.395 -> 0.395 (+0.0)
+- ledger.unattended_success: 0.395 -> 0.425 (+0.03)
 - ledger.locator_fallback_rate: 0.0 -> 0.0 (+0.0)

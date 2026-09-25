@@ -894,10 +894,10 @@
   "judge_trusted": true,
   "ledger": {
     "replay": {
-      "runs": 38,
+      "runs": 40,
       "buckets": {
-        "SUCCESS": 10,
-        "BUSINESS_OUTCOME": 5,
+        "SUCCESS": 11,
+        "BUSINESS_OUTCOME": 6,
         "ESCALATED": 5,
         "FAILURE": 18
       },
@@ -914,8 +914,8 @@
         "DRIFT_DETECTED": 2,
         "POLICY_VIOLATION": 2
       },
-      "unattended_success": 0.395,
-      "escalation_rate": 0.158,
+      "unattended_success": 0.425,
+      "escalation_rate": 0.15,
       "policy_violations": {
         "start_page": 1,
         "mid_flow": 1
@@ -939,15 +939,15 @@
       "seconds_to_claim_p50": 0.0,
       "resume_first_pass": 5,
       "acts_rejected": 0,
-      "duration_p50_s": 0.65,
+      "duration_p50_s": 0.5,
       "duration_p95_s": 5.54
     },
     "replay_by_capability": {
       "get_savings_balance": {
-        "runs": 28,
+        "runs": 30,
         "buckets": {
-          "SUCCESS": 7,
-          "BUSINESS_OUTCOME": 2,
+          "SUCCESS": 8,
+          "BUSINESS_OUTCOME": 3,
           "ESCALATED": 4,
           "FAILURE": 15
         },
@@ -964,8 +964,8 @@
           "DRIFT_DETECTED": 2,
           "POLICY_VIOLATION": 2
         },
-        "unattended_success": 0.321,
-        "escalation_rate": 0.179,
+        "unattended_success": 0.367,
+        "escalation_rate": 0.167,
         "policy_violations": {
           "start_page": 1,
           "mid_flow": 1
@@ -985,7 +985,7 @@
         "seconds_to_claim_p50": 0.0,
         "resume_first_pass": 4,
         "acts_rejected": 0,
-        "duration_p50_s": 0.38,
+        "duration_p50_s": 0.37,
         "duration_p95_s": 5.09
       },
       "open_sub_account": {
@@ -1055,7 +1055,7 @@
   },
   "gate_breaches": [],
   "alerts": [
-    "unattended_success = 0.395 (min 0.9)",
+    "unattended_success = 0.425 (min 0.9)",
     "policy_violation_runs = 2 (max 0)"
   ],
   "ledger_path": "runs/metrics.jsonl, evals/discovery/baseline/runs/metrics.jsonl, evals/discovery/v1/runs/metrics.jsonl, evals/discovery/v2/runs/metrics.jsonl, evals/replay/baseline/runs/metrics.jsonl",
@@ -1077,8 +1077,8 @@
     },
     "ledger.unattended_success": {
       "before": 0.395,
-      "now": 0.395,
-      "delta": 0.0
+      "now": 0.425,
+      "delta": 0.03
     },
     "ledger.locator_fallback_rate": {
       "before": 0.0,
