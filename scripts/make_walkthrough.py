@@ -221,6 +221,9 @@ class Segment:
         return " ".join(self.sentences)
 
 
+_WORDS = {4: "Four", 5: "Five", 6: "Six", 7: "Seven", 8: "Eight", 9: "Nine", 10: "Ten", 11: "Eleven", 12: "Twelve"}
+
+
 def segments(m: dict) -> list[Segment]:
     rep = {r["clip"]: r for r in m["replays"]}
     disc = {d["clip"]: d for d in m["discoveries"]}
@@ -331,7 +334,7 @@ def segments(m: dict) -> list[Segment]:
         mock_t = b[3] + 3.9
         body = f"""<div class=abs style="left:40px;top:150px;width:1340px">
           <div class='term'><div class='bar'><i style='background:#f87171'></i><i style='background:#fbbf24'></i><i style='background:#4ade80'></i></div>
-          <pre style="font-size:24px"><div class=fade style="{at(b[1] - 0.2)}"><span class=p>$</span> <span data-type="{b[1]:.2f},30">make setup</span></div><div class="c fade" style="{at(b[1] + 0.5)}"># uv venv -p 3.12, pip install -e .[dev], playwright install chromium</div><div class=fade style="{at(b[1] + 0.9)}"><span style="display:inline-block;width:700px;height:16px;background:#1e293b;border-radius:8px;vertical-align:middle;overflow:hidden"><span data-bar="{b[1] + 0.9:.2f},2.6" style="--w:700px;width:0;display:block;height:100%;background:linear-gradient(90deg,#38bdf8,#4ade80)"></span></span></div><div>&nbsp;</div><div class=fade style="{at(b[2] - 0.2)}"><span class=p>$</span> <span data-type="{b[2]:.2f},30">scripts/store_api_key.sh</span></div><div class=fade style="{at(b[2] + 0.9)}">Paste your Anthropic API key at the prompt (input is hidden), then paste it again to confirm.</div><div class="ok fade" style="{at(b[2] + 2.6)}">Stored in Keychain as 'cua-anthropic-api-key'.</div><div>&nbsp;</div><div class=fade style="{at(b[3] - 0.2)}"><span class=p>$</span> <span data-type="{b[3]:.2f},30">make test</span></div><div class=fade style="{at(b[3] + 0.8)}">{dots}</div><div class="ok fade" style="{at(b[3] + 0.8)}"><span data-count="0,162,{b[3] + 0.9:.2f},2.2">0</span> passed, 1 deselected<span class=fade style="{at(b[3] + 3.2)}"> in 151.13s</span></div><div>&nbsp;</div><div class=fade style="{at(mock_t - 0.2)}"><span class=p>$</span> <span data-type="{mock_t:.2f},30">make mock</span></div><div class="c fade" style="{at(mock_t + 0.5)}"># mock CoreOne Banking app on http://127.0.0.1:5055</div></pre></div></div>
+          <pre style="font-size:24px"><div class=fade style="{at(b[1] - 0.2)}"><span class=p>$</span> <span data-type="{b[1]:.2f},30">make setup</span></div><div class="c fade" style="{at(b[1] + 0.5)}"># uv venv -p 3.12, pip install -e .[dev], playwright install chromium</div><div class=fade style="{at(b[1] + 0.9)}"><span style="display:inline-block;width:700px;height:16px;background:#1e293b;border-radius:8px;vertical-align:middle;overflow:hidden"><span data-bar="{b[1] + 0.9:.2f},2.6" style="--w:700px;width:0;display:block;height:100%;background:linear-gradient(90deg,#38bdf8,#4ade80)"></span></span></div><div>&nbsp;</div><div class=fade style="{at(b[2] - 0.2)}"><span class=p>$</span> <span data-type="{b[2]:.2f},30">scripts/store_api_key.sh</span></div><div class=fade style="{at(b[2] + 0.9)}">Paste your Anthropic API key at the prompt (input is hidden), then paste it again to confirm.</div><div class="ok fade" style="{at(b[2] + 2.6)}">Stored in Keychain as 'cua-anthropic-api-key'.</div><div>&nbsp;</div><div class=fade style="{at(b[3] - 0.2)}"><span class=p>$</span> <span data-type="{b[3]:.2f},30">make test</span></div><div class=fade style="{at(b[3] + 0.8)}">{dots}</div><div class="ok fade" style="{at(b[3] + 0.8)}"><span data-count="0,225,{b[3] + 0.9:.2f},2.2">0</span> passed, 1 deselected<span class=fade style="{at(b[3] + 3.2)}"> in 187.52s</span></div><div>&nbsp;</div><div class=fade style="{at(mock_t - 0.2)}"><span class=p>$</span> <span data-type="{mock_t:.2f},30">make mock</span></div><div class="c fade" style="{at(mock_t + 0.5)}"># mock CoreOne Banking app on http://127.0.0.1:5055</div></pre></div></div>
           <div class=side>
             <div class="card slide" style="{at(b[0])}"><h3>Stack</h3>{ul('Python 3.12 + uv', 'Playwright (Chromium)', 'Pydantic v2 contracts', 'Flask mock bank', 'Anthropic SDK, claude-opus-5')}</div>
             <div class="card slide" style="{at(b[2])};text-align:center"><h3>macOS Keychain</h3>
@@ -358,8 +361,8 @@ def segments(m: dict) -> list[Segment]:
                  f'<div class="abs pop badge" style="left:52px;top:470px;background:var(--orange);font-size:16px;{at(b[1] + 0.2)}">nav frame</div>'
                  f'<div class="abs pop" style="left:181px;top:140px;width:519px;height:372px;border:4px dashed var(--blue);border-radius:10px;{at(b[1] + 0.4)}"></div>'
                  f'<div class="abs pop badge" style="left:560px;top:470px;background:var(--blue);font-size:16px;{at(b[1] + 0.5)}">main frame</div>'
-                 f'<div class="abs pop" style="left:866px;top:273px;width:298px;height:74px;border:4px solid var(--purple);border-radius:6px;{at(b[1] + 1.1)}"></div>'
-                 f'<div class="abs pop badge" style="left:1172px;top:292px;background:var(--purple);font-size:18px;{at(b[1] + 1.3)}">no ids</div>')
+                 f'<div class="abs pop" style="left:866px;top:297px;width:298px;height:72px;border:4px solid var(--purple);border-radius:6px;{at(b[1] + 1.1)}"></div>'
+                 f'<div class="abs pop badge" style="left:1172px;top:316px;background:var(--purple);font-size:18px;{at(b[1] + 1.3)}">no ids</div>')
         faults = ["⚡ session expiry", "⚡ surprise dialog", "⚡ slow page", "⚡ HTTP 500", "⚡ off-allowlist redirect",
                   "⚡ columns reordered", "⚡ native alert", "⚡ truncated input"]
         spots = [(480, 540), (1080, 560), (170, 990), (890, 1000), (420, 790), (1110, 820), (620, 420), (250, 680)]
@@ -376,7 +379,12 @@ def segments(m: dict) -> list[Segment]:
         return page("The target", "A deliberately hostile legacy app", body, S(4))
 
     # ---- clip scenes share a layout: stage on the left, cards sliding in on the beats
-    spec = (ROOT / "specs" / "get_savings_balance.yaml").read_text().strip()
+    import yaml
+    _sp = yaml.safe_load((ROOT / "specs" / "get_savings_balance.yaml").read_text())
+    spec = "\n".join([f"name: {_sp['name']}", "goal: look up the savings balance",
+                      "inputs:   " + ", ".join(f"{f['name']} ({f['type']})" for f in _sp["inputs"]),
+                      "outputs:  " + ", ".join(f"{f['name']} ({f['type']})" for f in _sp["outputs"]),
+                      "outcomes: " + ", ".join(o["code"] for o in _sp["outcomes"])])
 
     def discovery(b):
         chips = "".join(f'<span class="badge pop" style="background:{c};font-family:SF Mono,Menlo,monospace;font-size:19px;margin:4px;{at(b[1] + 0.7 + 0.18 * i)}">{t}</span>'
@@ -393,16 +401,23 @@ def segments(m: dict) -> list[Segment]:
         return page("Discovery", "It asks a human when it should", "<div class=stage></div>" + side(
             ("What happens", ul("The session expires after the search", "Claude has no credentials, by design",
                                 "<b>request_human</b>: the operator signs in on the same browser",
-                                "Discovery continues from the restored page"), b[1]),
+                                "Discovery restarts from the entry point; only verified steps are recorded"), b[1]),
             ("Result", f'<p><b>{dx["status"]}</b> in {dx["turns"]} turns</p><p style="font-size:20px;color:var(--muted);'
                        'margin-top:8px">The login form is never recorded as a step.</p>', b[-1])), S(6))
 
     # ---- 7 artifact: JSON slides up, the locator ladder builds rung by rung and a probe falls through it, APPROVED stamp
     def artifact(b):
-        s2, s3 = art["steps"][1], art["steps"][2]
+        s3 = art["steps"][2]
+        one = lambda v: json.dumps(v, separators=(", ", ": "))  # noqa: E731
+        contract = html.escape("\n".join(
+            ["{", ' "inputs": ['] + [f"  {one({k: f[k] for k in ('name', 'type', 'pattern') if k in f})}" for f in art["inputs"]]
+            + [" ],", ' "outputs": ['] + [f"  {one({k: f[k] for k in ('name', 'type', 'sensitive') if k in f and f[k]})}" for f in art["outputs"]]
+            + [" ],", f' "outcomes": {one([o["code"] for o in art["outcomes"]])},', ' "success": {',
+               f'  "text_present": {one(art["success"]["text_present"])},',
+               f'  "input_present": {one(art["success"].get("input_present", []))}', " }", "}"]))
         fmt = lambda s: html.escape(json.dumps({"id": s["id"], "action": s["action"], "risk": s["risk"],  # noqa: E731
                                                 "target": {"frame": s["target"]["frame"], "candidates": s["target"]["candidates"]},
-                                                "post": s.get("post")}, indent=1))
+                                                "post": {k: v for k, v in (s.get("post") or {}).items() if v}}, indent=1))
         rungs = [("ROLE_NAME", 'button "Search"'), ("LABEL_PROXIMITY", "input next to a label"),
                  ("TABLE_ANCHOR", 'row "Savings", column 4'), ("COORDINATES", "last resort")]
         span = b[2] - b[1]
@@ -416,7 +431,7 @@ def segments(m: dict) -> list[Segment]:
             </div>""" for k, (r, d) in enumerate(rungs))
         stamp_t = b[2] + 1.3
         body = f"""<div class=abs style="left:40px;top:140px;width:1360px;display:grid;grid-template-columns:1fr 1fr;gap:20px">
-            <div class="term rise" style="{at(b[0] + 0.2)}"><pre style="font-size:15px">{fmt(s2)}</pre></div>
+            <div class="term rise" style="{at(b[0] + 0.2)}"><pre style="font-size:17px">{contract}</pre></div>
             <div class="term rise" style="{at(b[0] + 0.5)}"><pre style="font-size:15px">{fmt(s3)}</pre></div>
             <div style="grid-column:span 2">{term([
                 ('p', 'cua discover specs/get_savings_balance.yaml', b[0] + 0.9),
@@ -450,19 +465,21 @@ def segments(m: dict) -> list[Segment]:
             ("Legend", '<p class="legend"><span style="background:var(--blue)"></span>action &nbsp; '
                        '<span style="background:var(--green)"></span>read</p>', b[1])), S(8))
 
-    nf, amb = rep["replay-not-found"], rep["replay-ambiguous"]
+    nf, amb, wm = rep["replay-not-found"], rep["replay-ambiguous"], rep["replay-wrong-member"]
 
     def buckets(b):
-        cards = "".join(f'<div class="card rise" style="position:absolute;left:{x}px;top:730px;width:900px;{at(t)}">'
-                        f'<span class="badge b-{r["result"]["bucket"]}">{r["result"]["bucket"]}</span> '
-                        f'<b style="font-size:26px;margin-left:10px">{r["result"].get("code") or r["result"].get("reason")}</b>'
-                        f'<p style="margin-top:10px;color:var(--muted)">{c}</p></div>'
-                        for x, r, c, t in ((40, nf, 'member_id M9999: an answer, not a crash', b[1]),
-                                           (980, amb, 'member_id M1002 has two Savings rows: replay stops instead of guessing', b[2])))
+        cards = "".join(f'<div class="card rise" style="position:absolute;left:{x}px;top:560px;width:600px;{at(t)}">'
+                        f'<span class="badge b-{r["result"]["bucket"]}">{r["result"]["bucket"]}</span><br>'
+                        f'<b style="font-size:24px;display:inline-block;margin-top:8px">{r["result"].get("code") or r["result"].get("reason")}</b>'
+                        f'<p style="margin-top:8px;color:var(--muted);font-size:20px">{c}</p></div>'
+                        for x, r, c, t in ((40, nf, 'M9999: a declared answer, not a crash', b[1]),
+                                           (660, amb, 'M1002 has two Savings rows: replay stops instead of guessing', b[2]),
+                                           (1280, wm, 'The app shows another member: nothing is returned, and a commit would never be reached', b[3])))
         row = "".join(f'<span class="badge b-{k} pop" style="{at(b[0] + 0.3 + 0.25 * i)}">{k}</span>'
                       for i, k in enumerate(["SUCCESS", "BUSINESS_OUTCOME", "ESCALATED", "FAILURE"]))
         return page("Outcomes", "Every run ends in exactly one of four buckets", f"""
-          <div class=stage style="width:900px;height:580px"></div><div class=stage style="left:980px;width:900px;height:580px"></div>{cards}
+          <div class=stage style="width:600px;height:405px"></div><div class=stage style="left:660px;width:600px;height:405px"></div>
+          <div class=stage style="left:1280px;width:600px;height:405px"></div>{cards}
           <div style="position:absolute;left:40px;top:915px;right:40px;display:flex;gap:16px;font-size:24px;align-items:center">{row}
             <span class=fade style="color:var(--muted);margin-left:10px;{at(b[0] + 1.4)}">each with a typed reason code, never a free-text error</span></div>""",
             S(9))
@@ -510,17 +527,19 @@ def segments(m: dict) -> list[Segment]:
     # ---- 13 evidence: a scanner sweeps the screenshot and masks what it passes; 38 tiles light up
     def evidence(b):
         cat_col = {"baseline": "#16a34a", "business": "#2563eb", "recoverable": "#06b6d4", "escalation": "#ea580c",
-                   "hard_failure": "#dc2626", "drift": "#7c3aed", "safety": "#0f172a"}
+                   "hard_failure": "#dc2626", "drift": "#7c3aed", "safety": "#0f172a", "contract": "#db2777"}
+        n_sc = len(stress["matrix"])
+        n_ok = sum(r["pass"] for r in stress["matrix"])
         span = max(2.5, b[2] - b[1] - 0.6)
         tiles = "".join(f'<div class=pop style="height:50px;border-radius:8px;background:{cat_col[r["category"]]};color:#fff;'
                         f'font:700 15px SF Mono,Menlo,monospace;display:flex;align-items:center;justify-content:center;'
-                        f'{at(b[1] + 0.4 + span * i / 38)}">{r["id"]}{" ✓" if r["pass"] else ""}</div>'
+                        f'{at(b[1] + 0.4 + span * i / n_sc)}">{r["id"]}{" ✓" if r["pass"] else ""}</div>'
                         for i, r in enumerate(stress["matrix"]))
         legend = "".join(f'<span style="display:inline-flex;align-items:center;gap:6px;margin-right:14px"><i style="width:14px;height:14px;border-radius:3px;'
                          f'background:{c}"></i>{k.replace("_", " ")}</span>' for k, c in cat_col.items())
         stats = "".join(f'<div class=pop style="flex:1;background:#fff;border:3px solid var(--green);border-radius:14px;padding:12px;text-align:center;{at(b[2] + 0.2 + 0.4 * i)}">'
                         f'<div style="font-size:42px;font-weight:900;color:var(--green)">{v}</div><div style="font-size:19px;color:var(--muted)">{k}</div></div>'
-                        for i, (v, k) in enumerate([("38/38", "classified correctly"), ("0", "false SUCCESS"),
+                        for i, (v, k) in enumerate([(f"{n_ok}/{n_sc}", "classified correctly"), ("0", "false SUCCESS"),
                                                     (str(len(stress.get("pii_hits") or [])), "PII leaks")]))
         scan0, scan_d = b[0] + 1.0, 3.0
         body = f"""<div class="abs rise" style="left:40px;top:140px;width:1000px;{at(b[0])}">
@@ -533,8 +552,8 @@ def segments(m: dict) -> list[Segment]:
             {term([('c', 'evidence/replay/<run>/', b[0] + 0.3), ('', '  events.jsonl       every step, recovery, handoff', b[0] + 0.8),
                    ('', '  result.json        the typed result, outputs masked', b[0] + 1.3), ('', '  evidence-001.png   masked screenshot', b[0] + 1.8),
                    ('', '  evidence-001.txt   redacted page text', b[0] + 2.3)], 18)}
-            <div class="card slide" style="{at(b[1])}"><h3>Stress matrix: <span data-count="0,38,{b[1] + 0.4:.2f},{span:.2f}">0</span> injected conditions</h3>
-              <div style="display:grid;grid-template-columns:repeat(8,1fr);gap:6px">{tiles}</div>
+            <div class="card slide" style="{at(b[1])}"><h3>Stress matrix: <span data-count="0,{n_sc},{b[1] + 0.4:.2f},{span:.2f}">0</span> injected conditions</h3>
+              <div style="display:grid;grid-template-columns:repeat(9,1fr);gap:6px">{tiles}</div>
               <div style="font-size:16px;color:var(--muted);margin-top:10px">{legend}</div></div>
             <div style="display:flex;gap:14px">{stats}</div></div>"""
         script = f"""const S0 = {scan0}, SD = {scan_d}, mk = document.getElementById('masked'), sc = document.getElementById('scan');
@@ -545,7 +564,7 @@ def segments(m: dict) -> list[Segment]:
     # ---- 14 evals: layers slide in, bars race, confetti when v2 lands on 1.00
     def evals(b):
         layers = [("Runtime telemetry", "every run: outcomes, allowlist refusals by stage, locator fallbacks, cost", b[1]),
-                  ("Replay eval", "38 scenarios in CI: 38/38 correct, 0 false SUCCESS", b[2]),
+                  ("Replay eval", f"{len(stress['matrix'])} scenarios in CI: {len(stress['matrix'])}/{len(stress['matrix'])} correct, 0 false SUCCESS", b[2]),
                   ("Discovery eval", "11 cases x 2 reps: replay what Claude found on probe inputs", b[3]),
                   ("Judge calibration", "Sonnet 5 judge, 35 labelled items, 100% agreement", b[3] + 2.6)]
         rows = "".join(f'<tr class=slide style="border-top:1px solid var(--line);{at(t)}"><td style="padding:10px 0;width:250px"><b>{a}</b></td>'
@@ -593,20 +612,21 @@ def segments(m: dict) -> list[Segment]:
                                 "And evidence for every run, with sensitive data masked."], pipeline),
         Segment("03-setup", ["Setup is three commands.", "Make setup builds the Python environment and installs Chromium.",
                              "The API key script stores your Anthropic key in the macOS Keychain, never on disk.",
-                             "And make test runs 162 offline tests, no key needed."], setup),
+                             "And make test runs 225 offline tests, no key needed."], setup),
         Segment("04-app", ["The target is a mock legacy banking app.", "Framesets, nested tables, no element ids.",
                            "Three tenants and over twenty injectable faults, like expired sessions, surprise dialogs, and slow pages.",
                            "All the data is synthetic."], app),
         Segment("05-discovery", ["Discovery starts from a short spec: a goal, with typed inputs and outputs.",
                                  "Claude reads the page as text and calls one tool per turn, each with a stated reason.",
                                  "A gateway checks every action against the allowlist first.",
-                                 "Six turns later, a draft is saved."], discovery,
+                                 f"{_WORDS.get(ds['turns'], ds['turns'])} turns later, a draft is saved."], discovery,
                 [Clip("discovery-savings", captions=ds["captions"])], max_speed=2.2),
         Segment("06-escalate", ["When Claude hits something it shouldn't handle, it asks for help.", "Here the session expires.",
                                 "Claude has no credentials, so it calls request human.",
                                 "An operator signs in on the same browser, and discovery carries on."], escalate,
                 [Clip("discovery-expired", captions=dx["captions"])], max_speed=4.0),
-        Segment("07-artifact", ["The recorder turns that trace into an artifact.",
+        Segment("07-artifact", ["The recorder turns that trace into an artifact with a contract: typed inputs and outputs, "
+                                "the business outcomes it can return, and a success check bound to the member it was asked for.",
                                 "Each step has a ranked ladder of locators: role and name, then label, then table anchor, and coordinates only as a last resort.",
                                 "It stays a draft until an operator approves it."], artifact, hold=1.3),
         Segment("08-replay", ["Replay runs the approved artifact with no model at all.", "Blue outlines are actions; green are reads.",
@@ -614,8 +634,10 @@ def segments(m: dict) -> list[Segment]:
                               "The caller gets the balance; on disk, it's masked."], replay, [Clip("replay-success")]),
         Segment("09-buckets", ["Every run ends in exactly one of four buckets.",
                                "An unknown member is a business outcome: an answer, not a crash.",
-                               "Two matching savings rows is a failure, because replay won't guess."],
-                buckets, [Clip("replay-not-found", 40, 128, 900, 580), Clip("replay-ambiguous", 980, 128, 900, 580)]),
+                               "Two matching savings rows is a failure, because replay won't guess.",
+                               "And a page for the wrong member fails its identity check, so nothing is returned, and nothing is committed."],
+                buckets, [Clip("replay-not-found", 40, 128, 600, 405), Clip("replay-ambiguous", 660, 128, 600, 405),
+                          Clip("replay-wrong-member", 1280, 128, 600, 405)]),
         Segment("10-handoff", ["Anything that needs a person escalates.", "Here the session expires mid-run.",
                                "Automation never types credentials, so it hands a control token to an operator on the same live session.",
                                "While the human holds it, automation is locked out.",
@@ -629,8 +651,8 @@ def segments(m: dict) -> list[Segment]:
                               "And a redactor masks names, SSNs, and balances in every log and screenshot."], policy,
                 [Clip("replay-policy")]),
         Segment("13-evidence", ["Every run leaves evidence: an event log, masked screenshots, and a result.",
-                                "The stress matrix injects 38 fault conditions, no key needed.",
-                                "All 38 are classified correctly, with zero false successes and zero leaks."], evidence),
+                                f"The stress matrix injects {len(stress['matrix'])} fault conditions, no key needed.",
+                                f"All {len(stress['matrix'])} are classified correctly, with zero false successes and zero leaks."], evidence),
         Segment("14-evals", ["Evals keep measuring it.", "Telemetry on every run.", "A replay eval in CI.",
                              "And a live discovery eval that replays what Claude found, graded by a calibrated judge.",
                              "Across three prompt versions, task success rose from 82 to 100 percent."], evals),

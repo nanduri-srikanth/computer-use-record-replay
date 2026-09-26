@@ -146,6 +146,7 @@ REPLAYS = [  # clip, capability, inputs, faults, operator factory
     ("replay-success", "get_savings_balance", {"member_id": "M1001"}, {}, None),
     ("replay-not-found", "get_savings_balance", {"member_id": "M9999"}, {}, None),
     ("replay-ambiguous", "get_savings_balance", {"member_id": "M1002"}, {}, None),
+    ("replay-wrong-member", "get_savings_balance", {"member_id": "M1001"}, {"wrong_member": "M1003"}, None),
     ("replay-handoff", "get_savings_balance", {"member_id": "M1001"}, {"session_expire_at": 5},
      lambda: ScriptedOperator(rounds=[([human_sign_in], "RESUME")])),
     ("replay-dialog", "get_savings_balance", {"member_id": "M1001"}, {"unknown_dialog": True},

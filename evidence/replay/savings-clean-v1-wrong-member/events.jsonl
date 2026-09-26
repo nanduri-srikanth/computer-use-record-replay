@@ -1,20 +1,20 @@
-{"ts": 1790396634.793, "kind": "run_started", "capability": "get_savings_balance", "version": 1, "tenant": "tenant_a", "artifact_hash": "779be47bee0886b6"}
-{"ts": 1790396634.793, "kind": "effective_artifact", "hash": "779be47bee0886b6", "overlay": "none"}
-{"ts": 1790396634.817, "kind": "fingerprint_ok", "version": "4.2.1", "tenant": "tenant_a"}
-{"ts": 1790396634.832, "kind": "resolved", "step": "s1", "candidate": 0, "tried": ["LABEL_PROXIMITY=1"]}
-{"ts": 1790396634.838, "kind": "acted", "step": "s1", "action": "FILL", "risk": "REVERSIBLE_WRITE"}
-{"ts": 1790396634.841, "kind": "step_timing", "step": "s1", "seconds": 0.024}
-{"ts": 1790396634.855, "kind": "resolved", "step": "s2", "candidate": 0, "tried": ["ROLE_NAME=1"]}
-{"ts": 1790396634.898, "kind": "acted", "step": "s2", "action": "CLICK", "risk": "READ"}
-{"ts": 1790396635.069, "kind": "step_timing", "step": "s2", "seconds": 0.228}
-{"ts": 1790396635.084, "kind": "resolved", "step": "s3", "candidate": 0, "tried": ["TABLE_ANCHOR=1"]}
-{"ts": 1790396635.102, "kind": "acted", "step": "s3", "action": "CLICK", "risk": "READ"}
-{"ts": 1790396635.131, "kind": "step_timing", "step": "s3", "seconds": 0.063}
-{"ts": 1790396635.143, "kind": "resolved", "step": "s4", "candidate": 0, "tried": ["LABEL_PROXIMITY=1"]}
-{"ts": 1790396635.144, "kind": "acted", "step": "s4", "action": "EXTRACT", "risk": "READ"}
-{"ts": 1790396635.144, "kind": "step_timing", "step": "s4", "seconds": 0.012}
-{"ts": 1790396635.151, "kind": "resolved", "step": "s5", "candidate": 0, "tried": ["LABEL_PROXIMITY=1"]}
-{"ts": 1790396635.151, "kind": "acted", "step": "s5", "action": "EXTRACT", "risk": "READ"}
-{"ts": 1790396635.151, "kind": "step_timing", "step": "s5", "seconds": 0.007}
-{"ts": 1790396636.312, "kind": "failure", "reason": "IDENTITY_MISMATCH", "step": "s5", "expected": "success condition ['Account Detail', 'Account Type:', 'inputs.member_id']", "observed": "Account Detail\n\nMember: M**03\n\nAccount Type:\tSavings\nAccount No:\t****2346\nAvailable Balance:\t$***\nCurrency:\tUSD\n\nBack to Member Summary\n\nCoreOne Banking v4.2.1 | Tenant: tenant_a"}
-{"ts": 1790396636.312, "kind": "run_ended", "bucket": "FAILURE"}
+{"ts": 1790397914.207, "kind": "run_started", "capability": "get_savings_balance", "version": 1, "tenant": "tenant_a", "artifact_hash": "4e0780563a78d7ec"}
+{"ts": 1790397914.208, "kind": "effective_artifact", "hash": "4e0780563a78d7ec", "overlay": "none"}
+{"ts": 1790397914.231, "kind": "fingerprint_ok", "version": "4.2.1", "tenant": "tenant_a"}
+{"ts": 1790397914.247, "kind": "resolved", "step": "s1", "candidate": 0, "tried": ["LABEL_PROXIMITY=1"]}
+{"ts": 1790397914.253, "kind": "acted", "step": "s1", "action": "FILL", "risk": "REVERSIBLE_WRITE"}
+{"ts": 1790397914.255, "kind": "step_timing", "step": "s1", "seconds": 0.024}
+{"ts": 1790397914.268, "kind": "resolved", "step": "s2", "candidate": 0, "tried": ["ROLE_NAME=1"]}
+{"ts": 1790397914.316, "kind": "acted", "step": "s2", "action": "CLICK", "risk": "READ"}
+{"ts": 1790397914.491, "kind": "step_timing", "step": "s2", "seconds": 0.235}
+{"ts": 1790397914.506, "kind": "resolved", "step": "s3", "candidate": 0, "tried": ["TABLE_ANCHOR=1"]}
+{"ts": 1790397914.521, "kind": "acted", "step": "s3", "action": "CLICK", "risk": "READ"}
+{"ts": 1790397914.551, "kind": "step_timing", "step": "s3", "seconds": 0.059}
+{"ts": 1790397914.562, "kind": "resolved", "step": "s4", "candidate": 0, "tried": ["LABEL_PROXIMITY=1"]}
+{"ts": 1790397914.563, "kind": "acted", "step": "s4", "action": "EXTRACT", "risk": "READ"}
+{"ts": 1790397914.563, "kind": "step_timing", "step": "s4", "seconds": 0.012}
+{"ts": 1790397914.569, "kind": "resolved", "step": "s5", "candidate": 0, "tried": ["LABEL_PROXIMITY=1"]}
+{"ts": 1790397914.57, "kind": "acted", "step": "s5", "action": "EXTRACT", "risk": "READ"}
+{"ts": 1790397914.57, "kind": "step_timing", "step": "s5", "seconds": 0.007}
+{"ts": 1790397915.765, "kind": "failure", "reason": "IDENTITY_MISMATCH", "step": "s5", "expected": "success condition ['Account Detail', 'Account Type:', 'inputs.member_id']", "observed": "Account Detail\n\nMember: M**03\n\nAccount Type:\tSavings\nAccount No:\t****2346\nAvailable Balance:\t$***\nCurrency:\tUSD\n\nBack to Member Summary\n\nCoreOne Banking v4.2.1 | Tenant: tenant_a"}
+{"ts": 1790397915.765, "kind": "run_ended", "bucket": "FAILURE"}

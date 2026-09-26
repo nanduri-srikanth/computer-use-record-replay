@@ -1,10 +1,10 @@
-{"ts": 1790396633.175, "kind": "run_started", "capability": "get_savings_balance", "version": 1, "tenant": "tenant_a", "artifact_hash": "779be47bee0886b6"}
-{"ts": 1790396633.175, "kind": "effective_artifact", "hash": "779be47bee0886b6", "overlay": "none"}
-{"ts": 1790396633.197, "kind": "fingerprint_ok", "version": "4.2.1", "tenant": "tenant_a"}
-{"ts": 1790396633.213, "kind": "resolved", "step": "s1", "candidate": 0, "tried": ["LABEL_PROXIMITY=1"]}
-{"ts": 1790396633.22, "kind": "acted", "step": "s1", "action": "FILL", "risk": "REVERSIBLE_WRITE"}
-{"ts": 1790396633.222, "kind": "step_timing", "step": "s1", "seconds": 0.025}
-{"ts": 1790396633.236, "kind": "resolved", "step": "s2", "candidate": 0, "tried": ["ROLE_NAME=1"]}
-{"ts": 1790396633.28, "kind": "acted", "step": "s2", "action": "CLICK", "risk": "READ"}
-{"ts": 1790396633.309, "kind": "business_outcome", "step": "s2", "code": "MEMBER_NOT_FOUND"}
-{"ts": 1790396633.309, "kind": "run_ended", "bucket": "BUSINESS_OUTCOME"}
+{"ts": 1790397912.219, "kind": "run_started", "capability": "get_savings_balance", "version": 1, "tenant": "tenant_a", "artifact_hash": "4e0780563a78d7ec"}
+{"ts": 1790397912.219, "kind": "effective_artifact", "hash": "4e0780563a78d7ec", "overlay": "none"}
+{"ts": 1790397912.242, "kind": "fingerprint_ok", "version": "4.2.1", "tenant": "tenant_a"}
+{"ts": 1790397912.258, "kind": "resolved", "step": "s1", "candidate": 0, "tried": ["LABEL_PROXIMITY=1"]}
+{"ts": 1790397912.264, "kind": "acted", "step": "s1", "action": "FILL", "risk": "REVERSIBLE_WRITE"}
+{"ts": 1790397912.266, "kind": "step_timing", "step": "s1", "seconds": 0.024}
+{"ts": 1790397912.28, "kind": "resolved", "step": "s2", "candidate": 0, "tried": ["ROLE_NAME=1"]}
+{"ts": 1790397912.323, "kind": "acted", "step": "s2", "action": "CLICK", "risk": "READ"}
+{"ts": 1790397912.495, "kind": "business_outcome", "step": "s2", "code": "MEMBER_NOT_FOUND"}
+{"ts": 1790397912.496, "kind": "run_ended", "bucket": "BUSINESS_OUTCOME"}
