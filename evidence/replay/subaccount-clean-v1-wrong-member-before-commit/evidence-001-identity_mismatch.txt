@@ -1,0 +1,13 @@
+[nav]
+CoreOne
+
+Member Search
+[main]
+Review Sub-Account
+
+Member: M**03
+
+Account Type:	Money Market
+Initial Deposit:	$***
+
+CoreOne Banking v4.2.1 | Tenant: tenant_a

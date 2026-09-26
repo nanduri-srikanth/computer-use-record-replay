@@ -85,7 +85,7 @@ def main() -> None:
     lines += [
         "", "## Stress headline", "",
         f"- Matrix: **{sum(r['pass'] for r in m)}/{len(m)}** scenarios produced exactly the expected result, "
-        "across baseline, business outcomes, recoverable conditions, escalation, hard failures, drift, and safety.",
+        "across baseline, business outcomes, recoverable conditions, escalation, hard failures, drift, safety, and contract (identity, undeclared outcomes).",
         f"- Flakiness: with {int(st['flaky_rate'] * 100)}% of backend requests failing at random, "
         f"{st['success_rate']:.0%} of {st['repeats']} runs still succeeded via bounded retries.",
         f"- Determinism: {det['repeats']} baseline replays produced {det['distinct_traces']} distinct trace(s).",

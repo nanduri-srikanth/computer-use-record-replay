@@ -1,26 +1,26 @@
-{"ts": 1790314359.935, "kind": "run_started", "capability": "get_savings_balance", "version": 4, "tenant": "tenant_a", "artifact_hash": "87c5f2c205c6d1a2"}
-{"ts": 1790314359.935, "kind": "effective_artifact", "hash": "87c5f2c205c6d1a2", "overlay": "none"}
-{"ts": 1790314359.958, "kind": "fingerprint_ok", "version": "4.2.1", "tenant": "tenant_a"}
-{"ts": 1790314359.974, "kind": "resolved", "step": "s1", "candidate": 0, "tried": ["LABEL_PROXIMITY=1"]}
-{"ts": 1790314359.981, "kind": "acted", "step": "s1", "action": "FILL", "risk": "REVERSIBLE_WRITE"}
-{"ts": 1790314359.983, "kind": "step_timing", "step": "s1", "seconds": 0.025}
-{"ts": 1790314359.996, "kind": "resolved", "step": "s2", "candidate": 0, "tried": ["ROLE_NAME=1"]}
-{"ts": 1790314360.041, "kind": "acted", "step": "s2", "action": "CLICK", "risk": "READ"}
-{"ts": 1790314360.216, "kind": "step_timing", "step": "s2", "seconds": 0.233}
-{"ts": 1790314360.232, "kind": "resolved", "step": "s3", "candidate": 0, "tried": ["TABLE_ANCHOR=1"]}
-{"ts": 1790314360.246, "kind": "acted", "step": "s3", "action": "CLICK", "risk": "READ"}
-{"ts": 1790314360.321, "kind": "intervention_requested", "capability": "get_savings_balance", "step": "s3", "reason": "SESSION_EXPIRED: Session expired", "screenshot": "savings-session-expired-v4-session-expired-handoff/evidence-001-intervention"}
-{"ts": 1790314360.321, "kind": "claimed", "operator": "op-test", "seconds_to_claim": 0.0}
-{"ts": 1790314360.325, "kind": "human_event", "type": "change", "frame": "main", "tag": "input", "role": "textbox", "name": "", "label": "User Name:"}
-{"ts": 1790314360.362, "kind": "human_event", "type": "change", "frame": "main", "tag": "input", "role": "textbox", "name": "", "label": "Password:"}
-{"ts": 1790314360.362, "kind": "human_event", "type": "click", "frame": "main", "tag": "input", "role": "button", "name": "Sign In", "label": ""}
-{"ts": 1790314360.363, "kind": "human_event", "type": "submit", "frame": "main", "tag": "form", "role": "form", "name": "", "label": ""}
-{"ts": 1790314360.584, "kind": "handoff_ended", "outcome": "RESUMED", "transitions": ["AUTOMATION->PAUSE_REQUESTED (SESSION_EXPIRED: Session expired)", "PAUSE_REQUESTED->HUMAN_IN_CONTROL (claimed by op-test)", "HUMAN_IN_CONTROL->RESUME_REQUESTED (human requested resume)", "RESUME_REQUESTED->VERIFYING_CHECKPOINT (human input released)", "VERIFYING_CHECKPOINT->AUTOMATION (checkpoint passed, NEXT)"], "seconds_in_control": 0.26}
-{"ts": 1790314360.585, "kind": "step_timing", "step": "s3", "seconds": 0.368}
-{"ts": 1790314360.604, "kind": "resolved", "step": "s4", "candidate": 0, "tried": ["LABEL_PROXIMITY=1"]}
-{"ts": 1790314360.605, "kind": "acted", "step": "s4", "action": "EXTRACT", "risk": "READ"}
-{"ts": 1790314360.605, "kind": "step_timing", "step": "s4", "seconds": 0.02}
-{"ts": 1790314360.612, "kind": "resolved", "step": "s5", "candidate": 0, "tried": ["LABEL_PROXIMITY=1"]}
-{"ts": 1790314360.613, "kind": "acted", "step": "s5", "action": "EXTRACT", "risk": "READ"}
-{"ts": 1790314360.613, "kind": "step_timing", "step": "s5", "seconds": 0.008}
-{"ts": 1790314360.614, "kind": "run_ended", "bucket": "ESCALATED"}
+{"ts": 1790396746.818, "kind": "run_started", "capability": "get_savings_balance", "version": 4, "tenant": "tenant_a", "artifact_hash": "84745b4ce30812a8"}
+{"ts": 1790396746.818, "kind": "effective_artifact", "hash": "84745b4ce30812a8", "overlay": "none"}
+{"ts": 1790396746.841, "kind": "fingerprint_ok", "version": "4.2.1", "tenant": "tenant_a"}
+{"ts": 1790396746.858, "kind": "resolved", "step": "s1", "candidate": 0, "tried": ["LABEL_PROXIMITY=1"]}
+{"ts": 1790396746.864, "kind": "acted", "step": "s1", "action": "FILL", "risk": "REVERSIBLE_WRITE"}
+{"ts": 1790396746.867, "kind": "step_timing", "step": "s1", "seconds": 0.026}
+{"ts": 1790396746.879, "kind": "resolved", "step": "s2", "candidate": 0, "tried": ["ROLE_NAME=1"]}
+{"ts": 1790396746.923, "kind": "acted", "step": "s2", "action": "CLICK", "risk": "READ"}
+{"ts": 1790396747.091, "kind": "step_timing", "step": "s2", "seconds": 0.224}
+{"ts": 1790396747.106, "kind": "resolved", "step": "s3", "candidate": 0, "tried": ["TABLE_ANCHOR=1"]}
+{"ts": 1790396747.129, "kind": "acted", "step": "s3", "action": "CLICK", "risk": "READ"}
+{"ts": 1790396747.203, "kind": "intervention_requested", "capability": "get_savings_balance", "step": "s3", "reason": "SESSION_EXPIRED: Session expired", "screenshot": "savings-session-expired-v4-session-expired-handoff/evidence-001-intervention"}
+{"ts": 1790396747.203, "kind": "claimed", "operator": "op-test", "seconds_to_claim": 0.0}
+{"ts": 1790396747.207, "kind": "human_event", "type": "change", "frame": "main", "tag": "input", "role": "textbox", "name": "", "label": "User Name:"}
+{"ts": 1790396747.244, "kind": "human_event", "type": "change", "frame": "main", "tag": "input", "role": "textbox", "name": "", "label": "Password:"}
+{"ts": 1790396747.244, "kind": "human_event", "type": "click", "frame": "main", "tag": "input", "role": "button", "name": "Sign In", "label": ""}
+{"ts": 1790396747.244, "kind": "human_event", "type": "submit", "frame": "main", "tag": "form", "role": "form", "name": "", "label": ""}
+{"ts": 1790396747.465, "kind": "handoff_ended", "outcome": "RESUMED", "transitions": ["AUTOMATION->PAUSE_REQUESTED (SESSION_EXPIRED: Session expired)", "PAUSE_REQUESTED->HUMAN_IN_CONTROL (claimed by op-test)", "HUMAN_IN_CONTROL->RESUME_REQUESTED (human requested resume)", "RESUME_REQUESTED->VERIFYING_CHECKPOINT (human input released)", "VERIFYING_CHECKPOINT->AUTOMATION (checkpoint passed, NEXT)"], "seconds_in_control": 0.26}
+{"ts": 1790396747.466, "kind": "step_timing", "step": "s3", "seconds": 0.374}
+{"ts": 1790396747.484, "kind": "resolved", "step": "s4", "candidate": 0, "tried": ["LABEL_PROXIMITY=1"]}
+{"ts": 1790396747.486, "kind": "acted", "step": "s4", "action": "EXTRACT", "risk": "READ"}
+{"ts": 1790396747.486, "kind": "step_timing", "step": "s4", "seconds": 0.02}
+{"ts": 1790396747.493, "kind": "resolved", "step": "s5", "candidate": 0, "tried": ["LABEL_PROXIMITY=1"]}
+{"ts": 1790396747.493, "kind": "acted", "step": "s5", "action": "EXTRACT", "risk": "READ"}
+{"ts": 1790396747.493, "kind": "step_timing", "step": "s5", "seconds": 0.008}
+{"ts": 1790396747.494, "kind": "run_ended", "bucket": "ESCALATED"}

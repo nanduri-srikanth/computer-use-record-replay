@@ -1,6 +1,18 @@
 {
+  "v1": {
+    "approved_at": "2026-09-26T04:23:52+00:00",
+    "content_hash": "779be47bee0886b6"
+  },
+  "v2": {
+    "approved_at": "2026-09-26T04:24:51+00:00",
+    "content_hash": "a91ae36303e82767"
+  },
+  "v3": {
+    "approved_at": "2026-09-26T04:25:17+00:00",
+    "content_hash": "25ab36ca2ff747dc"
+  },
   "v4": {
-    "approved_at": "2026-09-25T21:36:08+00:00",
-    "content_hash": "87c5f2c205c6d1a2"
+    "approved_at": "2026-09-26T04:25:46+00:00",
+    "content_hash": "84745b4ce30812a8"
   }
 }

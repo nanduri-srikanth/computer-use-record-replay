@@ -22,9 +22,17 @@ class Block:
 
 
 @dataclass
+class Usage:
+    input_tokens: int = 0
+    output_tokens: int = 0
+
+
+@dataclass
 class Response:
     content: list[Block]
     stop_reason: str = "tool_use"
+    id: str = "msg_scripted"
+    usage: Usage = field(default_factory=Usage)
 
 
 Intent = Callable[[str], tuple[str, dict]]

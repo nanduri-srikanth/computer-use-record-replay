@@ -1,9 +1,11 @@
 name: get_savings_balance
 goal: Look up the member's savings account and report its available balance and currency.
 inputs:
-  - {name: member_id, type: string, pattern: '^M\d{4}$'}
+  - {name: member_id, type: string, pattern: '^M\d{4}$', description: 'Core banking member identifier, as typed into Member Search'}
 outputs:
-  - {name: balance, type: decimal, sensitive: true}
-  - {name: currency, type: string, pattern: '^[A-Z]{3}$'}
+  - {name: balance, type: decimal, sensitive: true, description: "Available balance of the member's savings account"}
+  - {name: currency, type: string, pattern: '^[A-Z]{3}$', description: ISO 4217 currency code of the balance}
+outcomes:
+  - {code: MEMBER_NOT_FOUND, description: 'No member has this ID. A legitimate answer: ask the caller to check the ID; do not retry.'}
 example_inputs:
   member_id: M1001

@@ -1,4 +1,4 @@
-"""cua CLI: discover, approve, deprecate, replay, list, propose-revision, serve-mock."""
+"""cua CLI: discover, approve, deprecate, replay, list, describe, propose-revision, serve-mock."""
 
 from __future__ import annotations
 
@@ -45,6 +45,15 @@ def _console(args):
 def cmd_list(args) -> None:
     for name, version, status in _store().list_all():
         print(f"{name:24} v{version:<3} {status}")
+
+
+def cmd_describe(args) -> None:
+    """The agent-facing contract of a capability: inputs, outputs and declared outcomes, without steps."""
+    store = _store()
+    cap = store.load(args.name, args.version) if args.version else store.latest(args.name)
+    if cap is None:
+        raise LifecycleError(f"no APPROVED version of {args.name}; pass --version for a draft")
+    print(json.dumps(cap.contract(), indent=2))
 
 
 def cmd_approve(args) -> None:
@@ -224,6 +233,10 @@ def main(argv: list[str] | None = None) -> int:
                        help="no operator: blockers fail instead of escalating, irreversible steps are refused")
 
     sub.add_parser("list", help="list artifacts").set_defaults(fn=cmd_list)
+    p = sub.add_parser("describe", help="print a capability's agent-facing contract (no steps)")
+    p.add_argument("name")
+    p.add_argument("--version", type=int)
+    p.set_defaults(fn=cmd_describe)
     for name, fn in (("approve", cmd_approve), ("deprecate", cmd_deprecate)):
         p = sub.add_parser(name)
         p.add_argument("name")

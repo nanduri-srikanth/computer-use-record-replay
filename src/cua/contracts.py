@@ -16,7 +16,7 @@ from typing import Annotated, Any, Literal, Union
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-SCHEMA_VERSION = 2
+SCHEMA_VERSION = 3  # v3: declared outcomes, field descriptions, input-bound checkpoints
 
 Verdict = Literal["NEXT", "RETRY"]  # after a recovery or handoff: advance, or run the same step again
 INPUT_REF = r"^inputs\.[a-z][a-z0-9_]*$"
@@ -81,6 +81,8 @@ class FailureReason(str, Enum):
     UNRECOVERABLE_BLOCKER = "UNRECOVERABLE_BLOCKER"
     OUTPUT_INVALID = "OUTPUT_INVALID"
     UNEXPECTED_ERROR = "UNEXPECTED_ERROR"  # anything unanticipated; still a structured FAILURE with evidence
+    IDENTITY_MISMATCH = "IDENTITY_MISMATCH"  # the expected page, but not showing this invocation's input (wrong member)
+    UNDECLARED_OUTCOME = "UNDECLARED_OUTCOME"  # the app gave a business answer this capability's contract does not declare
 
 
 class BusinessCode(str, Enum):
@@ -132,7 +134,24 @@ class TargetDescriptor(Strict):
 
 class Checkpoint(Strict):
     frame: str | None = None
-    text_present: list[str] = Field(min_length=1)
+    text_present: list[str] = Field(default_factory=list)
+    # Input values that must be on screen, by reference (never the value), e.g. "inputs.member_id":
+    # binds the state to *this* invocation, so a page for a different member cannot pass.
+    input_present: list[Annotated[str, Field(pattern=INPUT_REF)]] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def _not_empty(self) -> "Checkpoint":
+        if not self.text_present and not self.input_present:
+            raise ValueError("checkpoint needs text_present or input_present")
+        return self
+
+    @property
+    def input_names(self) -> list[str]:
+        return [r.split(".", 1)[1] for r in self.input_present]
+
+    def describe(self) -> str:
+        """For expected/observed strings: names input refs, never their values."""
+        return str(self.text_present + self.input_present)
 
 
 # ---------------------------------------------------------------- IO specs
@@ -144,6 +163,7 @@ class FieldSpec(Strict):
     pattern: str | None = None
     enum: list[str] | None = None
     minimum: Decimal | None = None
+    description: str | None = None  # for the calling agent: what the value means
     sensitive: bool = False  # returned to the caller, but masked in anything persisted (result.json, evidence)
 
     @model_validator(mode="after")
@@ -212,6 +232,12 @@ class Step(Strict):
         return self
 
 
+class OutcomeSpec(Strict):
+    """A business outcome this capability can return instead of outputs: a legitimate answer, not an error."""
+    code: BusinessCode
+    description: str  # when it happens and what the caller should do
+
+
 class Provenance(Strict):
     created_by: Literal["discovery", "hand-authored", "human-revision"]
     created_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat(timespec="seconds"))
@@ -232,6 +258,7 @@ class Capability(Strict):
     start_route: str = "/"
     inputs: list[FieldSpec]
     outputs: list[FieldSpec]
+    outcomes: list[OutcomeSpec] = Field(default_factory=list)  # the caller's branch table besides SUCCESS
     steps: list[Step] = Field(min_length=1)
     success: Checkpoint  # capability-level success condition, verified after the last step
     provenance: Provenance
@@ -251,7 +278,45 @@ class Capability(Strict):
         extracted = {s.output for s in self.steps if s.output}
         if extracted != out_names:
             raise ValueError(f"outputs {sorted(out_names - extracted)} never extracted")
+        sensitive_in = {f.name for f in self.inputs if f.sensitive}
+        typed_in = {f.name: f.type for f in self.inputs}
+        checkpoints = [("success", self.success)] + [(s.id, cp) for s in self.steps for cp in (s.pre, s.post) if cp]
+        for where, cp in checkpoints:
+            for name in cp.input_names:
+                if name not in in_names:
+                    raise ValueError(f"checkpoint at {where} references unknown input inputs.{name}")
+                if name in sensitive_in:  # checkpoint expectations reach logs; sensitive values never may
+                    raise ValueError(f"checkpoint at {where} references sensitive input inputs.{name}")
+                if typed_in[name] != "string":  # a decimal renders as "$1,000.50", never as the raw value
+                    raise ValueError(f"checkpoint at {where} can only bind string inputs, not inputs.{name}")
+        codes = [o.code for o in self.outcomes]
+        if len(codes) != len(set(codes)):
+            raise ValueError("duplicate outcome codes")
+        if (any(s.risk == RiskTier.IRREVERSIBLE for s in self.steps)
+                and BusinessCode.DECLINED_BY_OPERATOR not in codes):
+            raise ValueError("a capability with an IRREVERSIBLE step must declare outcome DECLINED_BY_OPERATOR")
         return self
+
+    def declares(self, code: str) -> bool:
+        return any(o.code.value == code for o in self.outcomes)
+
+    def contract(self) -> dict[str, Any]:
+        """What a calling agent needs and nothing it doesn't: no steps, no locators."""
+        def fields(specs: list[FieldSpec]) -> list[dict[str, Any]]:
+            return [f.model_dump(mode="json", exclude_none=True, exclude={"sensitive"}) | (
+                {"sensitive": True} if f.sensitive else {}) for f in specs]
+        return {
+            "name": self.name, "version": self.version, "status": self.status.value, "goal": self.goal,
+            "app": {"product": self.vendor_product, "versions": self.compatible_versions},
+            "inputs": fields(self.inputs), "outputs": fields(self.outputs),
+            "results": {
+                "SUCCESS": "outputs as declared",
+                "BUSINESS_OUTCOME": {o.code.value: o.description for o in self.outcomes},
+                "ESCALATED": "a human held control; outputs present if the run completed",
+                "FAILURE": "reason, step, expected, observed, evidence_ref",
+            },
+            "irreversible": any(s.risk == RiskTier.IRREVERSIBLE for s in self.steps),
+        }
 
     def content_hash(self) -> str:
         """Hash of everything except lifecycle status, so status changes keep identity."""

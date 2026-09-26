@@ -1,87 +1,156 @@
 # Report: Computer-Use Automation for Legacy Back-Office Apps
 
-The model discovers once; the artifact becomes a reviewed capability; deterministic replay is what an agent invokes in production. The design is drawn in [docs/WORKFLOW.md](docs/WORKFLOW.md) (10 diagrams), and the evidence is in [evidence/](evidence/README.md).
+The model discovers once. The artifact becomes a reviewed capability with a contract. Deterministic replay is what an agent invokes in production. Diagrams: [docs/WORKFLOW.md](docs/WORKFLOW.md). Evidence: [evidence/](evidence/README.md).
 
 ## 1. Architecture
 
-A single Python process; each module seam is where a service boundary would go later.
+A single Python process. Each module seam is where a service boundary would go later.
 
-- **Target.** `mockbank/` is a deliberately hostile "CoreOne Banking" app: framesets, nested tables, labels in neighbouring cells, no ids or test ids, div modals, native `alert`/`confirm`, three tenants, and 20+ injectable faults (a public site would not let me inject session expiry, 500s, or drift on demand).
-- **Surface seam** (`cua/surface`). A `Surface` protocol (observe, resolve, act, snapshot). `PlaywrightSurface` is the only module that imports Playwright; discovery, replay, and session control see only abstract `TargetDescriptor`s.
-- **Discovery** (`cua/discovery`). A manual tool loop on Claude (`claude-opus-5`, adaptive thinking, prompt caching, refusal fallbacks). Manual rather than the SDK tool runner because every proposed action must pass a deterministic gateway (allowlist, risk tier, approval), be verified, and be recorded before the next turn. The model proposes; code decides.
-- **Replay** (`cua/replay`). Deterministic and never imports the LLM client (a test checks the import graph). Product knowledge lives in a per-product *detector pack* (`config/detectors/coreone.yaml`: business outcomes, known dialogs, blockers, fingerprint rules), not in engine code.
-- **Cross-cutting.** `PolicyEngine` (shared by both phases), `SessionController` (control token, handoff), `Redactor` (every persistence path and everything sent to the model), `EvidenceSink`, and `ArtifactStore` (`DRAFT -> APPROVED -> DEPRECATED`; only APPROVED runs unattended).
-- **Evals and telemetry** ([docs/EVALS.md](docs/EVALS.md)). Every run appends a metrics row (allowlist refusals by stage, locator fallback rate, escalations, cost); the replay eval gates CI; a discovery eval checks that discovered artifacts replay like the golden ones, with a Sonnet 5 judge calibrated at 100% agreement on 35 labelled items. Its first run found four real defects, all fixed (task success 0.82 → 1.00).
+- **Target:** `mockbank/`, a deliberately hostile "CoreOne Banking". It has framesets, nested tables, labels in neighbouring cells, no ids, and native dialogs, plus 20+ injectable faults, which no public site would allow.
+- **Surface seam:** a `Surface` protocol (observe, resolve, act, snapshot). `PlaywrightSurface` is the only Playwright import.
+- **Discovery:** a manual Claude tool loop (`claude-opus-5`). It is manual so that every proposed action passes a deterministic gateway (allowlist, risk tier, approval) and is verified and recorded before the next turn. The model proposes; code decides.
+- **Replay:** never imports the LLM client, and a test enforces it. Product knowledge (outcome and error signatures, known dialogs, version fingerprint) lives in a per-product detector pack (`config/detectors/coreone.yaml`), not in engine code.
+- **Cross-cutting:**
+  - `PolicyEngine`, shared by both phases;
+  - `SessionController` (the control token);
+  - `Redactor` (every persistence path, and all model input);
+  - `ArtifactStore` (`DRAFT → APPROVED → DEPRECATED`; only APPROVED runs unattended).
 
-**Trade-offs.** DOM-assisted observation is precise on web; the model also gets a masked screenshot and a `click_point` tool, so a no-ref path exists (section 4). Synchronous and single-browser is fine for one session; queued workers are a deployment concern.
+**Trade-off:** DOM-assisted observation is precise on web, and a masked screenshot plus `click_point` gives the model a no-DOM path.
 
 ## 2. Artifact schema
 
-`cua/contracts.py`: Pydantic with `extra="forbid"` everywhere. A live-discovered example: [evidence/artifacts/get_savings_balance/v4.json](evidence/artifacts/get_savings_balance/v4.json).
+`cua/contracts.py`, schema v3. It uses Pydantic with `extra="forbid"` and is validated on every load. `cua describe <name>` prints the agent-facing contract, without steps.
 
-- **Contract first.** `name`, `version`, `status`, `goal`; typed `inputs`/`outputs` (`FieldSpec`: string / decimal / enum, pattern, minimum, `sensitive`); a capability-level `success` checkpoint; `compatible_versions`; `provenance`. A calling agent knows what it supplies and gets back without reading the steps.
-- **Steps.** `action` (CLICK/FILL/SELECT/EXTRACT), `target`, `risk`, `pre`/`post` checkpoints, and either `value_from: inputs.<name>` or `output`. Literal values are impossible by construction, so artifacts are parameterized and carry no customer data.
-- **Targets.** A frame plus a ranked, validated ladder of `LocatorCandidate`s: `ROLE_NAME` → `LABEL_PROXIMITY` (label in the neighbouring cell) → `TABLE_ANCHOR` (static text in the same row + column) → `COORDINATES`. Accessible name carries the most meaning, label adjacency survives restyling, and row anchors identify a row by what it *is* ("Savings"). The recorder keeps only candidates that match **exactly one** element, built from static text only (nothing with digits or anything redactable), so ids, amounts, and PII never become anchors.
-- **Coordinates are not a fallback.** They are used only for a target with no semantic candidate (the screenshot path, visible to the reviewer). Once a semantic locator exists and misses, the page has drifted; a blind click at a stored point cannot see a second matching row or a moved column, so replay stops as `TARGET_NOT_FOUND`.
-- **Reviewable, and approval is bound to content.** Plain JSON with human descriptions and a content hash that excludes status. `approve` records the hash in `approvals.json`; an APPROVED version edited after review, or flipped to APPROVED on disk with no recorded approval, is refused at load. Versions are immutable except for status; a revision is a new version with a parent pointer.
+- **Contract:**
+  - `inputs` and `outputs` are typed `FieldSpec`s with pattern, minimum, `description` and `sensitive`.
+  - `outcomes` declares every business outcome the capability can return, with what the caller should do; e.g. `MEMBER_NOT_FOUND`.
+  - The caller's branch table lives in the artifact. Any capability with an irreversible step must declare `DECLINED_BY_OPERATOR`.
+- **Steps:** `action`, `target`, `risk`, `pre`/`post` checkpoints, and either `value_from: inputs.<name>` or `output`. Literal values are impossible by construction, so artifacts are parameterized and hold no customer data.
+- **Targets:** a ranked ladder, `ROLE_NAME` → `LABEL_PROXIMITY` (label in the neighbouring cell) → `TABLE_ANCHOR` (row text + column) → `COORDINATES`.
+  - The recorder keeps only candidates that match exactly one element and are built from static text.
+  - Coordinates are used only for a target with no semantic candidate. If a semantic locator misses, the page has drifted, and replay stops rather than click blind.
+- **Checkpoints bind identity:**
+  - `text_present` is static page text. `input_present` holds refs like `inputs.member_id` whose runtime values must be on screen, which separates *this* member's page from a well-formed page for someone else.
+  - Discovery adds the bindings automatically, on the success condition and before every irreversible step.
+  - Only refs are stored, never values. Sensitive and non-string inputs cannot be bound, since amounts render as `$1,000.50`.
+- **Reviewable, and approval is bound to content:** approval records a content hash, and an APPROVED version edited afterwards is refused at load. Versions are immutable, and revisions point at their parent. An older schema version is refused with a "re-record or migrate" message.
 
 ## 3. Determinism & error handling
 
-**Determinism.** The same artifact and inputs try the same candidates in the same order. More than one match stops as `AMBIGUOUS_TARGET` instead of guessing a row. FILL values are read back and must equal the input, whatever locator found the field (truncation is `ACTION_FAILED`). Steps wait on checkpoints, not sleeps, and the `success` condition must hold before outputs are returned. Ten baseline replays in the stress harness produced one distinct trace.
+**Determinism:**
+- The same artifact and inputs try the same candidates in the same order.
+- More than one match stops as `AMBIGUOUS_TARGET`, never a guess.
+- FILL values are read back.
+- Steps wait on checkpoints, not sleeps, and `success` must hold before outputs are returned.
+- Ten replays produced one distinct trace.
 
-**Result contract.** Exactly one bucket for every exit, including unanticipated exceptions (`FAILURE UNEXPECTED_ERROR`, attributed to the step that was running, with evidence).
-
-| Bucket | Meaning | Examples (all exercised in `evidence/stress/`) |
+| Bucket | Meaning | Examples (all in `evidence/stress/`) |
 |---|---|---|
-| SUCCESS | typed outputs | clean runs, and runs that recovered |
-| BUSINESS_OUTCOME | a legitimate answer | `MEMBER_NOT_FOUND`, app-side `VALIDATION_REJECTED`, `DECLINED_BY_OPERATOR` |
-| ESCALATED | a human held the control token | resumed with outputs, or operator took over |
-| FAILURE | stop, with step / expected / observed / evidence ref | `TIMEOUT`, `APP_ERROR`, `AMBIGUOUS_TARGET`, `TARGET_NOT_FOUND`, `ACTION_FAILED`, `DRIFT_DETECTED`, `PERMISSION_DENIED` (the app refused), `POLICY_VIOLATION` (our allowlist refused), `UNRECOVERABLE_BLOCKER`, `HANDOFF_FAILED`, `VALIDATION_ERROR` |
+| SUCCESS | typed outputs | clean or recovered runs |
+| BUSINESS_OUTCOME | a *declared* legitimate answer | `MEMBER_NOT_FOUND`, `VALIDATION_REJECTED`, `DECLINED_BY_OPERATOR` |
+| ESCALATED | a human held the control token | resumed with outputs |
+| FAILURE | step / expected / observed / evidence | `IDENTITY_MISMATCH`, `UNDECLARED_OUTCOME`, `AMBIGUOUS_TARGET`, `TARGET_NOT_FOUND`, `TIMEOUT`, `APP_ERROR`, `DRIFT_DETECTED`, `PERMISSION_DENIED`, `POLICY_VIOLATION`, … |
 
-**Recoverable conditions** are handled within a per-step retry budget and listed on every result as `recoveries` without changing the bucket: dismiss a known interstitial, accept a known native alert, wait out a slow load or late-rendered table, reload after a transient 500, retry an obscured click. After each action, business-outcome and hard-failure detectors run first, then dialog checks, then the post-checkpoint, so a "not found" page is an answer, not an error.
+**Outcomes are checked against the contract.** A recognised business answer that the artifact does not declare returns `FAILURE UNDECLARED_OUTCOME`. The caller only branches on what was promised, so the artifact needs review.
 
-**Two deliberate asymmetries.** Irreversible steps are never retried: a 500 or timeout after Confirm fails with "verify in the app" (X28 shows exactly one commit). An unknown native dialog is dismissed and the run stops, because it could be confirming anything.
+**Recoverable conditions** stay within a per-step retry budget and are reported as `recoveries` without changing the bucket:
+- known interstitials and native alerts;
+- slow loads and late-rendered tables;
+- transient 500s;
+- obscured clicks.
 
-**Drift** is secondary (the UIs are stable) but caught: preflight fingerprints tenant and app version (`DRIFT_DETECTED` before any action), and column reorders or renamed labels give `TARGET_NOT_FOUND` with evidence, on live-discovered artifacts too. The stress matrix passes 38/38; with 30% of backend requests failing at random, 20/20 runs still succeeded.
+Detectors run before the post-checkpoint, so a "not found" page is an answer, not an error.
+
+**Deliberate asymmetries:**
+- **Irreversible steps are never retried.** A failure after Confirm says "verify in the app" (X28: exactly one commit).
+- **An unknown native dialog stops the run**, because it could be confirming anything.
+- **A page for the wrong member is `IDENTITY_MISMATCH`**, not a timeout, and it stops before the commit (X40).
+- **M1002 (two savings accounts) is `AMBIGUOUS_TARGET`**, not an outcome, because this capability cannot choose. The fix is an account-selector input.
+
+**Drift is caught:**
+- Preflight fingerprints tenant and version.
+- Moved columns and renamed labels give `TARGET_NOT_FOUND` with evidence.
+- The stress matrix passes 41/41, and runs with 30% random backend failures succeed 20 out of 20.
 
 ## 4. Heterogeneity & multi-tenant
 
-**Surfaces.** The flow references `TargetDescriptor`s, never Playwright objects, and the ladder maps to other surfaces: `ROLE_NAME` to UIA `ControlType`+`Name` or AX role+title, `LABEL_PROXIMITY` to labelled-by or spatial adjacency, `COORDINATES` to screen points. A desktop app is a new `Surface` (UIA / AX / screenshot) with the same four methods; schema, replay, policy, handoff, and redaction do not change. Discovery already has a screenshot-coordinate action (`click_point`) whose recorder output is the path a surface with no usable tree would take. Legacy web (framesets, table layouts, no test ids) is what the mock *is*.
+**Surfaces:** flows reference `TargetDescriptor`s only, and the ladder maps onto other surfaces:
+- `ROLE_NAME` → UIA `ControlType`+`Name` or AX role+title;
+- `LABEL_PROXIMITY` → labelled-by or spatial adjacency;
+- `COORDINATES` → screen points.
 
-**Tenants.** One **base artifact per vendor product and version**, plus a **tenant overlay** that can hold only label maps and locator overrides, so a tenant can re-point a control but cannot add steps, lower risk, or widen permissions. The effective artifact is deterministic (same inputs, same hash), and preflight reads tenant and version from the live UI. Demonstrated: `tenant_b` relabels "Member ID" → "Member #" and "Savings" → "Share Savings" and replays through the base plus a small overlay (X33); `tenant_c` on 4.3.0 is refused (X32). At scale, overlays are the per-tenant unit of review, and a version bump triggers rediscovery against the base.
+A desktop app is a new `Surface` with the same four methods; schema, replay, policy, handoff and redaction are unchanged. The mock already *is* a legacy web app.
+
+**Tenants:**
+- There is one base artifact per vendor product and version, plus a tenant overlay limited to label maps and locator overrides. An overlay cannot add steps, lower risk or widen permissions.
+- Identity bindings are data, so overlays never touch them.
+- Preflight reads tenant and version from the live UI.
+- `tenant_b` ("Member #", "Share Savings") replays through the base plus an overlay (X33). `tenant_c` on 4.3.0 is refused (X32).
+- A version bump triggers rediscovery against the base.
 
 ## 5. Escalation & handoff
 
-**Detecting "stuck".** Replay: an unknown dialog or a blocker such as session expiry. Discovery: the model calls `request_human`, or makes 3 turns without verified progress. Irreversible steps need a human decision (approval, below).
+**Stuck:**
+- In replay: an unknown dialog, or a blocker such as session expiry.
+- In discovery: `request_human`, or 3 turns without verified progress.
+- Irreversible steps need a human decision (§6).
 
-**Control transfer.** One `ControlToken` per live session: `AUTOMATION → PAUSE_REQUESTED → HUMAN_IN_CONTROL → RESUME_REQUESTED → VERIFYING_CHECKPOINT → AUTOMATION` (or `FAILED` / `CANCELLED`).
+**Control transfer:** one `ControlToken` per session.
+`AUTOMATION → PAUSE_REQUESTED → HUMAN_IN_CONTROL → RESUME_REQUESTED → VERIFYING_CHECKPOINT → AUTOMATION` (or `FAILED` / `CANCELLED`).
+- The token is enforced at the Surface seam: automation acting during human control raises an error.
+- The request carries capability, step, reason, a masked screenshot and redacted text.
+- The human works in **the same browser session**.
+- Human actions are captured without values, so passwords typed during re-login are never recorded.
+- Resume is verified by checkpoint: continue, retry the step, or hand back to the human.
+- An unclaimed request fails as `HANDOFF_FAILED`.
 
-- Enforced at the Surface seam: every automation `act()` passes a guard, so acting while a human holds the token raises and is logged.
-- The intervention request carries capability, step, reason, a masked screenshot, and redacted page text. The human works in **the same browser session** (the CLI forces a visible browser whenever an operator is attached).
-- Human actions are captured as event types and targets; **values are never captured**, so a password typed during re-login is never recorded.
-- Resume is verified, not trusted: checkpoints decide "human finished the step" (continue) or "step still needed" (retry); otherwise control returns to the human, up to a limit. A broken operator channel fails the handoff cleanly (`HANDOFF_FAILED`). An unclaimed request ends `HANDOFF_FAILED`; cancel or hold timeout ends `ESCALATED`.
+**In discovery**, after a human changes the page, the run restarts from the entry point and records only verified automation steps (live run `savings-session-expired`). It never restarts after a commit.
 
-**Discovery handoffs.** Captured events have no values, so they cannot become steps. After a human changes the page, discovery restarts from the entry point and the model redoes what the human did; only verified automation steps are recorded. The live run `savings-session-expired` shows this (Claude asked for help because it has no credentials; the operator signed in; discovery restarted and produced a complete artifact). No restart after a commit.
+Any run where a human held the token reports ESCALATED, so SUCCESS always means unattended.
 
-**Precedence.** Any run where a human held the token reports ESCALATED (with outputs if it finished), so SUCCESS always means fully unattended. Approval uses the same channel but does **not** transfer the token. **Mocked:** the operator surface is a terminal prompt (`CLIOperatorConsole`), and a scripted operator in tests; a real console implements the same five-method `OperatorConsole` protocol.
+**Mocked:** the operator surface is a terminal prompt. A real console implements the same five-method `OperatorConsole` protocol.
 
 ## 6. Safety
 
-- **Allowlist** (`config/policy.yaml`): schemes (http/https only), hosts, routes (dot segments resolved first), and action types. Checked at preflight for every step; on the destination of every click before it happens, coordinate clicks included; on **every frame** before each action and while waiting on every checkpoint (before and after the read); and once more before SUCCESS is returned. A redirect off-list stops as `POLICY_VIOLATION` with its stage (X34, X35), counted separately from the app's `PERMISSION_DENIED`.
-- **Risk tiers fail closed.** A click is IRREVERSIBLE if it matches an explicit rule, its label contains a commit keyword, or **it submits a POST form** (a structural signal that works without semantic markup). An artifact can raise its tier but never lower it below the policy's classification.
-- IRREVERSIBLE needs an operator **approval token** (HMAC-signed, single use, bound to run and step). No console, a timeout, or a denial commits nothing (X06, X37, X38). I chose *require confirmation* over *block* because opening accounts is the job, and over *flag* because a flag after an irreversible action is useless.
-- **DRAFTs never run unattended.** Only an APPROVED artifact whose content matches its recorded approval runs without an operator; `--attended` requires an attached operator and cannot be combined with `--unattended`.
-- **Redaction** in logs, evidence, artifacts, intervention and approval payloads, and model input: patterns (SSN, card numbers, dates, emails, account numbers, member ids, amounts), case-insensitive labels (the cell next to "Name:" or "Address:"), and known secrets. Screenshots mask the same plus password fields. Fields marked `sensitive` are masked outright in anything persisted, inputs and outputs alike (outputs are still returned to the caller). The store refuses to save a redactable artifact.
-- Credentials are used once at session bootstrap over HTTP and never touch the UI, logs, or model; the API key lives in the macOS Keychain. A seeded-canary leak scan over all evidence is part of the test suite; it caught two real leaks during development (balances quoted by the model, names on screen), both fixed.
+- **Allowlist** (`config/policy.yaml`: schemes, hosts, routes, action types). It is checked at preflight, on each click's destination before the click, on every frame while waiting, and before SUCCESS. An off-list redirect is `POLICY_VIOLATION`, distinct from the app's `PERMISSION_DENIED`.
+- **Risk tiers fail closed.** A click is IRREVERSIBLE if it matches a rule, has a commit keyword, or submits a POST form. An artifact can raise a tier, never lower it.
+- **Irreversible steps need an operator approval token** (HMAC-signed, single use, bound to run and step), requested only after identity is verified on screen.
+  - No console, a timeout or a denial commits nothing (X06, X37, X38).
+  - *Confirm* beats *block* because opening accounts is the job. It beats *flag* because a flag after an irreversible act is useless.
+- **Redaction** covers logs, evidence, artifacts, operator payloads and model input.
+  - It uses patterns (SSN, account and member numbers, dates, amounts, emails), label adjacency ("Name:"), and known secrets. Screenshots are masked too.
+  - A seeded-canary leak scan runs in the test suite.
+- **Prompt injection:** page text is untrusted, e.g. a customer note saying "ignore your instructions".
+  - The prompt says page text is data, but the real defence is that the model has no authority. Every proposal passes the same allowlist, risk and approval gate, and there is no URL tool.
+  - The worst case is a wrong recorded path, which review catches.
+  - Replay has no model to inject into.
+- **Credentials** are used once at session bootstrap, never in the UI, logs or model. The API key lives in the Keychain.
 
-**Limits.** Pattern and label redaction misses free-text PII in prose, and whatever screenshot masks miss goes to the API. Keyword/POST classification can over-flag (safe but noisy) and cannot see a GET that mutates state; explicit rules cover those. Tokens are process-local, and the approval ledger is tamper-evident, not tamper-proof (someone who can rewrite both files can forge it); production needs a shared signer (KMS) and audit store.
+**Limits:**
+- Free-text PII in prose evades pattern redaction.
+- Keyword/POST classification can over-flag, and it misses a state-changing GET unless a rule names it.
+- The approval ledger is tamper-evident, not tamper-proof. Production needs a KMS signer, an audit store and least-privilege credentials per capability.
 
 ## 7. Cuts
 
-**Left out.** A real operator console (the handoff mechanism is real; the UI is a terminal). Desktop and accessibility surfaces (designed, section 4; not built). Service boundaries, queues, multi-browser concurrency. Route canonicalization (replay never navigates by URL). Video recording of runs (masking applies to screenshots, not video frames).
+**Left out:**
+- a real operator console (the handoff mechanism is real; the UI is a terminal);
+- desktop and accessibility surfaces (designed, not built);
+- services and queues;
+- route canonicalization;
+- video capture.
 
-**Built beyond the core.** The DRAFT/APPROVED gate and cross-tenant overlays (two stretch goals); `propose-revision` and signed approval tokens (small extras). The evals layer, walkthrough video, and playground are presentation aids, not part of the graded core.
+**Beyond the core:**
+- two stretch goals: the DRAFT/APPROVED gate and tenant overlays;
+- a stability study;
+- an eval harness ([docs/EVALS.md](docs/EVALS.md));
+- an adversarial [independent review](docs/independent_review/EVALUATION.md), whose 18 findings are fixed and kept as regression tests.
 
-**Next.** (1) A web operator console on the same protocol (CDP screencast). (2) A UIA `Surface` for one desktop app. (3) A bounded, policy-checked LLM fallback for a single failed replay step, recorded as evidence. (4) Stability scoring from the flakiness harness to gate APPROVED. (5) A shared signer for tokens and approvals, with an audit log. (6) NER-based redaction for free-text PII.
-
-An independent review ([docs/independent_review/](docs/independent_review/EVALUATION.md)) wrote 48 adversarial tests; the 18 defects it found (coordinate fallback bypassing ambiguity and allowlist checks, approval not bound to content, sensitive inputs persisted, and smaller ones) are fixed and those tests now pass as regressions.
+**Next:**
+1. a web operator console (CDP screencast);
+2. a UIA `Surface`;
+3. a bounded, policy-checked single-step LLM fallback;
+4. stability scores gating APPROVED;
+5. a KMS signer and audit log;
+6. NER redaction for free text.

@@ -1,5 +1,5 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "name": "get_savings_balance",
   "version": 1,
   "status": "APPROVED",
@@ -14,6 +14,7 @@
       "name": "member_id",
       "type": "string",
       "pattern": "^M\\d{4}$",
+      "description": "Core banking member identifier, as typed into Member Search",
       "sensitive": false
     }
   ],
@@ -21,13 +22,21 @@
     {
       "name": "balance",
       "type": "decimal",
+      "description": "Available balance of the member's savings account",
       "sensitive": true
     },
     {
       "name": "currency",
       "type": "string",
       "pattern": "^[A-Z]{3}$",
+      "description": "ISO 4217 currency code of the balance",
       "sensitive": false
+    }
+  ],
+  "outcomes": [
+    {
+      "code": "MEMBER_NOT_FOUND",
+      "description": "No member has this ID. A legitimate answer: ask the caller to check the ID; do not retry."
     }
   ],
   "steps": [
@@ -52,7 +61,8 @@
         "frame": "main",
         "text_present": [
           "Member Search"
-        ]
+        ],
+        "input_present": []
       }
     },
     {
@@ -75,13 +85,15 @@
         "frame": "main",
         "text_present": [
           "Member Search"
-        ]
+        ],
+        "input_present": []
       },
       "post": {
         "frame": "main",
         "text_present": [
           "Member Summary"
-        ]
+        ],
+        "input_present": []
       }
     },
     {
@@ -105,13 +117,15 @@
         "frame": "main",
         "text_present": [
           "Member Summary"
-        ]
+        ],
+        "input_present": []
       },
       "post": {
         "frame": "main",
         "text_present": [
           "Account Detail"
-        ]
+        ],
+        "input_present": []
       }
     },
     {
@@ -135,7 +149,8 @@
         "frame": "main",
         "text_present": [
           "Account Detail"
-        ]
+        ],
+        "input_present": []
       }
     },
     {
@@ -159,7 +174,8 @@
         "frame": "main",
         "text_present": [
           "Account Detail"
-        ]
+        ],
+        "input_present": []
       }
     }
   ],
@@ -168,6 +184,9 @@
     "text_present": [
       "Account Detail",
       "Available Balance:"
+    ],
+    "input_present": [
+      "inputs.member_id"
     ]
   },
   "provenance": {

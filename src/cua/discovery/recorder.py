@@ -91,5 +91,6 @@ class Recorder:
         steps = [s.model_copy(update={"id": f"s{i}"}) for i, s in enumerate(self.steps, start=1)]
         return Capability(name=spec.name, version=1, goal=spec.goal, vendor_product=spec.vendor_product,
                           compatible_versions=[app_version], start_route=spec.start_route, inputs=spec.inputs,
-                          outputs=spec.outputs, steps=steps, success=success,
+                          outputs=spec.outputs, outcomes=list(getattr(spec, "outcomes", [])), steps=steps,
+                          success=success,
                           provenance=Provenance(created_by="discovery", source_run_id=run_id, model=model))

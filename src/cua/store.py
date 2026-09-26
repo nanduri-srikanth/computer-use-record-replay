@@ -16,7 +16,7 @@ import json
 from datetime import datetime, timezone
 from pathlib import Path
 
-from .contracts import ArtifactStatus, Capability
+from .contracts import SCHEMA_VERSION, ArtifactStatus, Capability
 from .redactor import Redactor
 
 _ALLOWED = {
@@ -77,7 +77,11 @@ class ArtifactStore:
         p = self._path(name, version)
         if not p.exists():
             raise LifecycleError(f"{name} v{version} not found")
-        cap = Capability.model_validate_json(p.read_text())
+        raw = json.loads(p.read_text())
+        if raw.get("schema_version") != SCHEMA_VERSION:  # say so plainly rather than fail as a hash or field mismatch
+            raise LifecycleError(f"{name} v{version} is schema v{raw.get('schema_version')}, this build reads "
+                                 f"v{SCHEMA_VERSION}; re-record or migrate it")
+        cap = Capability.model_validate(raw)
         self.verify(cap)
         return cap
 

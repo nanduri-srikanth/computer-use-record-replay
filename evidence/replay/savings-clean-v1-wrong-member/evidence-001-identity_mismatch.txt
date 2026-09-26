@@ -1,0 +1,17 @@
+[nav]
+CoreOne
+
+Member Search
+[main]
+Account Detail
+
+Member: M**03
+
+Account Type:	Savings
+Account No:	****2346
+Available Balance:	$***
+Currency:	USD
+
+Back to Member Summary
+
+CoreOne Banking v4.2.1 | Tenant: tenant_a

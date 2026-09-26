@@ -35,6 +35,42 @@ def test_artifact_round_trips():
     assert again == cap and again.content_hash() == cap.content_hash()
 
 
+@pytest.mark.parametrize("edit,message", [
+    (lambda b: b["success"].update(input_present=["inputs.nope"]), "unknown input"),
+    (lambda b: b["inputs"][0].update(sensitive=True), "sensitive input"),
+    (lambda b: b.update(outcomes=b["outcomes"] * 2), "duplicate outcome"),
+    (lambda b: b["inputs"][0].update(type="decimal", pattern=None), "only bind string inputs"),
+    (lambda b: b["success"].update(text_present=[], input_present=[]), "text_present or input_present"),
+])
+def test_contract_validation(edit, message):
+    body = json.loads(golden_cap().model_dump_json())
+    edit(body)
+    with pytest.raises(ValidationError, match=message):
+        Capability.model_validate(body)
+
+
+def test_irreversible_capability_must_declare_operator_decline():
+    body = json.loads(golden_cap("open_sub_account").model_dump_json())
+    body["outcomes"] = [o for o in body["outcomes"] if o["code"] != "DECLINED_BY_OPERATOR"]
+    with pytest.raises(ValidationError, match="DECLINED_BY_OPERATOR"):
+        Capability.model_validate(body)
+
+
+def test_contract_view_has_no_steps_and_lists_outcomes():
+    c = golden_cap().contract()
+    assert "steps" not in c and set(c["results"]["BUSINESS_OUTCOME"]) == {"MEMBER_NOT_FOUND"}
+    assert all(f.get("description") for f in c["inputs"] + c["outputs"])
+
+
+def test_older_schema_refused_with_clear_message(tmp_path):
+    body = json.loads(golden_cap().model_dump_json())
+    body["schema_version"] = 2
+    (tmp_path / "get_savings_balance").mkdir()
+    (tmp_path / "get_savings_balance" / "v1.json").write_text(json.dumps(body))
+    with pytest.raises(LifecycleError, match="schema v2"):
+        ArtifactStore(tmp_path).load("get_savings_balance", 1)
+
+
 def test_unknown_fields_rejected():
     body = json.loads(golden_cap().model_dump_json())
     body["steps"][0]["selector"] = "#member"
