@@ -1,5 +1,5 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "name": "open_sub_account",
   "version": 1,
   "status": "APPROVED",
@@ -14,6 +14,7 @@
       "name": "member_id",
       "type": "string",
       "pattern": "^M\\d{4}$",
+      "description": "Core banking member identifier, as typed into Member Search",
       "sensitive": false
     },
     {
@@ -24,12 +25,14 @@
         "MONEY_MARKET",
         "CHRISTMAS_CLUB"
       ],
+      "description": "Product type of the new sub-account",
       "sensitive": false
     },
     {
       "name": "initial_deposit",
       "type": "decimal",
       "minimum": "0.01",
+      "description": "Opening deposit; the application may enforce a higher minimum",
       "sensitive": false
     }
   ],
@@ -38,7 +41,22 @@
       "name": "confirmation_number",
       "type": "string",
       "pattern": "^CNF-\\d{8}$",
+      "description": "Confirmation number of the opened sub-account",
       "sensitive": false
+    }
+  ],
+  "outcomes": [
+    {
+      "code": "MEMBER_NOT_FOUND",
+      "description": "No member has this ID. A legitimate answer: ask the caller to check the ID; do not retry."
+    },
+    {
+      "code": "VALIDATION_REJECTED",
+      "description": "The application refused the request (deposit below its minimum, or the member is frozen). Nothing was opened; the detail says why."
+    },
+    {
+      "code": "DECLINED_BY_OPERATOR",
+      "description": "The operator declined the irreversible commit. Nothing was opened."
     }
   ],
   "steps": [
@@ -63,7 +81,8 @@
         "frame": "main",
         "text_present": [
           "Member Search"
-        ]
+        ],
+        "input_present": []
       }
     },
     {
@@ -86,13 +105,15 @@
         "frame": "main",
         "text_present": [
           "Member Search"
-        ]
+        ],
+        "input_present": []
       },
       "post": {
         "frame": "main",
         "text_present": [
           "Member Summary"
-        ]
+        ],
+        "input_present": []
       }
     },
     {
@@ -115,14 +136,16 @@
         "frame": "main",
         "text_present": [
           "Member Summary"
-        ]
+        ],
+        "input_present": []
       },
       "post": {
         "frame": "main",
         "text_present": [
           "Open Sub-Account",
           "Initial Deposit:"
-        ]
+        ],
+        "input_present": []
       }
     },
     {
@@ -146,7 +169,8 @@
         "frame": "main",
         "text_present": [
           "Initial Deposit:"
-        ]
+        ],
+        "input_present": []
       }
     },
     {
@@ -170,7 +194,8 @@
         "frame": "main",
         "text_present": [
           "Initial Deposit:"
-        ]
+        ],
+        "input_present": []
       }
     },
     {
@@ -193,13 +218,15 @@
         "frame": "main",
         "text_present": [
           "Initial Deposit:"
-        ]
+        ],
+        "input_present": []
       },
       "post": {
         "frame": "main",
         "text_present": [
           "Review Sub-Account"
-        ]
+        ],
+        "input_present": []
       }
     },
     {
@@ -222,13 +249,17 @@
         "frame": "main",
         "text_present": [
           "Review Sub-Account"
+        ],
+        "input_present": [
+          "inputs.member_id"
         ]
       },
       "post": {
         "frame": "main",
         "text_present": [
           "Sub-Account Opened"
-        ]
+        ],
+        "input_present": []
       }
     },
     {
@@ -252,7 +283,8 @@
         "frame": "main",
         "text_present": [
           "Sub-Account Opened"
-        ]
+        ],
+        "input_present": []
       }
     }
   ],
@@ -261,6 +293,9 @@
     "text_present": [
       "Sub-Account Opened",
       "Confirmation Number:"
+    ],
+    "input_present": [
+      "inputs.member_id"
     ]
   },
   "provenance": {

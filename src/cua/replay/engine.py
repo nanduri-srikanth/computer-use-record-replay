@@ -179,14 +179,16 @@ class ReplayEngine:
             ctx.ev.log("step_timing", step=step.id, seconds=round(time.time() - t_step, 3))
 
         # 7. capability-level success condition, read from a page that is still on the allowlist
-        ok = self._await_value(lambda: self._checkpoint_ok(effective.success), self.settings.checkpoint_timeout)
+        ok = self._await_value(lambda: self._checkpoint_ok(ctx, effective.success), self.settings.checkpoint_timeout)
         try:
             self._check_urls()
         except PolicyViolation as e:
             return self._policy_fail(ctx, e, "mid_flow", ctx.executed[-1], "page within allowlist at completion")
         if not ok:
-            return self._fail(ctx, FailureReason.SUCCESS_CONDITION_UNMET, ctx.executed[-1],
-                              f"success condition {effective.success.text_present}", self._observed(effective.success.frame))
+            reason = (FailureReason.IDENTITY_MISMATCH if self._identity_mismatch(ctx, effective.success)
+                      else FailureReason.SUCCESS_CONDITION_UNMET)
+            return self._fail(ctx, reason, ctx.executed[-1],
+                              f"success condition {effective.success.describe()}", self._observed(effective.success.frame))
         # 8. outputs
         try:
             typed = validate_fields(effective.outputs, ctx.outputs)
@@ -230,8 +232,8 @@ class ReplayEngine:
         self._check_urls()
         if human_completed:
             return
-        if step.pre and not self._pre_ok(step):
-            raise _NeedRecovery("pre", f"pre-checkpoint {step.pre.text_present}")
+        if step.pre and not self._pre_ok(ctx, step):
+            raise _NeedRecovery("pre", f"pre-checkpoint {step.pre.describe()}")
         try:
             res = resolve_ladder(self.surface, step.target)
         except TargetNotFound as e:
@@ -282,14 +284,22 @@ class ReplayEngine:
 
     # ================================================================ checkpoints and detectors
 
-    def _checkpoint_ok(self, cp: Checkpoint) -> bool:
+    def _checkpoint_ok(self, ctx: _Ctx, cp: Checkpoint) -> bool:
         text = self.surface.frame_text(cp.frame)
-        return all(t in text for t in cp.text_present)
+        return (all(t in text for t in cp.text_present)
+                and all(str(ctx.inputs[n]) in text for n in cp.input_names))
 
-    def _pre_ok(self, step: Step) -> bool:
+    def _identity_mismatch(self, ctx: _Ctx, cp: Checkpoint) -> bool:
+        if not cp.input_names:
+            return False
+        text = self.surface.frame_text(cp.frame)
+        return (all(t in text for t in cp.text_present)
+                and not all(str(ctx.inputs[n]) in text for n in cp.input_names))
+
+    def _pre_ok(self, ctx: _Ctx, step: Step) -> bool:
         if self.surface.dialog_visible(step.pre.frame, self.pack.dialog_selector) is not None:
             return False
-        return self._checkpoint_ok(step.pre)
+        return self._checkpoint_ok(ctx, step.pre)
 
     @staticmethod
     def _await_value(fn: Callable[[], Any], timeout: float) -> Any:
@@ -305,7 +315,7 @@ class ReplayEngine:
         end = time.time() + self.settings.checkpoint_timeout
         while True:
             self._check_urls()  # a redirect off the allowlist stops the run here
-            ok = self._checkpoint_ok(step.post)  # checkpoint first, so the scan below sees the same page
+            ok = self._checkpoint_ok(ctx, step.post)  # checkpoint first, so the scan below sees the same page
             self._check_urls()  # and again after the read: a navigation that landed meanwhile never counts as passing
             d = ctx.det.scan()
             if d and d.terminal:
@@ -313,7 +323,7 @@ class ReplayEngine:
             if ok and d is None:
                 return
             if d is not None or time.time() >= end:
-                raise _NeedRecovery("post", f"post-checkpoint {step.post.text_present}")
+                raise _NeedRecovery("post", f"post-checkpoint {step.post.describe()}")
             time.sleep(POLL)
 
     def _detect_after_action(self, ctx: _Ctx, step: Step) -> None:
@@ -323,6 +333,11 @@ class ReplayEngine:
 
     def _outcome(self, ctx: _Ctx, step: Step, d: Detection) -> NoReturn:
         if d.kind == "BUSINESS":
+            if not ctx.cap.declares(d.code):  # the caller branches on declared outcomes only; anything else is a contract gap
+                declared = [o.code.value for o in ctx.cap.outcomes]
+                self._stop(self._fail(ctx, FailureReason.UNDECLARED_OUTCOME, step.id,
+                                      f"a declared outcome {declared} or the post-checkpoint",
+                                      f"{d.code}: {d.detail}"))
             ctx.ev.log("business_outcome", step=step.id, code=d.code)
             self._stop(BusinessOutcome(code=BusinessCode(d.code), step=step.id, detail=d.detail))
         self._stop(self._fail(ctx, FailureReason(d.code), step.id, "no failure detector", d.detail))
@@ -370,7 +385,7 @@ class ReplayEngine:
             self._recovered(ctx, step, "TRANSIENT_APP_ERROR", f"reloaded after: {d.detail}")
             return self._recheck(ctx, step, need)
         if exhausted:
-            self._stop(self._fail(ctx, _BUDGET_REASON[need.phase], step.id, need.expected,
+            self._stop(self._fail(ctx, self._budget_reason(ctx, step, need), step.id, need.expected,
                                   f"retry budget exhausted; {self._observed(self._frame_of(step))}"))
         if need.phase == "action":
             time.sleep(POLL * 3)
@@ -380,7 +395,7 @@ class ReplayEngine:
         started = time.time()
         end = started + self.settings.slow_load_budget
         while time.time() < end:
-            if self._condition_met(step, need):
+            if self._condition_met(ctx, step, need):
                 self._recovered(ctx, step, "SLOW_LOAD", f"waited {time.time() - started:.1f}s for {need.phase}")
                 return "NEXT" if need.phase == "post" else "RETRY"
             if ctx.det.scan() is not None:
@@ -388,8 +403,15 @@ class ReplayEngine:
             time.sleep(POLL)
         note = ("irreversible step already performed and not retried; verify the result in the app. "
                 if ctx.step_risk.get(step.id) == RiskTier.IRREVERSIBLE and need.phase == "post" else "")
-        self._stop(self._fail(ctx, _BUDGET_REASON[need.phase], step.id, need.expected,
+        self._stop(self._fail(ctx, self._budget_reason(ctx, step, need), step.id, need.expected,
                               note + self._observed(self._frame_of(step))))
+
+    def _budget_reason(self, ctx: _Ctx, step: Step, need: _NeedRecovery) -> FailureReason:
+        """A checkpoint whose page arrived but shows a different input value is not a slow page: say so."""
+        cp = step.pre if need.phase == "pre" else step.post if need.phase == "post" else None
+        if cp is not None and self._identity_mismatch(ctx, cp):
+            return FailureReason.IDENTITY_MISMATCH
+        return _BUDGET_REASON[need.phase]
 
     def _recheck(self, ctx: _Ctx, step: Step, need: _NeedRecovery) -> Verdict:
         if need.phase != "post":
@@ -397,11 +419,11 @@ class ReplayEngine:
         self._await_post(ctx, step)  # may raise _NeedRecovery again; the caller's loop handles it
         return "NEXT"
 
-    def _condition_met(self, step: Step, need: _NeedRecovery) -> bool:
+    def _condition_met(self, ctx: _Ctx, step: Step, need: _NeedRecovery) -> bool:
         if need.phase == "pre":
-            return self._pre_ok(step)
+            return self._pre_ok(ctx, step)
         if need.phase == "post":
-            return self._checkpoint_ok(step.post)
+            return self._checkpoint_ok(ctx, step.post)
         try:
             resolve_ladder(self.surface, step.target)
             return True
@@ -419,9 +441,9 @@ class ReplayEngine:
             self._stop(self._fail(ctx, FailureReason.UNRECOVERABLE_BLOCKER, step.id, "no blocker", reason))
 
         def verify() -> Verdict | None:
-            if step.post and self._checkpoint_ok(step.post) and ctx.det.scan() is None:
+            if step.post and self._checkpoint_ok(ctx, step.post) and ctx.det.scan() is None:
                 return "NEXT"
-            if (step.pre is None or self._pre_ok(step)) and ctx.det.scan() is None:
+            if (step.pre is None or self._pre_ok(ctx, step)) and ctx.det.scan() is None:
                 return "RETRY"
             return None
 

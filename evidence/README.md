@@ -5,7 +5,7 @@ Everything here was produced by running the system, not written by hand:
 - `discovery/`: real LLM-driven discovery runs against the live mock app (`scripts/live_evidence.py`). Requested model `claude-opus-5` with server-side refusal fallback enabled; the table shows which model actually served each run.
 - `artifacts/`: the capability artifacts those runs recorded (typed, versioned, reviewable).
 - `replay/`: deterministic replays of the discovered artifacts, with no LLM involved, including error and exceptional states.
-- `stress/`: the stress matrix (38/38 scenarios matched), a flakiness study, and a determinism check (`scripts/stress.py`). See [stress/SUMMARY.md](stress/SUMMARY.md).
+- `stress/`: the stress matrix (41/41 scenarios matched), a flakiness study, and a determinism check (`scripts/stress.py`). See [stress/SUMMARY.md](stress/SUMMARY.md).
 
 **What is mocked.** The operator is scripted in these runs so they can run unattended: it approves or declines commits, acknowledges dialogs, and signs in on the live page. Its actions still go through the real control-token handoff and are captured like a human's. Interactively, `cua replay` / `cua discover` use the terminal operator console with a visible browser.
 
@@ -50,7 +50,7 @@ Notable behaviour (derived from each run's events):
 
 ## Stress headline
 
-- Matrix: **38/38** scenarios produced exactly the expected result, across baseline, business outcomes, recoverable conditions, escalation, hard failures, drift, and safety.
+- Matrix: **41/41** scenarios produced exactly the expected result, across baseline, business outcomes, recoverable conditions, escalation, hard failures, drift, and safety.
 - Flakiness: with 30% of backend requests failing at random, 100% of 20 runs still succeeded via bounded retries.
 - Determinism: 10 baseline replays produced 1 distinct trace(s).
 - Data handling: PII and secret scan over all evidence: clean.

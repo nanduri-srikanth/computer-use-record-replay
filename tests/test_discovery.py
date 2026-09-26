@@ -52,6 +52,11 @@ def test_discovery_records_draft_that_replays(reset, discover, store, engine):
     assert all(c.kind != LocatorKind.ROLE_NAME for c in view)
     assert all(c.kind != LocatorKind.COORDINATES for s in cap.steps for c in s.target.candidates)
     assert cap.steps[1].post.text_present == ["Member Summary"]
+    # the contract comes from the spec; success is bound to the member that was searched
+    assert [o.code.value for o in cap.outcomes] == ["MEMBER_NOT_FOUND"]
+    assert cap.inputs[0].description and cap.success.input_present == ["inputs.member_id"]
+    usage = [e for e in result.events if e["kind"] == "model_usage"]
+    assert usage and all(e["message_id"] == "msg_scripted" for e in usage)
     # the model saw masked data only
     sent = json.dumps([c["messages"][0]["content"][0]["text"] for c in llm.calls])
     assert "123-45-6789" not in sent and "M1001" not in sent
@@ -81,6 +86,8 @@ def test_discovery_irreversible_requires_approval(reset, discover, store, app_st
     assert result.status == "DRAFT_SAVED", result.reason
     confirm = next(s for s in result.capability.steps if s.target.candidates[0].name == "Confirm")
     assert confirm.risk == RiskTier.IRREVERSIBLE
+    assert confirm.pre.input_present == ["inputs.member_id"]  # identity verified before the commit
+    assert "DECLINED_BY_OPERATOR" in {o.code.value for o in result.capability.outcomes}
     assert len(op.approvals) == 1 and len(app_state()["created"]) == 1
     assert all(s.value_from is None or s.value_from.startswith("inputs.") for s in result.capability.steps)
 

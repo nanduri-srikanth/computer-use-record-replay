@@ -1,0 +1,21 @@
+name: test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - name: Install
+        run: |
+          uv venv -p 3.12
+          uv pip install -e ".[dev]"
+          .venv/bin/playwright install --with-deps chromium
+      - name: Offline suite (scripted model, no API key)
+        run: make test

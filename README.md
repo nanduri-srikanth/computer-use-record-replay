@@ -1,8 +1,10 @@
 # Legacy back-office automation: LLM discovery, deterministic replay
 
-Automates legacy bank back-office apps that have no API. Claude drives the real UI once to discover a procedure; the successful run is recorded as a typed, versioned capability artifact; after human approval it replays deterministically with no LLM in the loop. Every replay ends in exactly one of SUCCESS, BUSINESS_OUTCOME, ESCALATED, or FAILURE, and a human can take over the live browser session when the system is stuck.
+[![test](https://github.com/nanduri-srikanth/interface-ai-takehome/actions/workflows/test.yml/badge.svg)](https://github.com/nanduri-srikanth/interface-ai-takehome/actions/workflows/test.yml)
 
-- Video walkthrough (4 min, narrated): [docs/walkthrough/walkthrough.mp4](docs/walkthrough/walkthrough.mp4), script in [narration.md](docs/walkthrough/narration.md); interactive replay simulator: [docs/walkthrough/playground.html](docs/walkthrough/playground.html) (open in a browser)
+Automates legacy bank back-office apps that have no API. Claude drives the real UI once to discover a procedure; the successful run is recorded as a typed, versioned capability artifact; after human approval it replays deterministically with no LLM in the loop. Each artifact declares its typed inputs, outputs, and the business outcomes it can return. Every replay ends in exactly one of SUCCESS, BUSINESS_OUTCOME, ESCALATED, or FAILURE, and a human can take over the live browser session when the system is stuck.
+
+- Video walkthrough (4 min, narrated; recorded before schema v3 added declared outcomes and identity checkpoints): [docs/walkthrough/walkthrough.mp4](docs/walkthrough/walkthrough.mp4), script in [narration.md](docs/walkthrough/narration.md); interactive replay simulator: [docs/walkthrough/playground.html](docs/walkthrough/playground.html) (open in a browser)
 - Write-up: [REPORT.md](REPORT.md)
 - Evidence (real discovery runs, replays, stress matrix): [evidence/README.md](evidence/README.md)
 - Design diagrams: [docs/WORKFLOW.md](docs/WORKFLOW.md) (browse `docs/diagrams/index.html`)
@@ -27,7 +29,7 @@ Other config lives in `config/`: `policy.yaml` (allowlist, risk rules), `tenants
 ## Run without live services
 
 ```bash
-make test                       # 213 tests: acceptance, 38 stress scenarios, units, discovery (scripted model), metrics, evals, invariants, independent review
+make test                       # 224 tests: acceptance, 41 stress scenarios, units, discovery (scripted model), metrics, evals, invariants, independent review
 make evidence                   # regenerate evidence/stress: matrix, flakiness study, determinism check
 ```
 
@@ -49,12 +51,18 @@ scripts/with_api_key.sh env PYTHONPATH=src:. .venv/bin/python -m cua.cli discove
 
 # review artifacts/get_savings_balance/v2.json, then approve it (v1 becomes DEPRECATED)
 cua approve get_savings_balance 2
+cua describe get_savings_balance     # the agent-facing contract: inputs, outputs, declared outcomes (no steps)
 
 # replay with typed inputs, no LLM
 cua replay get_savings_balance --inputs '{"member_id": "M1001"}' --unattended   # SUCCESS {balance, currency}
 cua replay get_savings_balance --inputs '{"member_id": "M9999"}' --unattended   # BUSINESS_OUTCOME MEMBER_NOT_FOUND
 cua replay get_savings_balance --inputs '{"member_id": "abc"}'   --unattended   # FAILURE VALIDATION_ERROR (UI never touched)
 cua replay get_savings_balance --inputs '{"member_id": "M1002"}' --unattended   # FAILURE AMBIGUOUS_TARGET
+
+# the app serves a well-formed page for a different member: identity checkpoint refuses it
+curl -s -XPOST localhost:5055/__admin/reset -H 'content-type: application/json' -d '{"faults": {"wrong_member": "M1003"}}'
+cua replay get_savings_balance --inputs '{"member_id": "M1001"}' --unattended   # FAILURE IDENTITY_MISMATCH
+curl -s -XPOST localhost:5055/__admin/reset -H 'content-type: application/json' -d '{}'
 ```
 
 The goal, typed inputs, and typed outputs for discovery come from `specs/*.yaml`. `specs/open_sub_account.yaml` exercises the irreversible path: the terminal asks you to approve the commit, with a redacted summary.
@@ -67,7 +75,7 @@ cua replay get_savings_balance --inputs '{"member_id": "M1001"}'
 #   terminal: type c to take control, click "Acknowledge" in the browser, type r to resume -> ESCALATED with outputs
 ```
 
-Faults available through `/__admin/reset` are listed in `mockbank/app.py` (`Faults`): interstitials, unknown dialogs, slow loads, transient and persistent 500s, session expiry, native alert/confirm, redirects off the allowlist, invisible click-eating overlays, input truncation, late-rendered tables, column reorder, label rename, frame rename, flaky backends, and slow commits.
+Faults available through `/__admin/reset` are listed in `mockbank/app.py` (`Faults`): interstitials, unknown dialogs, slow loads, transient and persistent 500s, session expiry, native alert/confirm, redirects off the allowlist, invisible click-eating overlays, input truncation, late-rendered tables, column reorder, label rename, frame rename, flaky backends, slow commits, and a summary page for the wrong member.
 
 **Evidence from real runs** is regenerated with `make evidence-live` (about 5 discovery runs plus replays; cost is cents thanks to prompt caching).
 
@@ -93,6 +101,7 @@ cua metrics               # runtime ledger summary (runs/metrics.jsonl): outcome
 | `eval replay\|discovery\|calibrate-judge\|scorecard\|report` | evals (see [docs/EVALS.md](docs/EVALS.md)) |
 | `metrics [--ledger]` | runtime metrics ledger summary |
 | `list` | artifacts and status |
+| `describe NAME [--version N]` | agent-facing contract: typed inputs/outputs with descriptions, declared outcomes |
 | `serve-mock [--port]` | run the mock app |
 
 ## Layout

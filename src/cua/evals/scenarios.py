@@ -73,6 +73,7 @@ class Scenario:
     handoffs: int | None = None
     max_ui_actions: int | None = None
     shows: str = ""  # what this proves, for the evidence summary
+    edit: Callable[[Capability], Capability] | None = None  # replay a variant of the golden (e.g. a contract gap)
 
 
 def op(**kw) -> Callable[[], ScriptedOperator]:
@@ -174,6 +175,16 @@ SCENARIOS: list[Scenario] = [
     Scenario("X37", "safety", "Irreversible step with no operator", SUBACCOUNT, SUB, "FAILURE", "HANDOFF_FAILED", created=0),
     Scenario("X38", "safety", "Approval never arrives", SUBACCOUNT, SUB, "FAILURE", "HANDOFF_FAILED", operator=op(approve=None),
              created=0),
+    # contract: identity binding and declared outcomes
+    Scenario("X39", "contract", "Summary serves a different member", SAVINGS, M1001, "FAILURE", "IDENTITY_MISMATCH",
+             faults={"wrong_member": "M1003"},
+             shows="Success is bound to inputs.member_id: a well-formed page for the wrong member never returns outputs"),
+    Scenario("X40", "contract", "Wrong member reaches the commit review", SUBACCOUNT, SUB, "FAILURE", "IDENTITY_MISMATCH",
+             faults={"wrong_member": "M1003"}, operator=op(approve=True), created=0,
+             shows="Identity checked before the irreversible step: nothing is committed for the wrong member"),
+    Scenario("X41", "contract", "Business outcome the artifact does not declare", SAVINGS, {"member_id": "M9999"},
+             "FAILURE", "UNDECLARED_OUTCOME", edit=lambda c: c.model_copy(update={"outcomes": []}),
+             shows="The caller only branches on declared outcomes; anything else is a contract gap, not an answer"),
 ]
 
 
@@ -203,7 +214,8 @@ def run_scenario(sc: Scenario, base_url: str, runs_dir: Path, redactor: Redactor
         reset_app(base_url, sc.tenant, sc.faults)
         engine = ReplayEngine(surface, runs_dir=runs_dir, redactor=redactor, console=sc.operator(),
                               settings=Settings.load(**FAST), overlay_root=ROOT, tenants=tenants)
-        report = engine.run(load_cap(sc.capability), sc.inputs, sc.tenant, run_id=f"{sc.id}-{_slug(sc.title)}")
+        cap = load_cap(sc.capability)
+        report = engine.run(sc.edit(cap) if sc.edit else cap, sc.inputs, sc.tenant, run_id=f"{sc.id}-{_slug(sc.title)}")
     finally:
         surface.close()
     return report, check(sc, report, base_url)

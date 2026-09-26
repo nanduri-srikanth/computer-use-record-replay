@@ -1,11 +1,15 @@
 name: open_sub_account
 goal: Open a new sub-account of the given type for the member with the given initial deposit, and report the confirmation number.
 inputs:
-  - {name: member_id, type: string, pattern: '^M\d{4}$'}
-  - {name: account_type, type: enum, enum: [SAVINGS, MONEY_MARKET, CHRISTMAS_CLUB]}
-  - {name: initial_deposit, type: decimal, minimum: '0.01'}
+  - {name: member_id, type: string, pattern: '^M\d{4}$', description: 'Core banking member identifier, as typed into Member Search'}
+  - {name: account_type, type: enum, enum: [SAVINGS, MONEY_MARKET, CHRISTMAS_CLUB], description: Product type of the new sub-account}
+  - {name: initial_deposit, type: decimal, minimum: '0.01', description: 'Opening deposit; the application may enforce a higher minimum'}
 outputs:
-  - {name: confirmation_number, type: string, pattern: '^CNF-\d{8}$'}
+  - {name: confirmation_number, type: string, pattern: '^CNF-\d{8}$', description: Confirmation number of the opened sub-account}
+outcomes:
+  - {code: MEMBER_NOT_FOUND, description: 'No member has this ID. Nothing was opened.'}
+  - {code: VALIDATION_REJECTED, description: 'The application refused the request (deposit below its minimum, or the member is frozen). Nothing was opened; the detail says why.'}
+  - {code: DECLINED_BY_OPERATOR, description: 'The operator declined the irreversible commit. Nothing was opened.'}
 example_inputs:
   member_id: M1001
   account_type: MONEY_MARKET

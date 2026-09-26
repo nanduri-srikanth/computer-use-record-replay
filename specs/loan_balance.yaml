@@ -3,8 +3,10 @@
 name: loan_balance
 goal: Look up the member's personal loan account and report its outstanding loan balance.
 inputs:
-  - {name: member_id, type: string, pattern: '^M\d{4}$'}
+  - {name: member_id, type: string, pattern: '^M\d{4}$', description: 'Core banking member identifier, as typed into Member Search'}
 outputs:
   - {name: loan_balance, type: decimal, sensitive: true}
+outcomes:
+  - {code: MEMBER_NOT_FOUND, description: 'No member has this ID.'}
 example_inputs:
   member_id: M1001
