@@ -52,7 +52,7 @@ Notable behaviour (derived from each run's events):
 
 ## Stress headline
 
-- Matrix: **41/41** scenarios produced exactly the expected result, across baseline, business outcomes, recoverable conditions, escalation, hard failures, drift, and safety.
+- Matrix: **41/41** scenarios produced exactly the expected result, across baseline, business outcomes, recoverable conditions, escalation, hard failures, drift, safety, and contract (identity, undeclared outcomes).
 - Flakiness: with 30% of backend requests failing at random, 100% of 20 runs still succeeded via bounded retries.
 - Determinism: 10 baseline replays produced 1 distinct trace(s).
 - Data handling: PII and secret scan over all evidence: clean.
