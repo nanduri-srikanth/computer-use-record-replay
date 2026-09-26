@@ -1,22 +1,22 @@
-{"ts": 1790314262.725, "kind": "run_started", "capability": "open_sub_account", "version": 1, "tenant": "tenant_a", "artifact_hash": "6965507254e3f718"}
-{"ts": 1790314262.726, "kind": "effective_artifact", "hash": "6965507254e3f718", "overlay": "none"}
-{"ts": 1790314262.748, "kind": "fingerprint_ok", "version": "4.2.1", "tenant": "tenant_a"}
-{"ts": 1790314262.764, "kind": "resolved", "step": "s1", "candidate": 0, "tried": ["LABEL_PROXIMITY=1"]}
-{"ts": 1790314262.77, "kind": "acted", "step": "s1", "action": "FILL", "risk": "REVERSIBLE_WRITE"}
-{"ts": 1790314262.772, "kind": "step_timing", "step": "s1", "seconds": 0.024}
-{"ts": 1790314262.785, "kind": "resolved", "step": "s2", "candidate": 0, "tried": ["ROLE_NAME=1"]}
-{"ts": 1790314262.834, "kind": "acted", "step": "s2", "action": "CLICK", "risk": "READ"}
-{"ts": 1790314262.841, "kind": "step_timing", "step": "s2", "seconds": 0.068}
-{"ts": 1790314262.859, "kind": "resolved", "step": "s3", "candidate": 0, "tried": ["ROLE_NAME=1"]}
-{"ts": 1790314262.885, "kind": "acted", "step": "s3", "action": "CLICK", "risk": "READ"}
-{"ts": 1790314263.052, "kind": "step_timing", "step": "s3", "seconds": 0.211}
-{"ts": 1790314263.068, "kind": "resolved", "step": "s4", "candidate": 0, "tried": ["LABEL_PROXIMITY=1"]}
-{"ts": 1790314263.071, "kind": "acted", "step": "s4", "action": "SELECT", "risk": "REVERSIBLE_WRITE"}
-{"ts": 1790314263.073, "kind": "step_timing", "step": "s4", "seconds": 0.021}
-{"ts": 1790314263.08, "kind": "resolved", "step": "s5", "candidate": 0, "tried": ["LABEL_PROXIMITY=1"]}
-{"ts": 1790314263.081, "kind": "acted", "step": "s5", "action": "FILL", "risk": "REVERSIBLE_WRITE"}
-{"ts": 1790314263.083, "kind": "step_timing", "step": "s5", "seconds": 0.01}
-{"ts": 1790314263.09, "kind": "resolved", "step": "s6", "candidate": 0, "tried": ["ROLE_NAME=1"]}
-{"ts": 1790314263.119, "kind": "acted", "step": "s6", "action": "CLICK", "risk": "READ"}
-{"ts": 1790314263.295, "kind": "business_outcome", "step": "s6", "code": "VALIDATION_REJECTED"}
-{"ts": 1790314263.296, "kind": "run_ended", "bucket": "BUSINESS_OUTCOME"}
+{"ts": 1790396665.585, "kind": "run_started", "capability": "open_sub_account", "version": 1, "tenant": "tenant_a", "artifact_hash": "6de1c11ce4206e31"}
+{"ts": 1790396665.585, "kind": "effective_artifact", "hash": "6de1c11ce4206e31", "overlay": "none"}
+{"ts": 1790396665.61, "kind": "fingerprint_ok", "version": "4.2.1", "tenant": "tenant_a"}
+{"ts": 1790396665.626, "kind": "resolved", "step": "s1", "candidate": 0, "tried": ["LABEL_PROXIMITY=1"]}
+{"ts": 1790396665.633, "kind": "acted", "step": "s1", "action": "FILL", "risk": "REVERSIBLE_WRITE"}
+{"ts": 1790396665.635, "kind": "step_timing", "step": "s1", "seconds": 0.025}
+{"ts": 1790396665.651, "kind": "resolved", "step": "s2", "candidate": 0, "tried": ["ROLE_NAME=1"]}
+{"ts": 1790396665.692, "kind": "acted", "step": "s2", "action": "CLICK", "risk": "READ"}
+{"ts": 1790396665.724, "kind": "step_timing", "step": "s2", "seconds": 0.089}
+{"ts": 1790396665.735, "kind": "resolved", "step": "s3", "candidate": 0, "tried": ["ROLE_NAME=1"]}
+{"ts": 1790396665.744, "kind": "acted", "step": "s3", "action": "CLICK", "risk": "READ"}
+{"ts": 1790396665.912, "kind": "step_timing", "step": "s3", "seconds": 0.187}
+{"ts": 1790396665.927, "kind": "resolved", "step": "s4", "candidate": 0, "tried": ["LABEL_PROXIMITY=1"]}
+{"ts": 1790396665.93, "kind": "acted", "step": "s4", "action": "SELECT", "risk": "REVERSIBLE_WRITE"}
+{"ts": 1790396665.932, "kind": "step_timing", "step": "s4", "seconds": 0.02}
+{"ts": 1790396665.939, "kind": "resolved", "step": "s5", "candidate": 0, "tried": ["LABEL_PROXIMITY=1"]}
+{"ts": 1790396665.941, "kind": "acted", "step": "s5", "action": "FILL", "risk": "REVERSIBLE_WRITE"}
+{"ts": 1790396665.942, "kind": "step_timing", "step": "s5", "seconds": 0.01}
+{"ts": 1790396665.949, "kind": "resolved", "step": "s6", "candidate": 0, "tried": ["ROLE_NAME=1"]}
+{"ts": 1790396665.979, "kind": "acted", "step": "s6", "action": "CLICK", "risk": "READ"}
+{"ts": 1790396666.15, "kind": "business_outcome", "step": "s6", "code": "VALIDATION_REJECTED"}
+{"ts": 1790396666.151, "kind": "run_ended", "bucket": "BUSINESS_OUTCOME"}

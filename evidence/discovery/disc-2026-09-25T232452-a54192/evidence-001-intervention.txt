@@ -4,6 +4,9 @@ CoreOne
 Member Search
 [main]
 Member Summary
+
+Member: M**01
+
 Name: [REDACTED]
 SSN:	***-**-****
 Date of Birth:	****-**-**

@@ -1,5 +1,5 @@
 {
-  "schema_version": 2,
+  "schema_version": 3,
   "name": "open_sub_account",
   "version": 1,
   "status": "APPROVED",
@@ -14,6 +14,7 @@
       "name": "member_id",
       "type": "string",
       "pattern": "^M\\d{4}$",
+      "description": "Core banking member identifier, as typed into Member Search",
       "sensitive": false
     },
     {
@@ -24,12 +25,14 @@
         "MONEY_MARKET",
         "CHRISTMAS_CLUB"
       ],
+      "description": "Product type of the new sub-account",
       "sensitive": false
     },
     {
       "name": "initial_deposit",
       "type": "decimal",
       "minimum": "0.01",
+      "description": "Opening deposit; the application may enforce a higher minimum",
       "sensitive": false
     }
   ],
@@ -38,14 +41,29 @@
       "name": "confirmation_number",
       "type": "string",
       "pattern": "^CNF-\\d{8}$",
+      "description": "Confirmation number of the opened sub-account",
       "sensitive": false
+    }
+  ],
+  "outcomes": [
+    {
+      "code": "MEMBER_NOT_FOUND",
+      "description": "No member has this ID. Nothing was opened."
+    },
+    {
+      "code": "VALIDATION_REJECTED",
+      "description": "The application refused the request (deposit below its minimum, or the member is frozen). Nothing was opened; the detail says why."
+    },
+    {
+      "code": "DECLINED_BY_OPERATOR",
+      "description": "The operator declined the irreversible commit. Nothing was opened."
     }
   ],
   "steps": [
     {
       "id": "s1",
       "action": "FILL",
-      "description": "Enter the member ID to locate the member record",
+      "description": "Enter the member identifier in Member Search",
       "target": {
         "frame": "main",
         "description": "textbox 'Member ID:'",
@@ -60,11 +78,6 @@
             "anchor_text": "Member ID:",
             "column": 2,
             "element": "input"
-          },
-          {
-            "kind": "COORDINATES",
-            "x": 160.4,
-            "y": 58.4
           }
         ]
       },
@@ -74,13 +87,14 @@
         "frame": "main",
         "text_present": [
           "Member Search"
-        ]
+        ],
+        "input_present": []
       }
     },
     {
       "id": "s2",
       "action": "CLICK",
-      "description": "Submit the search to open the member record",
+      "description": "Search for the member",
       "target": {
         "frame": "main",
         "description": "button 'Search'",
@@ -89,11 +103,6 @@
             "kind": "ROLE_NAME",
             "role": "button",
             "name": "Search"
-          },
-          {
-            "kind": "COORDINATES",
-            "x": 141.0,
-            "y": 83.4
           }
         ]
       },
@@ -102,19 +111,21 @@
         "frame": "main",
         "text_present": [
           "Member Search"
-        ]
+        ],
+        "input_present": []
       },
       "post": {
         "frame": "main",
         "text_present": [
           "Member Summary"
-        ]
+        ],
+        "input_present": []
       }
     },
     {
       "id": "s3",
       "action": "CLICK",
-      "description": "Begin the sub-account opening workflow",
+      "description": "Start opening a new sub-account for the member",
       "target": {
         "frame": "main",
         "description": "button 'Open Sub-Account'",
@@ -123,11 +134,6 @@
             "kind": "ROLE_NAME",
             "role": "button",
             "name": "Open Sub-Account"
-          },
-          {
-            "kind": "COORDINATES",
-            "x": 72.3,
-            "y": 272.4
           }
         ]
       },
@@ -136,19 +142,21 @@
         "frame": "main",
         "text_present": [
           "Member Summary"
-        ]
+        ],
+        "input_present": []
       },
       "post": {
         "frame": "main",
         "text_present": [
           "Open Sub-Account"
-        ]
+        ],
+        "input_present": []
       }
     },
     {
       "id": "s4",
       "action": "SELECT",
-      "description": "Set the requested sub-account type",
+      "description": "Choose the product type for the new sub-account",
       "target": {
         "frame": "main",
         "description": "combobox 'Account Type:'",
@@ -172,13 +180,14 @@
         "frame": "main",
         "text_present": [
           "Open Sub-Account"
-        ]
+        ],
+        "input_present": []
       }
     },
     {
       "id": "s5",
       "action": "FILL",
-      "description": "Enter the initial deposit amount for the new sub-account",
+      "description": "Enter the opening deposit amount",
       "target": {
         "frame": "main",
         "description": "textbox 'Initial Deposit:'",
@@ -193,11 +202,6 @@
             "anchor_text": "Initial Deposit:",
             "column": 2,
             "element": "input"
-          },
-          {
-            "kind": "COORDINATES",
-            "x": 175.9,
-            "y": 81.4
           }
         ]
       },
@@ -207,13 +211,14 @@
         "frame": "main",
         "text_present": [
           "Open Sub-Account"
-        ]
+        ],
+        "input_present": []
       }
     },
     {
       "id": "s6",
       "action": "CLICK",
-      "description": "Advance to the review/confirmation step",
+      "description": "Submit the sub-account details",
       "target": {
         "frame": "main",
         "description": "button 'Continue'",
@@ -222,11 +227,6 @@
             "kind": "ROLE_NAME",
             "role": "button",
             "name": "Continue"
-          },
-          {
-            "kind": "COORDINATES",
-            "x": 169.1,
-            "y": 106.4
           }
         ]
       },
@@ -235,19 +235,21 @@
         "frame": "main",
         "text_present": [
           "Open Sub-Account"
-        ]
+        ],
+        "input_present": []
       },
       "post": {
         "frame": "main",
         "text_present": [
           "Review Sub-Account"
-        ]
+        ],
+        "input_present": []
       }
     },
     {
       "id": "s7",
       "action": "CLICK",
-      "description": "Finalize opening the sub-account to generate the confirmation number",
+      "description": "Confirm opening the sub-account",
       "target": {
         "frame": "main",
         "description": "button 'Confirm'",
@@ -256,11 +258,6 @@
             "kind": "ROLE_NAME",
             "role": "button",
             "name": "Confirm"
-          },
-          {
-            "kind": "COORDINATES",
-            "x": 39.3,
-            "y": 115.4
           }
         ]
       },
@@ -269,13 +266,17 @@
         "frame": "main",
         "text_present": [
           "Review Sub-Account"
+        ],
+        "input_present": [
+          "inputs.member_id"
         ]
       },
       "post": {
         "frame": "main",
         "text_present": [
           "Sub-Account Opened"
-        ]
+        ],
+        "input_present": []
       }
     },
     {
@@ -296,11 +297,6 @@
             "anchor_text": "Confirmation Number:",
             "column": 2,
             "element": "td"
-          },
-          {
-            "kind": "COORDINATES",
-            "x": 255.9,
-            "y": 57.4
           }
         ]
       },
@@ -310,7 +306,8 @@
         "frame": "main",
         "text_present": [
           "Sub-Account Opened"
-        ]
+        ],
+        "input_present": []
       }
     }
   ],
@@ -319,12 +316,15 @@
     "text_present": [
       "Sub-Account Opened",
       "Confirmation Number:"
+    ],
+    "input_present": [
+      "inputs.member_id"
     ]
   },
   "provenance": {
     "created_by": "discovery",
-    "created_at": "2026-09-25T05:31:00+00:00",
-    "source_run_id": "disc-2026-09-25T003011-a4f9a4",
+    "created_at": "2026-09-26T04:24:23+00:00",
+    "source_run_id": "disc-2026-09-25T232357-ba8430",
     "model": "claude-opus-5"
   }
 }

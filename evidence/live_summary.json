@@ -7,10 +7,10 @@
       "status": "DRAFT_SAVED",
       "reason": "goal met",
       "turns": 6,
-      "run": "discovery/disc-2026-09-25T002942-aa7985",
+      "run": "discovery/disc-2026-09-25T232334-440dcf",
       "input_tokens": 12,
-      "output_tokens": 515,
-      "cache_read": 31299,
+      "output_tokens": 595,
+      "cache_read": 32197,
       "restarted": false,
       "served_models": [
         "claude-opus-5"
@@ -33,10 +33,10 @@
       "status": "DRAFT_SAVED",
       "reason": "goal met",
       "turns": 9,
-      "run": "discovery/disc-2026-09-25T003011-a4f9a4",
+      "run": "discovery/disc-2026-09-25T232357-ba8430",
       "input_tokens": 18,
-      "output_tokens": 1022,
-      "cache_read": 68538,
+      "output_tokens": 804,
+      "cache_read": 69368,
       "restarted": false,
       "served_models": [
         "claude-opus-5"
@@ -64,10 +64,10 @@
       "status": "DRAFT_SAVED",
       "reason": "goal met",
       "turns": 7,
-      "run": "discovery/disc-2026-09-25T003103-91763f",
+      "run": "discovery/disc-2026-09-25T232431-588a2d",
       "input_tokens": 14,
-      "output_tokens": 656,
-      "cache_read": 42033,
+      "output_tokens": 649,
+      "cache_read": 42988,
       "restarted": false,
       "served_models": [
         "claude-opus-5"
@@ -92,10 +92,10 @@
       "status": "DRAFT_SAVED",
       "reason": "goal met",
       "turns": 7,
-      "run": "discovery/disc-2026-09-25T003130-7e58f3",
+      "run": "discovery/disc-2026-09-25T232452-a54192",
       "input_tokens": 14,
-      "output_tokens": 613,
-      "cache_read": 47316,
+      "output_tokens": 714,
+      "cache_read": 48758,
       "restarted": false,
       "served_models": [
         "claude-opus-5"
@@ -120,10 +120,10 @@
       "status": "DRAFT_SAVED",
       "reason": "goal met",
       "turns": 9,
-      "run": "discovery/disc-2026-09-25T003210-5be90c",
+      "run": "discovery/disc-2026-09-25T232517-cfb9e6",
       "input_tokens": 18,
-      "output_tokens": 765,
-      "cache_read": 71355,
+      "output_tokens": 766,
+      "cache_read": 71378,
       "restarted": true,
       "served_models": [
         "claude-opus-5"
@@ -187,6 +187,14 @@
     },
     {
       "artifact": "artifacts/get_savings_balance/v1.json",
+      "scenario": "wrong-member",
+      "bucket": "FAILURE",
+      "code": "IDENTITY_MISMATCH",
+      "recoveries": [],
+      "run": "replay/savings-clean-v1-wrong-member"
+    },
+    {
+      "artifact": "artifacts/get_savings_balance/v1.json",
       "scenario": "unknown-dialog-handoff",
       "bucket": "ESCALATED",
       "code": "completed after human intervention: UNKNOWN_DIALOG: Security verification required",
@@ -216,6 +224,14 @@
       "code": "VALIDATION_REJECTED",
       "recoveries": [],
       "run": "replay/subaccount-clean-v1-below-minimum"
+    },
+    {
+      "artifact": "artifacts/open_sub_account/v1.json",
+      "scenario": "wrong-member-before-commit",
+      "bucket": "FAILURE",
+      "code": "IDENTITY_MISMATCH",
+      "recoveries": [],
+      "run": "replay/subaccount-clean-v1-wrong-member-before-commit"
     },
     {
       "artifact": "artifacts/get_savings_balance/v2.json",
