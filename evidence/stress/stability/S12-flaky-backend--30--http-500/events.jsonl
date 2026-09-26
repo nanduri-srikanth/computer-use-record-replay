@@ -1,19 +1,19 @@
-{"ts": 1790396494.227, "kind": "run_started", "capability": "get_savings_balance", "version": 1, "tenant": "tenant_a", "artifact_hash": "ac1f2a6a169f7051"}
-{"ts": 1790396494.227, "kind": "effective_artifact", "hash": "ac1f2a6a169f7051", "overlay": "none"}
-{"ts": 1790396494.25, "kind": "fingerprint_ok", "version": "4.2.1", "tenant": "tenant_a"}
-{"ts": 1790396494.267, "kind": "resolved", "step": "s1", "candidate": 0, "tried": ["LABEL_PROXIMITY=1"]}
-{"ts": 1790396494.273, "kind": "acted", "step": "s1", "action": "FILL", "risk": "REVERSIBLE_WRITE"}
-{"ts": 1790396494.276, "kind": "step_timing", "step": "s1", "seconds": 0.025}
-{"ts": 1790396494.289, "kind": "resolved", "step": "s2", "candidate": 0, "tried": ["ROLE_NAME=1"]}
-{"ts": 1790396494.333, "kind": "acted", "step": "s2", "action": "CLICK", "risk": "READ"}
-{"ts": 1790396494.508, "kind": "step_timing", "step": "s2", "seconds": 0.232}
-{"ts": 1790396494.522, "kind": "resolved", "step": "s3", "candidate": 0, "tried": ["TABLE_ANCHOR=1"]}
-{"ts": 1790396494.537, "kind": "acted", "step": "s3", "action": "CLICK", "risk": "READ"}
-{"ts": 1790396494.566, "kind": "step_timing", "step": "s3", "seconds": 0.058}
-{"ts": 1790396494.578, "kind": "resolved", "step": "s4", "candidate": 0, "tried": ["LABEL_PROXIMITY=1"]}
-{"ts": 1790396494.579, "kind": "acted", "step": "s4", "action": "EXTRACT", "risk": "READ"}
-{"ts": 1790396494.579, "kind": "step_timing", "step": "s4", "seconds": 0.013}
-{"ts": 1790396494.585, "kind": "resolved", "step": "s5", "candidate": 0, "tried": ["LABEL_PROXIMITY=1"]}
-{"ts": 1790396494.585, "kind": "acted", "step": "s5", "action": "EXTRACT", "risk": "READ"}
-{"ts": 1790396494.585, "kind": "step_timing", "step": "s5", "seconds": 0.007}
-{"ts": 1790396494.586, "kind": "run_ended", "bucket": "SUCCESS"}
+{"ts": 1790398088.618, "kind": "run_started", "capability": "get_savings_balance", "version": 1, "tenant": "tenant_a", "artifact_hash": "ac1f2a6a169f7051"}
+{"ts": 1790398088.618, "kind": "effective_artifact", "hash": "ac1f2a6a169f7051", "overlay": "none"}
+{"ts": 1790398088.641, "kind": "fingerprint_ok", "version": "4.2.1", "tenant": "tenant_a"}
+{"ts": 1790398088.657, "kind": "resolved", "step": "s1", "candidate": 0, "tried": ["LABEL_PROXIMITY=1"]}
+{"ts": 1790398088.664, "kind": "acted", "step": "s1", "action": "FILL", "risk": "REVERSIBLE_WRITE"}
+{"ts": 1790398088.666, "kind": "step_timing", "step": "s1", "seconds": 0.024}
+{"ts": 1790398088.679, "kind": "resolved", "step": "s2", "candidate": 0, "tried": ["ROLE_NAME=1"]}
+{"ts": 1790398088.723, "kind": "acted", "step": "s2", "action": "CLICK", "risk": "READ"}
+{"ts": 1790398088.896, "kind": "step_timing", "step": "s2", "seconds": 0.23}
+{"ts": 1790398088.91, "kind": "resolved", "step": "s3", "candidate": 0, "tried": ["TABLE_ANCHOR=1"]}
+{"ts": 1790398088.93, "kind": "acted", "step": "s3", "action": "CLICK", "risk": "READ"}
+{"ts": 1790398088.961, "kind": "step_timing", "step": "s3", "seconds": 0.065}
+{"ts": 1790398088.973, "kind": "resolved", "step": "s4", "candidate": 0, "tried": ["LABEL_PROXIMITY=1"]}
+{"ts": 1790398088.974, "kind": "acted", "step": "s4", "action": "EXTRACT", "risk": "READ"}
+{"ts": 1790398088.974, "kind": "step_timing", "step": "s4", "seconds": 0.013}
+{"ts": 1790398088.98, "kind": "resolved", "step": "s5", "candidate": 0, "tried": ["LABEL_PROXIMITY=1"]}
+{"ts": 1790398088.981, "kind": "acted", "step": "s5", "action": "EXTRACT", "risk": "READ"}
+{"ts": 1790398088.981, "kind": "step_timing", "step": "s5", "seconds": 0.006}
+{"ts": 1790398088.982, "kind": "run_ended", "bucket": "SUCCESS"}

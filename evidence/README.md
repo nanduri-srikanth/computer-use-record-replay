@@ -19,16 +19,16 @@ Everything here was produced by running the system, not written by hand:
 
 | Run | Condition during discovery | Outcome | Turns | Handoff | Served by | Tokens (cached in / out) | Artifact |
 |---|---|---|---|---|---|---|---|
-| [savings-clean](discovery/disc-2026-09-25T232334-440dcf/) | clean | DRAFT_SAVED: goal met | 6 | 0 | claude-opus-5 | 32,197 / 595 | [artifacts/get_savings_balance/v1.json](artifacts/get_savings_balance/v1.json) |
-| [subaccount-clean](discovery/disc-2026-09-25T232357-ba8430/) | clean | DRAFT_SAVED: goal met | 9 | 0 | claude-opus-5 | 69,368 / 804 | [artifacts/open_sub_account/v1.json](artifacts/open_sub_account/v1.json) |
-| [savings-interstitial](discovery/disc-2026-09-25T232431-588a2d/) | interstitial=True | DRAFT_SAVED: goal met | 7 | 0 | claude-opus-5 | 42,988 / 649 | [artifacts/get_savings_balance/v2.json](artifacts/get_savings_balance/v2.json) |
-| [savings-unknown-dialog](discovery/disc-2026-09-25T232452-a54192/) | unknown_dialog=True | DRAFT_SAVED: goal met | 7 | 1 | claude-opus-5 | 48,758 / 714 | [artifacts/get_savings_balance/v3.json](artifacts/get_savings_balance/v3.json) |
-| [savings-session-expired](discovery/disc-2026-09-25T232517-cfb9e6/) | session_expire_at=4 | DRAFT_SAVED: goal met | 9 | 1 (restarted) | claude-opus-5 | 71,378 / 766 | [artifacts/get_savings_balance/v4.json](artifacts/get_savings_balance/v4.json) |
+| [savings-clean](discovery/disc-2026-09-25T234455-5ea587/) | clean | DRAFT_SAVED: goal met | 6 | 0 | claude-opus-5 | 32,107 / 527 | [artifacts/get_savings_balance/v1.json](artifacts/get_savings_balance/v1.json) |
+| [subaccount-clean](discovery/disc-2026-09-25T234516-17ca0e/) | clean | DRAFT_SAVED: goal met | 9 | 0 | claude-opus-5 | 69,568 / 870 | [artifacts/open_sub_account/v1.json](artifacts/open_sub_account/v1.json) |
+| [savings-interstitial](discovery/disc-2026-09-25T234552-db6696/) | interstitial=True | DRAFT_SAVED: goal met | 7 | 0 | claude-opus-5 | 42,996 / 661 | [artifacts/get_savings_balance/v2.json](artifacts/get_savings_balance/v2.json) |
+| [savings-unknown-dialog](discovery/disc-2026-09-25T234612-26cf82/) | unknown_dialog=True | DRAFT_SAVED: goal met | 7 | 1 | claude-opus-5 | 47,069 / 614 | [artifacts/get_savings_balance/v3.json](artifacts/get_savings_balance/v3.json) |
+| [savings-session-expired](discovery/disc-2026-09-25T234628-025808/) | session_expire_at=4 | DRAFT_SAVED: goal met | 9 | 1 (restarted) | claude-opus-5 | 71,661 / 850 | [artifacts/get_savings_balance/v4.json](artifacts/get_savings_balance/v4.json) |
 
 Notable behaviour (derived from each run's events):
 - **savings-interstitial**: dismissed 1 dialog(s) itself; kept out of the artifact because replay handles dialogs.
-- **savings-unknown-dialog**: asked a human: "A security authorisation prompt must be confirmed by an operator before the member's accounts can be viewed."; the human closed the dialog and discovery continued (no restart: nothing was missing).
-- **savings-session-expired**: asked a human: "Session expired and a sign-in is required; no credentials available."; the human changed the page, so discovery restarted from the entry point and the artifact contains only recorder-verified steps.
+- **savings-unknown-dialog**: asked a human: "A security authorisation attestation dialog blocks the member record and must be confirmed by a human operator"; the human closed the dialog and discovery continued (no restart: nothing was missing).
+- **savings-session-expired**: asked a human: "Session expired and the app requires sign-in credentials, which the automation does not have."; the human changed the page, so discovery restarted from the entry point and the artifact contains only recorder-verified steps.
 
 ## Replays of the discovered artifacts (no LLM)
 

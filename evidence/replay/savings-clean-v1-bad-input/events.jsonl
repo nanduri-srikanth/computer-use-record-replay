@@ -1,4 +1,4 @@
-{"ts": 1790396633.537, "kind": "run_started", "capability": "get_savings_balance", "version": 1, "tenant": "tenant_a", "artifact_hash": "779be47bee0886b6"}
-{"ts": 1790396633.538, "kind": "effective_artifact", "hash": "779be47bee0886b6", "overlay": "none"}
-{"ts": 1790396633.538, "kind": "failure", "reason": "VALIDATION_ERROR", "step": null, "expected": "inputs match schema", "observed": "member_id does not match ^M\\d{4}$"}
-{"ts": 1790396633.538, "kind": "run_ended", "bucket": "FAILURE"}
+{"ts": 1790397912.732, "kind": "run_started", "capability": "get_savings_balance", "version": 1, "tenant": "tenant_a", "artifact_hash": "4e0780563a78d7ec"}
+{"ts": 1790397912.732, "kind": "effective_artifact", "hash": "4e0780563a78d7ec", "overlay": "none"}
+{"ts": 1790397912.732, "kind": "failure", "reason": "VALIDATION_ERROR", "step": null, "expected": "inputs match schema", "observed": "member_id does not match ^M\\d{4}$"}
+{"ts": 1790397912.732, "kind": "run_ended", "bucket": "FAILURE"}

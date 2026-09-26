@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 
 import pytest
 from pydantic import ValidationError
@@ -357,3 +358,11 @@ def test_redactor_secrets_and_keys():
     assert r.text("pw is hunter2-secret") == "pw is [SECRET]"
     assert r.value({"password": "anything", "nested": {"api_key": "x"}}) == \
         {"password": "[SECRET]", "nested": {"api_key": "[SECRET]"}}
+
+
+def test_screenshots_mask_every_on_screen_identifier():
+    """Anything the text redactor masks that an app can render as page text must be masked in screenshots too."""
+    masked = {p.pattern for p in Redactor.mask_patterns()}
+    for probe in ("M1001", "123-45-6789", "10012346", "$2,450.17", "1984-03-12"):
+        assert Redactor().text(probe) != probe
+        assert any(re.search(p, probe) for p in masked), probe

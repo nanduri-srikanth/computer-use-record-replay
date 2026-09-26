@@ -1,23 +1,23 @@
-{"ts": 1790396666.401, "kind": "run_started", "capability": "open_sub_account", "version": 1, "tenant": "tenant_a", "artifact_hash": "6de1c11ce4206e31"}
-{"ts": 1790396666.401, "kind": "effective_artifact", "hash": "6de1c11ce4206e31", "overlay": "none"}
-{"ts": 1790396666.424, "kind": "fingerprint_ok", "version": "4.2.1", "tenant": "tenant_a"}
-{"ts": 1790396666.441, "kind": "resolved", "step": "s1", "candidate": 0, "tried": ["LABEL_PROXIMITY=1"]}
-{"ts": 1790396666.447, "kind": "acted", "step": "s1", "action": "FILL", "risk": "REVERSIBLE_WRITE"}
-{"ts": 1790396666.45, "kind": "step_timing", "step": "s1", "seconds": 0.025}
-{"ts": 1790396666.463, "kind": "resolved", "step": "s2", "candidate": 0, "tried": ["ROLE_NAME=1"]}
-{"ts": 1790396666.507, "kind": "acted", "step": "s2", "action": "CLICK", "risk": "READ"}
-{"ts": 1790396666.692, "kind": "step_timing", "step": "s2", "seconds": 0.242}
-{"ts": 1790396666.711, "kind": "resolved", "step": "s3", "candidate": 0, "tried": ["ROLE_NAME=1"]}
-{"ts": 1790396666.728, "kind": "acted", "step": "s3", "action": "CLICK", "risk": "READ"}
-{"ts": 1790396666.899, "kind": "step_timing", "step": "s3", "seconds": 0.206}
-{"ts": 1790396666.916, "kind": "resolved", "step": "s4", "candidate": 0, "tried": ["LABEL_PROXIMITY=1"]}
-{"ts": 1790396666.919, "kind": "acted", "step": "s4", "action": "SELECT", "risk": "REVERSIBLE_WRITE"}
-{"ts": 1790396666.921, "kind": "step_timing", "step": "s4", "seconds": 0.022}
-{"ts": 1790396666.928, "kind": "resolved", "step": "s5", "candidate": 0, "tried": ["LABEL_PROXIMITY=1"]}
-{"ts": 1790396666.93, "kind": "acted", "step": "s5", "action": "FILL", "risk": "REVERSIBLE_WRITE"}
-{"ts": 1790396666.932, "kind": "step_timing", "step": "s5", "seconds": 0.011}
-{"ts": 1790396666.939, "kind": "resolved", "step": "s6", "candidate": 0, "tried": ["ROLE_NAME=1"]}
-{"ts": 1790396666.961, "kind": "acted", "step": "s6", "action": "CLICK", "risk": "READ"}
-{"ts": 1790396667.134, "kind": "step_timing", "step": "s6", "seconds": 0.202}
-{"ts": 1790396670.804, "kind": "failure", "reason": "IDENTITY_MISMATCH", "step": "s7", "expected": "pre-checkpoint ['Review Sub-Account', 'inputs.member_id']", "observed": "Review Sub-Account\n\nMember: M**03\n\nAccount Type:\tMoney Market\nInitial Deposit:\t$***\n\nCoreOne Banking v4.2.1 | Tenant: tenant_a"}
-{"ts": 1790396670.804, "kind": "run_ended", "bucket": "FAILURE"}
+{"ts": 1790397948.073, "kind": "run_started", "capability": "open_sub_account", "version": 1, "tenant": "tenant_a", "artifact_hash": "1f74f0ee1b80357b"}
+{"ts": 1790397948.073, "kind": "effective_artifact", "hash": "1f74f0ee1b80357b", "overlay": "none"}
+{"ts": 1790397948.095, "kind": "fingerprint_ok", "version": "4.2.1", "tenant": "tenant_a"}
+{"ts": 1790397948.111, "kind": "resolved", "step": "s1", "candidate": 0, "tried": ["LABEL_PROXIMITY=1"]}
+{"ts": 1790397948.118, "kind": "acted", "step": "s1", "action": "FILL", "risk": "REVERSIBLE_WRITE"}
+{"ts": 1790397948.12, "kind": "step_timing", "step": "s1", "seconds": 0.025}
+{"ts": 1790397948.133, "kind": "resolved", "step": "s2", "candidate": 0, "tried": ["ROLE_NAME=1"]}
+{"ts": 1790397948.177, "kind": "acted", "step": "s2", "action": "CLICK", "risk": "READ"}
+{"ts": 1790397948.343, "kind": "step_timing", "step": "s2", "seconds": 0.223}
+{"ts": 1790397948.358, "kind": "resolved", "step": "s3", "candidate": 0, "tried": ["ROLE_NAME=1"]}
+{"ts": 1790397948.364, "kind": "acted", "step": "s3", "action": "CLICK", "risk": "READ"}
+{"ts": 1790397948.544, "kind": "step_timing", "step": "s3", "seconds": 0.2}
+{"ts": 1790397948.564, "kind": "resolved", "step": "s4", "candidate": 0, "tried": ["LABEL_PROXIMITY=1"]}
+{"ts": 1790397948.568, "kind": "acted", "step": "s4", "action": "SELECT", "risk": "REVERSIBLE_WRITE"}
+{"ts": 1790397948.57, "kind": "step_timing", "step": "s4", "seconds": 0.026}
+{"ts": 1790397948.577, "kind": "resolved", "step": "s5", "candidate": 0, "tried": ["LABEL_PROXIMITY=1"]}
+{"ts": 1790397948.579, "kind": "acted", "step": "s5", "action": "FILL", "risk": "REVERSIBLE_WRITE"}
+{"ts": 1790397948.581, "kind": "step_timing", "step": "s5", "seconds": 0.011}
+{"ts": 1790397948.588, "kind": "resolved", "step": "s6", "candidate": 0, "tried": ["ROLE_NAME=1"]}
+{"ts": 1790397948.616, "kind": "acted", "step": "s6", "action": "CLICK", "risk": "READ"}
+{"ts": 1790397948.782, "kind": "step_timing", "step": "s6", "seconds": 0.2}
+{"ts": 1790397952.34, "kind": "failure", "reason": "IDENTITY_MISMATCH", "step": "s7", "expected": "pre-checkpoint ['Review Sub-Account', 'inputs.member_id']", "observed": "Review Sub-Account\n\nMember: M**03\n\nAccount Type:\tMoney Market\nInitial Deposit:\t$***\n\nCoreOne Banking v4.2.1 | Tenant: tenant_a"}
+{"ts": 1790397952.341, "kind": "run_ended", "bucket": "FAILURE"}

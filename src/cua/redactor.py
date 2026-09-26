@@ -71,4 +71,5 @@ class Redactor:
     @staticmethod
     def mask_patterns() -> list[re.Pattern[str]]:
         """Patterns whose on-screen matches are masked in screenshots."""
-        return [p for name, p, _ in _PATTERNS if name in ("ssn", "card_no", "date", "date_us", "email", "account_no", "money")]
+        return [p for name, p, _ in _PATTERNS if name in ("ssn", "card_no", "date", "date_us", "email", "account_no", "money",
+                                                           "member_id")]

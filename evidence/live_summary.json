@@ -7,10 +7,10 @@
       "status": "DRAFT_SAVED",
       "reason": "goal met",
       "turns": 6,
-      "run": "discovery/disc-2026-09-25T232334-440dcf",
+      "run": "discovery/disc-2026-09-25T234455-5ea587",
       "input_tokens": 12,
-      "output_tokens": 595,
-      "cache_read": 32197,
+      "output_tokens": 527,
+      "cache_read": 32107,
       "restarted": false,
       "served_models": [
         "claude-opus-5"
@@ -33,10 +33,10 @@
       "status": "DRAFT_SAVED",
       "reason": "goal met",
       "turns": 9,
-      "run": "discovery/disc-2026-09-25T232357-ba8430",
+      "run": "discovery/disc-2026-09-25T234516-17ca0e",
       "input_tokens": 18,
-      "output_tokens": 804,
-      "cache_read": 69368,
+      "output_tokens": 870,
+      "cache_read": 69568,
       "restarted": false,
       "served_models": [
         "claude-opus-5"
@@ -64,10 +64,10 @@
       "status": "DRAFT_SAVED",
       "reason": "goal met",
       "turns": 7,
-      "run": "discovery/disc-2026-09-25T232431-588a2d",
+      "run": "discovery/disc-2026-09-25T234552-db6696",
       "input_tokens": 14,
-      "output_tokens": 649,
-      "cache_read": 42988,
+      "output_tokens": 661,
+      "cache_read": 42996,
       "restarted": false,
       "served_models": [
         "claude-opus-5"
@@ -92,10 +92,10 @@
       "status": "DRAFT_SAVED",
       "reason": "goal met",
       "turns": 7,
-      "run": "discovery/disc-2026-09-25T232452-a54192",
+      "run": "discovery/disc-2026-09-25T234612-26cf82",
       "input_tokens": 14,
-      "output_tokens": 714,
-      "cache_read": 48758,
+      "output_tokens": 614,
+      "cache_read": 47069,
       "restarted": false,
       "served_models": [
         "claude-opus-5"
@@ -120,10 +120,10 @@
       "status": "DRAFT_SAVED",
       "reason": "goal met",
       "turns": 9,
-      "run": "discovery/disc-2026-09-25T232517-cfb9e6",
+      "run": "discovery/disc-2026-09-25T234628-025808",
       "input_tokens": 18,
-      "output_tokens": 766,
-      "cache_read": 71378,
+      "output_tokens": 850,
+      "cache_read": 71661,
       "restarted": true,
       "served_models": [
         "claude-opus-5"

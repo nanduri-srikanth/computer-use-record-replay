@@ -226,7 +226,7 @@ def create_app() -> Flask:
             modal += f"<script>window.addEventListener('load', function(){{ alert({json.dumps(msg)}); }});</script>"
         if f.obscure_links:  # transparent layer: visible to automation as nothing, but it eats every click
             modal += "<div style='position:fixed;top:0;left:0;width:100%;height:100%;z-index:99'></div>"
-        return _page("Member Summary", f"""<p>Member: {m.member_id}</p>
+        return _page("Member Summary", f"""<p>Member: <span>{m.member_id}</span></p>
 <table border="1" cellspacing="0" cellpadding="3">
 <tr><td>Name:</td><td>{escape(m.name)}</td></tr>
 <tr><td>SSN:</td><td>{m.ssn}</td></tr>
@@ -252,7 +252,7 @@ def create_app() -> Flask:
         acct = next((a for a in (m.accounts if m else []) if a.number == request.args.get("acct")), None)
         if not acct:
             return _page("Member Search Results", "<p>No member found for the given ID.</p>")
-        return _page("Account Detail", f"""<p>Member: {m.member_id}</p>
+        return _page("Account Detail", f"""<p>Member: <span>{m.member_id}</span></p>
 <table>
 <tr><td>Account Type:</td><td>{escape(t['type_labels'][acct.type])}</td></tr>
 <tr><td>Account No:</td><td>{acct.number}</td></tr>
@@ -294,7 +294,7 @@ def create_app() -> Flask:
         if dep < data.MIN_OPENING_DEPOSIT:
             return _subaccount_form(mid, f"Initial deposit must be at least {_money(data.MIN_OPENING_DEPOSIT)}.")
         confirm_js = ' onclick="return confirm(\'Open this sub-account now?\')"' if STATE.faults.confirm_prompt else ""
-        return _page("Review Sub-Account", f"""<p>Member: {escape(mid)}</p>
+        return _page("Review Sub-Account", f"""<p>Member: <span>{escape(mid)}</span></p>
 <table>
 <tr><td>Account Type:</td><td>{escape(t['type_labels'][typ])}</td></tr>
 <tr><td>Initial Deposit:</td><td>{_money(dep)}</td></tr></table>
@@ -316,7 +316,7 @@ def create_app() -> Flask:
             STATE.members[mid].accounts.append(Account(number, typ, dep))
         if STATE.faults.slow_confirm_ms:  # committed already; only the response is slow
             time.sleep(STATE.faults.slow_confirm_ms / 1000)
-        return _page("Sub-Account Opened", f"""<p>Member: {escape(mid)}</p>
+        return _page("Sub-Account Opened", f"""<p>Member: <span>{escape(mid)}</span></p>
 <table>
 <tr><td>Confirmation Number:</td><td>{conf}</td></tr>
 <tr><td>Account No:</td><td>{number}</td></tr></table>""")

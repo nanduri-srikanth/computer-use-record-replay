@@ -4,7 +4,7 @@
 
 Automates legacy bank back-office apps that have no API. Claude drives the real UI once to discover a procedure; the successful run is recorded as a typed, versioned capability artifact; after human approval it replays deterministically with no LLM in the loop. Each artifact declares its typed inputs, outputs, and the business outcomes it can return. Every replay ends in exactly one of SUCCESS, BUSINESS_OUTCOME, ESCALATED, or FAILURE, and a human can take over the live browser session when the system is stuck.
 
-- Video walkthrough (4 min, narrated; recorded before schema v3 added declared outcomes and identity checkpoints): [docs/walkthrough/walkthrough.mp4](docs/walkthrough/walkthrough.mp4), script in [narration.md](docs/walkthrough/narration.md); interactive replay simulator: [docs/walkthrough/playground.html](docs/walkthrough/playground.html) (open in a browser)
+- Video walkthrough (4 min, narrated): [docs/walkthrough/walkthrough.mp4](docs/walkthrough/walkthrough.mp4), script in [narration.md](docs/walkthrough/narration.md); interactive replay simulator: [docs/walkthrough/playground.html](docs/walkthrough/playground.html) (open in a browser)
 - Write-up: [REPORT.md](REPORT.md)
 - Evidence (real discovery runs, replays, stress matrix): [evidence/README.md](evidence/README.md)
 - Design diagrams: [docs/WORKFLOW.md](docs/WORKFLOW.md) (browse `docs/diagrams/index.html`)
@@ -29,7 +29,7 @@ Other config lives in `config/`: `policy.yaml` (allowlist, risk rules), `tenants
 ## Run without live services
 
 ```bash
-make test                       # 224 tests: acceptance, 41 stress scenarios, units, discovery (scripted model), metrics, evals, invariants, independent review
+make test                       # 225 tests: acceptance, 41 stress scenarios, units, discovery (scripted model), metrics, evals, invariants, independent review
 make evidence                   # regenerate evidence/stress: matrix, flakiness study, determinism check
 ```
 
