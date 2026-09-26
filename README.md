@@ -1,6 +1,6 @@
 # Legacy back-office automation: LLM discovery, deterministic replay
 
-[![test](https://github.com/nanduri-srikanth/interface-ai-takehome/actions/workflows/test.yml/badge.svg)](https://github.com/nanduri-srikanth/interface-ai-takehome/actions/workflows/test.yml)
+[![test](https://github.com/nanduri-srikanth/computer-use-record-replay/actions/workflows/test.yml/badge.svg)](https://github.com/nanduri-srikanth/computer-use-record-replay/actions/workflows/test.yml)
 
 Automates legacy bank back-office apps that have no API. Claude drives the real UI once to discover a procedure; the successful run is recorded as a typed, versioned capability artifact; after human approval it replays deterministically with no LLM in the loop. Each artifact declares its typed inputs, outputs, and the business outcomes it can return. Every replay ends in exactly one of SUCCESS, BUSINESS_OUTCOME, ESCALATED, or FAILURE, and a human can take over the live browser session when the system is stuck.
 
